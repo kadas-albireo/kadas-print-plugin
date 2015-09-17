@@ -15,6 +15,7 @@ from qgis.gui import *
 import os
 
 from ui.ui_printdialog import Ui_InstantPrintDialog
+from ui.ui_kastendialog import Ui_KastenDialog
 
 
 class InstantPrintTool(QgsMapTool):
@@ -29,6 +30,9 @@ class InstantPrintTool(QgsMapTool):
         self.populateCompositionFz = populateCompositionFz
 
         self.dialog = QDialog(self.iface.mainWindow())
+        self.kastendialog = QDialog()
+        self.kasten = Ui_KastenDialog()
+        self.kasten.setupUi(self.kastendialog)
         self.dialogui = Ui_InstantPrintDialog()
         self.dialogui.setupUi(self.dialog)
         self.exportButton = self.dialogui.buttonBox.addButton(self.tr("Export"), QDialogButtonBox.ActionRole)
@@ -42,6 +46,7 @@ class InstantPrintTool(QgsMapTool):
         self.iface.composerAdded.connect(lambda view: self.__reloadComposers())
         self.iface.composerWillBeRemoved.connect(self.__reloadComposers)
         self.dialogui.comboBox_composers.currentIndexChanged.connect(self.__selectComposer)
+        self.dialogui.kastenButton.clicked.connect(self.__kasten)
         self.exportButton.clicked.connect(self.__export)
         self.helpButton.clicked.connect(self.__help)
         self.dialogui.buttonBox.button(QDialogButtonBox.Close).clicked.connect(lambda: self.setEnabled(False))
@@ -57,6 +62,11 @@ class InstantPrintTool(QgsMapTool):
             self.dialog.setVisible(False)
             self.__cleanup()
             self.iface.mapCanvas().unsetMapTool(self)
+
+    def __kasten(self):
+        ret = self.kastendialog.exec_()
+        if ret == QDialog.Accepted:
+            pass
 
     def __changeScale(self):
         if not self.mapitem:
