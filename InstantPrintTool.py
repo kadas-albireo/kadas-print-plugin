@@ -62,6 +62,8 @@ class InstantPrintTool(QgsMapTool):
         self.dialogui.checkBox_legende.stateChanged.connect(self.__legende)
         self.dialogui.checkBox_massstabbalken.stateChanged.connect(self.__massstabbalken)
         self.dialogui.titleLE.textChanged.connect(self.__titleChanged)
+        self.dialogui.spinBox_intervalx.valueChanged.connect(self.__intervalXChanged)
+        self.dialogui.spinBox_intervaly.valueChanged.connect(self.__intervalYChanged)
         self.exportButton.clicked.connect(self.__export)
         self.helpButton.clicked.connect(self.__help)
         self.dialogui.buttonBox.button(QDialogButtonBox.Close).clicked.connect(lambda: self.setEnabled(False))
@@ -127,6 +129,13 @@ class InstantPrintTool(QgsMapTool):
             # elif format == 'UTM':
             #     self.mapitem.setGridAnnotationFormat(QgsComposerMap.UTM)
 
+            if crs != "EPSG:4326":
+                self.dialogui.spinBox_intervalx.setValue(100000.0)
+                self.dialogui.spinBox_intervaly.setValue(100000.0)
+            else:
+                self.dialogui.spinBox_intervalx.setValue(1.0)
+                self.dialogui.spinBox_intervaly.setValue(1.0)
+
         self.composerView.composition().update()
         self.dialogui.previewGraphic.update()
 
@@ -146,6 +155,16 @@ class InstantPrintTool(QgsMapTool):
             self.composerView.composition().getComposerItemById("uebungsbezeichnung").setText(unicode(self.kasten.uebungsbezeichnungLE.text()))
             self.composerView.composition().getComposerItemById("dokumentbezeichnung").setText(unicode(self.kasten.dokumentbezeichnungLE.text()))
             self.composerView.composition().getComposerItemById("ortdatum").setText(unicode(self.kasten.ortdatumLE.text()))
+
+    def __intervalXChanged(self, value):
+        self.mapitem.setGridIntervalX(value)
+        self.composerView.composition().update()
+        self.dialogui.previewGraphic.update()
+
+    def __intervalYChanged(self, value):
+        self.mapitem.setGridIntervalY(value)
+        self.composerView.composition().update()
+        self.dialogui.previewGraphic.update()
 
     def __titleChanged(self, arg):
         self.composerView.composition().getComposerItemById("title").setText(str(self.dialogui.titleLE.text()))
