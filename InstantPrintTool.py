@@ -41,16 +41,51 @@ class InstantPrintTool(QgsMapTool):
         self.dialogui.comboBox_fileformat.addItem("JPG", self.tr("JPG Image (*.jpg);;"))
         self.dialogui.comboBox_fileformat.addItem("BMP", self.tr("BMP Image (*.bmp);;"))
         self.dialogui.comboBox_fileformat.addItem("PNG", self.tr("PNG Image (*.png);;"))
+
+        self.dialogui.comboBox_crs.addItem("Kein Gitter", "nogrid,0")
+        self.dialogui.comboBox_crs.addItem("LV03", "EPSG:21781,0")
+        self.dialogui.comboBox_crs.addItem("LV95", "EPSG:2056,0")
+        self.dialogui.comboBox_crs.addItem("DD", "EPSG:4326,0")
+        self.dialogui.comboBox_crs.addItem("DM", "EPSG:4326,minute")
+        self.dialogui.comboBox_crs.addItem("DMS", "EPSG:4326,second")
+        self.dialogui.comboBox_crs.addItem("MGRS", "EPSG:4326,MGRS")
+        self.dialogui.comboBox_crs.addItem("UTM", "EPSG:4326,UTM")
+
         self.dialogui.spinBoxScale.valueChanged.connect(self.__changeScale)
 
         self.iface.composerAdded.connect(lambda view: self.__reloadComposers())
         self.iface.composerWillBeRemoved.connect(self.__reloadComposers)
         self.dialogui.comboBox_composers.currentIndexChanged.connect(self.__selectComposer)
         self.dialogui.kastenButton.clicked.connect(self.__kasten)
+        self.dialogui.comboBox_crs.currentIndexChanged.connect(self.__gridChanges)
         self.exportButton.clicked.connect(self.__export)
         self.helpButton.clicked.connect(self.__help)
         self.dialogui.buttonBox.button(QDialogButtonBox.Close).clicked.connect(lambda: self.setEnabled(False))
         self.setCursor(Qt.OpenHandCursor)
+
+    def createObjects(self):
+        self.legend = self.composerView.composition().getComposerItemById("legend")
+        self.scalebar = self.composerView.composition().getComposerItemById("scalebar")
+        self.grid = self.mapitem.grid()
+        self.mapitem.setGridEnabled(False)
+        self.dialogui.previewGraphic.setInteractive(False)
+        self.dialogui.previewGraphic.setScene(self.composerView.composition())
+        if not self.dialogui.checkBox_legende.isChecked():
+            self.legend.hide()
+        else:
+            self.legend.show()
+
+        if not self.dialogui.checkBox_massstabbalken.isChecked():
+            self.scalebar.hide()
+        else:
+            self.scalebar.show()
+
+        if not self.dialogui.checkBox_beschriftung.isChecked():
+            self.mapitem.setShowGridAnnotation(False)
+        else:
+            self.mapitem.setShowGridAnnotation(True)
+
+        self.__gridChanges()
 
     def setEnabled(self, enabled):
         if enabled:
@@ -62,6 +97,34 @@ class InstantPrintTool(QgsMapTool):
             self.dialog.setVisible(False)
             self.__cleanup()
             self.iface.mapCanvas().unsetMapTool(self)
+
+    def __gridChanges(self):
+        crs, format = self.dialogui.comboBox_crs.itemData(self.dialogui.comboBox_crs.currentIndex()).split(",")
+        if crs == "nogrid":
+            self.mapitem.setGridEnabled(False)
+            self.dialogui.checkBox_beschriftung.setEnabled(False)
+            self.dialogui.checkBox_beschriftung.setChecked(False)
+            self.dialogui.spinBox_intervalx.setEnabled(False)
+            self.dialogui.spinBox_intervaly.setEnabled(False)
+        else:
+            self.dialogui.spinBox_intervalx.setEnabled(True)
+            self.dialogui.spinBox_intervaly.setEnabled(True)
+            self.mapitem.setGridEnabled(True)
+            self.dialogui.checkBox_beschriftung.setEnabled(True)
+            self.grid.setCrs(QgsCoordinateReferenceSystem(crs))
+            if format == '0':
+                self.mapitem.setGridAnnotationFormat(0)
+            elif format == 'second':
+                self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinuteSecond)
+            elif format == 'minute':
+                self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinute)
+            # elif format == 'MGRS':
+            #     self.mapitem.setGridAnnotationFormat(QgsComposerMap.MGRS)
+            # elif format == 'UTM':
+            #     self.mapitem.setGridAnnotationFormat(QgsComposerMap.UTM)
+
+        self.composerView.composition().update()
+        self.dialogui.previewGraphic.update()
 
     def __kasten(self):
         ret = self.kastendialog.exec_()
@@ -112,6 +175,7 @@ class InstantPrintTool(QgsMapTool):
         self.mapitem = maps[0]
         self.dialogui.spinBoxScale.setValue(self.mapitem.scale())
         self.__createRubberBand()
+        self.createObjects()
 
     def __createRubberBand(self):
         self.__cleanup()
