@@ -58,6 +58,10 @@ class InstantPrintTool(QgsMapTool):
         self.dialogui.comboBox_composers.currentIndexChanged.connect(self.__selectComposer)
         self.dialogui.kastenButton.clicked.connect(self.__kasten)
         self.dialogui.comboBox_crs.currentIndexChanged.connect(self.__gridChanges)
+        self.dialogui.checkBox_beschriftung.stateChanged.connect(self.__beschriftung)
+        self.dialogui.checkBox_legende.stateChanged.connect(self.__legende)
+        self.dialogui.checkBox_massstabbalken.stateChanged.connect(self.__massstabbalken)
+        self.dialogui.titleLE.textChanged.connect(self.__titleChanged)
         self.exportButton.clicked.connect(self.__export)
         self.helpButton.clicked.connect(self.__help)
         self.dialogui.buttonBox.button(QDialogButtonBox.Close).clicked.connect(lambda: self.setEnabled(False))
@@ -129,7 +133,48 @@ class InstantPrintTool(QgsMapTool):
     def __kasten(self):
         ret = self.kastendialog.exec_()
         if ret == QDialog.Accepted:
-            pass
+            self.composerView.composition().getComposerItemById("uebungsdatum").setText(unicode(self.kasten.uebungsdatumDE.text()))
+            self.composerView.composition().getComposerItemById("klassifizierung1").setText(unicode(self.kasten.klassifizierungLE.text()))
+            self.composerView.composition().getComposerItemById("klassifizierung2").setText(unicode(self.kasten.klassifizierungLE.text()))
+            self.composerView.composition().getComposerItemById("uebungsorganisation").setText(unicode(self.kasten.uebungsorganisationLE.text()))
+            self.composerView.composition().getComposerItemById("kursbezeichnung").setText(unicode(self.kasten.kursbezeichnungLE.text()))
+            self.composerView.composition().getComposerItemById("truppenbezeichnung").setText(unicode(self.kasten.truppenbezeichnungLE.text()))
+            self.composerView.composition().getComposerItemById("deckname").setText(unicode(self.kasten.decknameLE.text()))
+            self.composerView.composition().getComposerItemById("kartenumschreibung").setText(unicode(self.kasten.kartenumschreibungLE.text()))
+            self.composerView.composition().getComposerItemById("beilagebezeichnung").setText(unicode(self.kasten.beilagebezeichnungLE.text()))
+            self.composerView.composition().getComposerItemById("massstabbezeichnung").setText(unicode(self.kasten.massstabbezeichnungLE.text()))
+            self.composerView.composition().getComposerItemById("uebungsbezeichnung").setText(unicode(self.kasten.uebungsbezeichnungLE.text()))
+            self.composerView.composition().getComposerItemById("dokumentbezeichnung").setText(unicode(self.kasten.dokumentbezeichnungLE.text()))
+            self.composerView.composition().getComposerItemById("ortdatum").setText(unicode(self.kasten.ortdatumLE.text()))
+
+    def __titleChanged(self, arg):
+        self.composerView.composition().getComposerItemById("title").setText(str(self.dialogui.titleLE.text()))
+        self.composerView.composition().update()
+        self.dialogui.previewGraphic.update()
+
+    def __beschriftung(self, stat):
+        if stat == 2:
+            self.mapitem.setShowGridAnnotation(True)
+        else:
+            self.mapitem.setShowGridAnnotation(False)
+        self.composerView.composition().update()
+        self.dialogui.previewGraphic.update()
+
+    def __legende(self, stat):
+        if stat == 2:
+            self.legend.show()
+        else:
+            self.legend.hide()
+        self.composerView.composition().update()
+        self.dialogui.previewGraphic.update()
+
+    def __massstabbalken(self, stat):
+        if stat == 2:
+            self.scalebar.show()
+        else:
+            self.scalebar.hide()
+        self.composerView.composition().update()
+        self.dialogui.previewGraphic.update()
 
     def __changeScale(self):
         if not self.mapitem:
