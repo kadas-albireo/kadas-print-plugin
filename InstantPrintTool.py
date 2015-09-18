@@ -371,4 +371,5 @@ class InstantPrintTool(QgsMapTool):
             self.dialogui.spinBoxScale.setEnabled(False)
 
     def __advanced(self):
-        pass
+        composer = self.composerView.composerWindow()
+        composer.show()
