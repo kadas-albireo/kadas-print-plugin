@@ -9,30 +9,106 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>560</width>
     <height>566</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Kartenkartusche</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Übungsdatum:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDateEdit" name="uebungsdatumDE"/>
-     </item>
-    </layout>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="18" column="0">
+    <widget class="QGraphicsView" name="kartenkartuscheView"/>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="uebungGroupBox">
+     <property name="title">
+      <string>Uebung</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Übungsdatum:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="kursbezeichnungLE"/>
+         </item>
+         <item row="2" column="3">
+          <widget class="QLineEdit" name="uebungsbezeichnungLE"/>
+         </item>
+         <item row="3" column="2">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>Dokumentbezeichnung:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Kursbezeichnung:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="uebungsorganisationLE"/>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Übungsbezeichnung:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Übungsorganisation:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="3">
+          <widget class="QLineEdit" name="dokumentbezeichnungLE"/>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="uebungsdatumLE"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="19" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
@@ -45,154 +121,76 @@
      </item>
     </layout>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Übungsorganisation:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="uebungsorganisationLE"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Kursbezeichnung:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="kursbezeichnungLE"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>Truppenbezeichnung:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="truppenbezeichnungLE"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Deckname:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="decknameLE"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_7">
-     <item>
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Kartenumschreibung:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="kartenumschreibungLE"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_8">
-     <item>
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>Beilagebezeichnung:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="beilagebezeichnungLE"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_9">
-     <item>
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>Massstabbezeichnung:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="massstabbezeichnungLE"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_10">
-     <item>
-      <widget class="QLabel" name="label_11">
-       <property name="text">
-        <string>Übungsbezeichnung:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="uebungsbezeichnungLE"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_11">
-     <item>
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>Dokumentbezeichnung:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="dokumentbezeichnungLE"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_12">
-     <item>
-      <widget class="QLabel" name="label_13">
-       <property name="text">
-        <string>Ort, Datum:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="ortdatumLE"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="2" column="0">
+    <widget class="QFrame" name="frame_2">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Truppenbezeichnung:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLineEdit" name="ortdatumLE"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_13">
+        <property name="text">
+         <string>Ort, Datum:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Deckname:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Kartenumschreibung:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Beilagebezeichnung:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="truppenbezeichnungLE"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>Massstabbezeichnung:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="decknameLE"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="kartenumschreibungLE"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="beilagebezeichnungLE"/>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="massstabbezeichnungLE"/>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

@@ -14,8 +14,8 @@ from qgis.core import *
 from qgis.gui import *
 import os
 
+from KastenDialog import Kasten
 from ui.ui_printdialog import Ui_InstantPrintDialog
-from ui.ui_kastendialog import Ui_KastenDialog
 
 
 class InstantPrintTool(QgsMapTool):
@@ -30,13 +30,10 @@ class InstantPrintTool(QgsMapTool):
         self.populateCompositionFz = populateCompositionFz
 
         self.dialog = QDialog(self.iface.mainWindow())
-        self.kastendialog = QDialog()
-        self.kasten = Ui_KastenDialog()
-        self.kasten.setupUi(self.kastendialog)
         self.dialogui = Ui_InstantPrintDialog()
         self.dialogui.setupUi(self.dialog)
         self.exportButton = self.dialogui.buttonBox.addButton(self.tr("Export"), QDialogButtonBox.ActionRole)
-        self.helpButton = self.dialogui.buttonBox.addButton(self.tr("Help"), QDialogButtonBox.HelpRole)
+        self.advancedButton = self.dialogui.buttonBox.addButton(self.tr("Advanced"), QDialogButtonBox.HelpRole)
         self.dialogui.comboBox_fileformat.addItem("PDF", self.tr("PDF Document (*.pdf);;"))
         self.dialogui.comboBox_fileformat.addItem("JPG", self.tr("JPG Image (*.jpg);;"))
         self.dialogui.comboBox_fileformat.addItem("BMP", self.tr("BMP Image (*.bmp);;"))
@@ -65,7 +62,7 @@ class InstantPrintTool(QgsMapTool):
         self.dialogui.spinBox_intervalx.valueChanged.connect(self.__intervalXChanged)
         self.dialogui.spinBox_intervaly.valueChanged.connect(self.__intervalYChanged)
         self.exportButton.clicked.connect(self.__export)
-        self.helpButton.clicked.connect(self.__help)
+        self.advancedButton.clicked.connect(self.__advanced)
         self.dialogui.buttonBox.button(QDialogButtonBox.Close).clicked.connect(lambda: self.setEnabled(False))
         self.setCursor(Qt.OpenHandCursor)
 
@@ -91,6 +88,7 @@ class InstantPrintTool(QgsMapTool):
         else:
             self.mapitem.setShowGridAnnotation(True)
 
+        self.mapitem.setPreviewMode(0)
         self.__gridChanges()
 
     def setEnabled(self, enabled):
@@ -124,10 +122,10 @@ class InstantPrintTool(QgsMapTool):
                 self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinuteSecond)
             elif format == 'minute':
                 self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinute)
-            # elif format == 'MGRS':
-            #     self.mapitem.setGridAnnotationFormat(QgsComposerMap.MGRS)
-            # elif format == 'UTM':
-            #     self.mapitem.setGridAnnotationFormat(QgsComposerMap.UTM)
+            elif format == 'MGRS':
+                self.mapitem.setGridAnnotationFormat(QgsComposerMap.MGRS)
+            elif format == 'UTM':
+                self.mapitem.setGridAnnotationFormat(QgsComposerMap.UTM)
 
             if crs != "EPSG:4326":
                 self.dialogui.spinBox_intervalx.setValue(100000.0)
@@ -140,21 +138,9 @@ class InstantPrintTool(QgsMapTool):
         self.dialogui.previewGraphic.update()
 
     def __kasten(self):
-        ret = self.kastendialog.exec_()
-        if ret == QDialog.Accepted:
-            self.composerView.composition().getComposerItemById("uebungsdatum").setText(unicode(self.kasten.uebungsdatumDE.text()))
-            self.composerView.composition().getComposerItemById("klassifizierung1").setText(unicode(self.kasten.klassifizierungLE.text()))
-            self.composerView.composition().getComposerItemById("klassifizierung2").setText(unicode(self.kasten.klassifizierungLE.text()))
-            self.composerView.composition().getComposerItemById("uebungsorganisation").setText(unicode(self.kasten.uebungsorganisationLE.text()))
-            self.composerView.composition().getComposerItemById("kursbezeichnung").setText(unicode(self.kasten.kursbezeichnungLE.text()))
-            self.composerView.composition().getComposerItemById("truppenbezeichnung").setText(unicode(self.kasten.truppenbezeichnungLE.text()))
-            self.composerView.composition().getComposerItemById("deckname").setText(unicode(self.kasten.decknameLE.text()))
-            self.composerView.composition().getComposerItemById("kartenumschreibung").setText(unicode(self.kasten.kartenumschreibungLE.text()))
-            self.composerView.composition().getComposerItemById("beilagebezeichnung").setText(unicode(self.kasten.beilagebezeichnungLE.text()))
-            self.composerView.composition().getComposerItemById("massstabbezeichnung").setText(unicode(self.kasten.massstabbezeichnungLE.text()))
-            self.composerView.composition().getComposerItemById("uebungsbezeichnung").setText(unicode(self.kasten.uebungsbezeichnungLE.text()))
-            self.composerView.composition().getComposerItemById("dokumentbezeichnung").setText(unicode(self.kasten.dokumentbezeichnungLE.text()))
-            self.composerView.composition().getComposerItemById("ortdatum").setText(unicode(self.kasten.ortdatumLE.text()))
+        self.kasten = Kasten(self.composerView.composition(), self.dialog)
+        self.kasten.insertLE()
+        self.kasten.exec_()
 
     def __intervalXChanged(self, value):
         self.mapitem.setGridIntervalX(value)
@@ -384,6 +370,5 @@ class InstantPrintTool(QgsMapTool):
             self.exportButton.setEnabled(False)
             self.dialogui.spinBoxScale.setEnabled(False)
 
-    def __help(self):
-        manualPath = os.path.join(os.path.dirname(__file__), "help", "documentation.pdf")
-        QDesktopServices.openUrl(QUrl.fromLocalFile(manualPath))
+    def __advanced(self):
+        pass
