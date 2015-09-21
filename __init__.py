@@ -10,5 +10,5 @@
 
 
 def classFactory(iface):
-    from InstantPrintPlugin import InstantPrintPlugin
-    return InstantPrintPlugin(iface)
+    from PrintPlugin import PrintPlugin
+    return PrintPlugin(iface)

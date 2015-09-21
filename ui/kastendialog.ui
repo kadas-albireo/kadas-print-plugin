@@ -23,7 +23,7 @@
    <item row="1" column="0">
     <widget class="QGroupBox" name="uebungGroupBox">
      <property name="title">
-      <string>Uebung</string>
+      <string>Übung</string>
      </property>
      <property name="checkable">
       <bool>true</bool>

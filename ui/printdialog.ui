@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>InstantPrintDialog</class>
- <widget class="QDialog" name="InstantPrintDialog">
+ <class>PrintDialog</class>
+ <widget class="QDialog" name="PrintDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Instant Print</string>
+   <string>Print</string>
   </property>
   <property name="windowIcon">
    <iconset theme="printer">
@@ -212,7 +212,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>InstantPrintDialog</receiver>
+   <receiver>PrintDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -228,7 +228,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>InstantPrintDialog</receiver>
+   <receiver>PrintDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

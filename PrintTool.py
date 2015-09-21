@@ -15,10 +15,10 @@ from qgis.gui import *
 import os
 
 from KastenDialog import Kasten
-from ui.ui_printdialog import Ui_InstantPrintDialog
+from ui.ui_printdialog import Ui_PrintDialog
 
 
-class InstantPrintTool(QgsMapTool):
+class PrintTool(QgsMapTool):
 
     def __init__(self, iface, populateCompositionFz=None):
         QgsMapTool.__init__(self, iface.mapCanvas())
@@ -30,7 +30,7 @@ class InstantPrintTool(QgsMapTool):
         self.populateCompositionFz = populateCompositionFz
 
         self.dialog = QDialog(self.iface.mainWindow())
-        self.dialogui = Ui_InstantPrintDialog()
+        self.dialogui = Ui_PrintDialog()
         self.dialogui.setupUi(self.dialog)
         self.exportButton = self.dialogui.buttonBox.addButton(self.tr("Export"), QDialogButtonBox.ActionRole)
         self.advancedButton = self.dialogui.buttonBox.addButton(self.tr("Advanced"), QDialogButtonBox.HelpRole)
@@ -89,6 +89,7 @@ class InstantPrintTool(QgsMapTool):
             self.mapitem.setShowGridAnnotation(True)
 
         self.mapitem.setPreviewMode(0)
+        self.mapitem.cache()
         self.__gridChanges()
 
     def setEnabled(self, enabled):
@@ -128,8 +129,8 @@ class InstantPrintTool(QgsMapTool):
                 self.mapitem.setGridAnnotationFormat(QgsComposerMap.UTM)
 
             if crs != "EPSG:4326":
-                self.dialogui.spinBox_intervalx.setValue(100000.0)
-                self.dialogui.spinBox_intervaly.setValue(100000.0)
+                self.dialogui.spinBox_intervalx.setValue(100.0)
+                self.dialogui.spinBox_intervaly.setValue(100.0)
             else:
                 self.dialogui.spinBox_intervalx.setValue(1.0)
                 self.dialogui.spinBox_intervaly.setValue(1.0)
@@ -319,7 +320,7 @@ class InstantPrintTool(QgsMapTool):
         filename = QFileDialog.getSaveFileName(
             self.iface.mainWindow(),
             self.tr("Print Composition"),
-            settings.value("/instantprint/lastfile", ""),
+            settings.value("/print/lastfile", ""),
             format
         )
         if not filename:
@@ -328,7 +329,7 @@ class InstantPrintTool(QgsMapTool):
         # Ensure output filename has correct extension
         filename = os.path.splitext(filename)[0] + "." + self.dialogui.comboBox_fileformat.currentText().lower()
 
-        settings.setValue("/instantprint/lastfile", filename)
+        settings.setValue("/print/lastfile", filename)
 
         if self.populateCompositionFz:
             self.populateCompositionFz(self.composerView.composition())
@@ -372,4 +373,4 @@ class InstantPrintTool(QgsMapTool):
 
     def __advanced(self):
         composer = self.composerView.composerWindow()
-        composer.show()
+        composer.showNormal()

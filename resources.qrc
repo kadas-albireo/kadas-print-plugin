@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/instantprint" >
+    <qresource prefix="/plugins/print">
         <file>icons/icon.png</file>
     </qresource>
 </RCC>

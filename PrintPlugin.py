@@ -14,21 +14,21 @@ from qgis.core import *
 from qgis.gui import *
 import os
 
-from InstantPrintTool import InstantPrintTool
+from PrintTool import PrintTool
 import resources_rc
 
 
-class InstantPrintPlugin(QObject):
+class PrintPlugin(QObject):
     def __init__(self, iface):
         QObject.__init__(self)
 
         self.iface = iface
         self.pluginDir = os.path.dirname(__file__)
-        self.tool = InstantPrintTool(self.iface)
+        self.tool = PrintTool(self.iface)
 
         # Localize
         locale = QSettings().value("locale/userLocale")[0:2]
-        localePath = os.path.join(self.pluginDir, 'i18n', 'instantprint_{}.qm'.format(locale))
+        localePath = os.path.join(self.pluginDir, 'i18n', 'print_{}.qm'.format(locale))
 
         if os.path.exists(localePath):
             self.translator = QTranslator()
@@ -37,9 +37,9 @@ class InstantPrintPlugin(QObject):
 
     def initGui(self):
         self.toolButton = QToolButton(self.iface.mapNavToolToolBar())
-        self.toolButton.setIcon(QIcon(":/plugins/instantprint/icons/icon.png"))
-        self.toolButton.setText(self.tr("Instant Print"))
-        self.toolButton.setToolTip(self.tr("Instant Print"))
+        self.toolButton.setIcon(QIcon(":/plugins/print/icons/icon.png"))
+        self.toolButton.setText(self.tr(" Print"))
+        self.toolButton.setToolTip(self.tr(" Print"))
         self.toolButton.setCheckable(True)
         self.toolAction = self.iface.pluginToolBar().addWidget(self.toolButton)
 

@@ -9,7 +9,7 @@
 
 
 [general]
-name=Instant Print
+name=Print
 qgisMinimumVersion=2.6
 qgisMaximumVersion=2.99
 description=Instantly print map excerpts
@@ -31,7 +31,7 @@ changelog=
  Rev 1.0.1 (18.03.2015)
    - Ensure export filename has correct extension.
    - Partial workaround for QGIS bug causing crashes when closing a project with more than one composer.
-     (To prevent crashes, make sure the Instant Print dialog is closed before closing a project.)
+     (To prevent crashes, make sure the Print dialog is closed before closing a project.)
 
  Rev 1.0.0 (26.02.2015)
    - Initial release
