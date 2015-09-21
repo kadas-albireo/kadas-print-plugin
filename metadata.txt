@@ -9,7 +9,7 @@
 
 
 [general]
-name=Print
+name=VBS Print
 qgisMinimumVersion=2.6
 qgisMaximumVersion=2.99
 description=Instantly print map excerpts
