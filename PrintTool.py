@@ -14,7 +14,7 @@ from qgis.core import *
 from qgis.gui import *
 import os
 
-from KastenDialog import Kasten
+from CaseDialog import Case
 from ui.ui_printdialog import Ui_PrintDialog
 
 
@@ -39,7 +39,7 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_fileformat.addItem("BMP", self.tr("BMP Image (*.bmp);;"))
         self.dialogui.comboBox_fileformat.addItem("PNG", self.tr("PNG Image (*.png);;"))
 
-        self.dialogui.comboBox_crs.addItem("Kein Gitter", "nogrid,0")
+        self.dialogui.comboBox_crs.addItem(self.tr("No Grid"), "nogrid,0")
         self.dialogui.comboBox_crs.addItem("LV03", "EPSG:21781,0")
         self.dialogui.comboBox_crs.addItem("LV95", "EPSG:2056,0")
         self.dialogui.comboBox_crs.addItem("DD", "EPSG:4326,0")
@@ -53,11 +53,11 @@ class PrintTool(QgsMapTool):
         self.iface.composerAdded.connect(lambda view: self.__reloadComposers())
         self.iface.composerWillBeRemoved.connect(self.__reloadComposers)
         self.dialogui.comboBox_composers.currentIndexChanged.connect(self.__selectComposer)
-        self.dialogui.kastenButton.clicked.connect(self.__kasten)
+        self.dialogui.caseButton.clicked.connect(self.__case)
         self.dialogui.comboBox_crs.currentIndexChanged.connect(self.__gridChanges)
-        self.dialogui.checkBox_beschriftung.stateChanged.connect(self.__beschriftung)
-        self.dialogui.checkBox_legende.stateChanged.connect(self.__legende)
-        self.dialogui.checkBox_massstabbalken.stateChanged.connect(self.__massstabbalken)
+        self.dialogui.checkBox_caption.stateChanged.connect(self.__caption)
+        self.dialogui.checkBox_legend.stateChanged.connect(self.__legend)
+        self.dialogui.checkBox_scalebar.stateChanged.connect(self.__scalebar)
         self.dialogui.titleLE.textChanged.connect(self.__titleChanged)
         self.dialogui.spinBox_intervalx.valueChanged.connect(self.__intervalXChanged)
         self.dialogui.spinBox_intervaly.valueChanged.connect(self.__intervalYChanged)
@@ -73,17 +73,17 @@ class PrintTool(QgsMapTool):
         self.mapitem.setGridEnabled(False)
         self.dialogui.previewGraphic.setInteractive(False)
         self.dialogui.previewGraphic.setScene(self.composerView.composition())
-        if not self.dialogui.checkBox_legende.isChecked():
+        if not self.dialogui.checkBox_legend.isChecked():
             self.legend.hide()
         else:
             self.legend.show()
 
-        if not self.dialogui.checkBox_massstabbalken.isChecked():
+        if not self.dialogui.checkBox_scalebar.isChecked():
             self.scalebar.hide()
         else:
             self.scalebar.show()
 
-        if not self.dialogui.checkBox_beschriftung.isChecked():
+        if not self.dialogui.checkBox_caption.isChecked():
             self.mapitem.setShowGridAnnotation(False)
         else:
             self.mapitem.setShowGridAnnotation(True)
@@ -107,41 +107,55 @@ class PrintTool(QgsMapTool):
         crs, format = self.dialogui.comboBox_crs.itemData(self.dialogui.comboBox_crs.currentIndex()).split(",")
         if crs == "nogrid":
             self.mapitem.setGridEnabled(False)
-            self.dialogui.checkBox_beschriftung.setEnabled(False)
-            self.dialogui.checkBox_beschriftung.setChecked(False)
+            self.dialogui.checkBox_caption.setEnabled(False)
+            self.dialogui.checkBox_caption.setChecked(False)
             self.dialogui.spinBox_intervalx.setEnabled(False)
             self.dialogui.spinBox_intervaly.setEnabled(False)
         else:
             self.dialogui.spinBox_intervalx.setEnabled(True)
             self.dialogui.spinBox_intervaly.setEnabled(True)
             self.mapitem.setGridEnabled(True)
-            self.dialogui.checkBox_beschriftung.setEnabled(True)
+            self.dialogui.checkBox_caption.setEnabled(True)
             self.grid.setCrs(QgsCoordinateReferenceSystem(crs))
             if format == '0':
                 self.mapitem.setGridAnnotationFormat(0)
+                self.grid.setAnnotationPrecision(5)
             elif format == 'second':
+                self.grid.setAnnotationPrecision(1)
                 self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinuteSecond)
             elif format == 'minute':
+                self.grid.setAnnotationPrecision(3)
                 self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinute)
             elif format == 'MGRS':
                 self.mapitem.setGridAnnotationFormat(QgsComposerMap.MGRS)
+                self.grid.setAnnotationPrecision(0)
             elif format == 'UTM':
                 self.mapitem.setGridAnnotationFormat(QgsComposerMap.UTM)
+                self.grid.setAnnotationPrecision(0)
 
             if crs != "EPSG:4326":
-                self.dialogui.spinBox_intervalx.setValue(100.0)
-                self.dialogui.spinBox_intervaly.setValue(100.0)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Bottom)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Left)
+                self.grid.setAnnotationPrecision(0)
+                scale = self.dialogui.spinBoxScale.value() / 10.0
+                self.dialogui.spinBox_intervalx.setValue(scale)
+                self.dialogui.spinBox_intervaly.setValue(scale)
             else:
-                self.dialogui.spinBox_intervalx.setValue(1.0)
-                self.dialogui.spinBox_intervaly.setValue(1.0)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Top)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Right)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Bottom)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Left)
+                scale = self.dialogui.spinBoxScale.value() / 1000000.0
+                self.dialogui.spinBox_intervalx.setValue(scale)
+                self.dialogui.spinBox_intervaly.setValue(scale)
 
         self.composerView.composition().update()
         self.dialogui.previewGraphic.update()
 
-    def __kasten(self):
-        self.kasten = Kasten(self.composerView.composition(), self.dialog)
-        self.kasten.insertLE()
-        self.kasten.exec_()
+    def __case(self):
+        self.case = Case(self.composerView.composition(), self.dialog)
+        self.case.insertLE()
+        self.case.exec_()
 
     def __intervalXChanged(self, value):
         self.mapitem.setGridIntervalX(value)
@@ -154,11 +168,11 @@ class PrintTool(QgsMapTool):
         self.dialogui.previewGraphic.update()
 
     def __titleChanged(self, arg):
-        self.composerView.composition().getComposerItemById("title").setText(str(self.dialogui.titleLE.text()))
+        self.composerView.composition().getComposerItemById("title").setText(unicode(self.dialogui.titleLE.text()))
         self.composerView.composition().update()
         self.dialogui.previewGraphic.update()
 
-    def __beschriftung(self, stat):
+    def __caption(self, stat):
         if stat == 2:
             self.mapitem.setShowGridAnnotation(True)
         else:
@@ -166,7 +180,7 @@ class PrintTool(QgsMapTool):
         self.composerView.composition().update()
         self.dialogui.previewGraphic.update()
 
-    def __legende(self, stat):
+    def __legend(self, stat):
         if stat == 2:
             self.legend.show()
         else:
@@ -174,7 +188,7 @@ class PrintTool(QgsMapTool):
         self.composerView.composition().update()
         self.dialogui.previewGraphic.update()
 
-    def __massstabbalken(self, stat):
+    def __scalebar(self, stat):
         if stat == 2:
             self.scalebar.show()
         else:

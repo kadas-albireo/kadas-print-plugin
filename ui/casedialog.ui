@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>KastenDialog</class>
- <widget class="QDialog" name="KastenDialog">
+ <class>CaseDialog</class>
+ <widget class="QDialog" name="CaseDialog">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -14,16 +14,16 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Kartenkartusche</string>
+   <string>MapCartridge</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="18" column="0">
-    <widget class="QGraphicsView" name="kartenkartuscheView"/>
+    <widget class="QGraphicsView" name="mapcartridgeView"/>
    </item>
    <item row="1" column="0">
-    <widget class="QGroupBox" name="uebungGroupBox">
+    <widget class="QGroupBox" name="exerciseGroupBox">
      <property name="title">
-      <string>Übung</string>
+      <string>Exercise</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -44,52 +44,52 @@
          <item row="1" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>Übungsdatum:</string>
+            <string>Exercise Date:</string>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QLineEdit" name="kursbezeichnungLE"/>
+          <widget class="QLineEdit" name="coursetitleLE"/>
          </item>
          <item row="2" column="3">
-          <widget class="QLineEdit" name="uebungsbezeichnungLE"/>
+          <widget class="QLineEdit" name="exercisetitleLE"/>
          </item>
          <item row="3" column="2">
           <widget class="QLabel" name="label_12">
            <property name="text">
-            <string>Dokumentbezeichnung:</string>
+            <string>Document Title:</string>
            </property>
           </widget>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>Kursbezeichnung:</string>
+            <string>Course Title:</string>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QLineEdit" name="uebungsorganisationLE"/>
+          <widget class="QLineEdit" name="exerciseorganisationLE"/>
          </item>
          <item row="2" column="2">
           <widget class="QLabel" name="label_11">
            <property name="text">
-            <string>Übungsbezeichnung:</string>
+            <string>Exercise Title:</string>
            </property>
           </widget>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>Übungsorganisation:</string>
+            <string>Exercise Organisation:</string>
            </property>
           </widget>
          </item>
          <item row="3" column="3">
-          <widget class="QLineEdit" name="dokumentbezeichnungLE"/>
+          <widget class="QLineEdit" name="documenttitleLE"/>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="uebungsdatumLE"/>
+          <widget class="QLineEdit" name="exercisedateLE"/>
          </item>
         </layout>
        </widget>
@@ -112,12 +112,12 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Klassifizierung:</string>
+        <string>classification:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="klassifizierungLE"/>
+      <widget class="QLineEdit" name="classificationLE"/>
      </item>
     </layout>
    </item>
@@ -133,62 +133,62 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_6">
         <property name="text">
-         <string>Truppenbezeichnung:</string>
+         <string>Troops Title:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="3">
-       <widget class="QLineEdit" name="ortdatumLE"/>
+       <widget class="QLineEdit" name="placedateLE"/>
       </item>
       <item row="0" column="2">
        <widget class="QLabel" name="label_13">
         <property name="text">
-         <string>Ort, Datum:</string>
+         <string>Place, Date:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Deckname:</string>
+         <string>Codename:</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Kartenumschreibung:</string>
+         <string>Map Circumscription:</string>
         </property>
        </widget>
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>Beilagebezeichnung:</string>
+         <string>Supplement Title:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="truppenbezeichnungLE"/>
+       <widget class="QLineEdit" name="troopstitleLE"/>
       </item>
       <item row="4" column="0">
        <widget class="QLabel" name="label_10">
         <property name="text">
-         <string>Massstabbezeichnung:</string>
+         <string>Scale Title:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="decknameLE"/>
+       <widget class="QLineEdit" name="codenameLE"/>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="kartenumschreibungLE"/>
+       <widget class="QLineEdit" name="mapcircumscriptionLE"/>
       </item>
       <item row="3" column="1">
-       <widget class="QLineEdit" name="beilagebezeichnungLE"/>
+       <widget class="QLineEdit" name="supplementtitleLE"/>
       </item>
       <item row="4" column="1">
-       <widget class="QLineEdit" name="massstabbezeichnungLE"/>
+       <widget class="QLineEdit" name="scaletitleLE"/>
       </item>
      </layout>
     </widget>
@@ -200,7 +200,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>KastenDialog</receiver>
+   <receiver>CaseDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -216,7 +216,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>KastenDialog</receiver>
+   <receiver>CaseDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -79,7 +79,7 @@
      <item>
       <widget class="QLabel" name="label_14">
        <property name="text">
-        <string>Titel:</string>
+        <string>Title:</string>
        </property>
       </widget>
      </item>
@@ -91,16 +91,16 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QCheckBox" name="checkBox_massstabbalken">
+      <widget class="QCheckBox" name="checkBox_scalebar">
        <property name="text">
-        <string>Massstabbalken</string>
+        <string>Scalebar</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox_legende">
+      <widget class="QCheckBox" name="checkBox_legend">
        <property name="text">
-        <string>Legende</string>
+        <string>Legend</string>
        </property>
       </widget>
      </item>
@@ -122,7 +122,7 @@
           <item>
            <widget class="QLabel" name="label_15">
             <property name="text">
-             <string>Koordinatengitter:</string>
+             <string>Grid:</string>
             </property>
            </widget>
           </item>
@@ -143,7 +143,7 @@
           <item>
            <widget class="QDoubleSpinBox" name="spinBox_intervalx">
             <property name="decimals">
-             <number>5</number>
+             <number>10</number>
             </property>
             <property name="maximum">
              <double>9999999.990000000223517</double>
@@ -164,7 +164,7 @@
           <item>
            <widget class="QDoubleSpinBox" name="spinBox_intervaly">
             <property name="decimals">
-             <number>5</number>
+             <number>10</number>
             </property>
             <property name="maximum">
              <double>9999999.990000000223517</double>
@@ -174,9 +174,9 @@
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="checkBox_beschriftung">
+         <widget class="QCheckBox" name="checkBox_caption">
           <property name="text">
-           <string>Beschriftung</string>
+           <string>Caption</string>
           </property>
          </widget>
         </item>
@@ -186,9 +186,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="kastenButton">
+    <widget class="QPushButton" name="caseButton">
      <property name="text">
-      <string>Kartenkartusche</string>
+      <string>Map Cartridge</string>
      </property>
     </widget>
    </item>
