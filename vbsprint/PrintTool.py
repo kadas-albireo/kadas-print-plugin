@@ -73,6 +73,7 @@ class PrintTool(QgsMapTool):
         self.mapitem.setGridEnabled(False)
         self.dialogui.previewGraphic.setInteractive(False)
         self.dialogui.previewGraphic.setScene(self.composerView.composition())
+        self.dialogui.titleLE.setText(unicode(self.composerView.composition().getComposerItemById("title").text()))
         if not self.dialogui.checkBox_legend.isChecked():
             self.legend.hide()
         else:
@@ -134,6 +135,8 @@ class PrintTool(QgsMapTool):
                 self.grid.setAnnotationPrecision(0)
 
             if crs != "EPSG:4326":
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.HideAll, QgsComposerMapGrid.Top)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.HideAll, QgsComposerMapGrid.Right)
                 self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Bottom)
                 self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Left)
                 self.grid.setAnnotationPrecision(0)
