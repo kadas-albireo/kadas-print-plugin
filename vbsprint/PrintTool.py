@@ -128,10 +128,10 @@ class PrintTool(QgsMapTool):
                 self.grid.setAnnotationPrecision(3)
                 self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinute)
             elif format == 'MGRS':
-                self.mapitem.setGridAnnotationFormat(QgsComposerMap.MGRS)
+                self.grid.setAnnotationFormat(QgsComposerMapGrid.MGRS)
                 self.grid.setAnnotationPrecision(0)
             elif format == 'UTM':
-                self.mapitem.setGridAnnotationFormat(QgsComposerMap.UTM)
+                self.grid.setAnnotationFormat(QgsComposerMapGrid.UTM)
                 self.grid.setAnnotationPrecision(0)
 
             if crs != "EPSG:4326":
