@@ -14,11 +14,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MapCartridge</string>
+   <string>MapCartouche</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="18" column="0">
-    <widget class="QGraphicsView" name="mapcartridgeView"/>
+    <widget class="QGraphicsView" name="mapcartoucheView"/>
    </item>
    <item row="1" column="0">
     <widget class="QGroupBox" name="exerciseGroupBox">
@@ -112,7 +112,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>classification:</string>
+        <string>Classification:</string>
        </property>
       </widget>
      </item>
@@ -157,7 +157,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Map Circumscription:</string>
+         <string>Cartouche Circumscription:</string>
         </property>
        </widget>
       </item>
@@ -182,7 +182,7 @@
        <widget class="QLineEdit" name="codenameLE"/>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="mapcircumscriptionLE"/>
+       <widget class="QLineEdit" name="cartouchecircumscriptionLE"/>
       </item>
       <item row="3" column="1">
        <widget class="QLineEdit" name="supplementtitleLE"/>

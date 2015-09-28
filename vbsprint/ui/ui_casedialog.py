@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'casedialog.ui'
 #
-# Created: Mon Sep 21 13:46:30 2015
+# Created: Mon Sep 28 11:17:30 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,9 +30,9 @@ class Ui_CaseDialog(object):
         CaseDialog.resize(560, 566)
         self.gridLayout = QtGui.QGridLayout(CaseDialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.mapcartridgeView = QtGui.QGraphicsView(CaseDialog)
-        self.mapcartridgeView.setObjectName(_fromUtf8("mapcartridgeView"))
-        self.gridLayout.addWidget(self.mapcartridgeView, 18, 0, 1, 1)
+        self.mapcartoucheView = QtGui.QGraphicsView(CaseDialog)
+        self.mapcartoucheView.setObjectName(_fromUtf8("mapcartoucheView"))
+        self.gridLayout.addWidget(self.mapcartoucheView, 18, 0, 1, 1)
         self.exerciseGroupBox = QtGui.QGroupBox(CaseDialog)
         self.exerciseGroupBox.setCheckable(True)
         self.exerciseGroupBox.setChecked(False)
@@ -124,9 +124,9 @@ class Ui_CaseDialog(object):
         self.codenameLE = QtGui.QLineEdit(self.frame_2)
         self.codenameLE.setObjectName(_fromUtf8("codenameLE"))
         self.gridLayout_4.addWidget(self.codenameLE, 1, 1, 1, 1)
-        self.mapcircumscriptionLE = QtGui.QLineEdit(self.frame_2)
-        self.mapcircumscriptionLE.setObjectName(_fromUtf8("mapcircumscriptionLE"))
-        self.gridLayout_4.addWidget(self.mapcircumscriptionLE, 2, 1, 1, 1)
+        self.cartouchecircumscriptionLE = QtGui.QLineEdit(self.frame_2)
+        self.cartouchecircumscriptionLE.setObjectName(_fromUtf8("cartouchecircumscriptionLE"))
+        self.gridLayout_4.addWidget(self.cartouchecircumscriptionLE, 2, 1, 1, 1)
         self.supplementtitleLE = QtGui.QLineEdit(self.frame_2)
         self.supplementtitleLE.setObjectName(_fromUtf8("supplementtitleLE"))
         self.gridLayout_4.addWidget(self.supplementtitleLE, 3, 1, 1, 1)
@@ -141,18 +141,18 @@ class Ui_CaseDialog(object):
         QtCore.QMetaObject.connectSlotsByName(CaseDialog)
 
     def retranslateUi(self, CaseDialog):
-        CaseDialog.setWindowTitle(_translate("CaseDialog", "MapCartridge", None))
+        CaseDialog.setWindowTitle(_translate("CaseDialog", "MapCartouche", None))
         self.exerciseGroupBox.setTitle(_translate("CaseDialog", "Exercise", None))
         self.label_2.setText(_translate("CaseDialog", "Exercise Date:", None))
         self.label_12.setText(_translate("CaseDialog", "Document Title:", None))
         self.label_5.setText(_translate("CaseDialog", "Course Title:", None))
         self.label_11.setText(_translate("CaseDialog", "Exercise Title:", None))
         self.label_4.setText(_translate("CaseDialog", "Exercise Organisation:", None))
-        self.label_3.setText(_translate("CaseDialog", "classification:", None))
+        self.label_3.setText(_translate("CaseDialog", "Classification:", None))
         self.label_6.setText(_translate("CaseDialog", "Troops Title:", None))
         self.label_13.setText(_translate("CaseDialog", "Place, Date:", None))
         self.label_7.setText(_translate("CaseDialog", "Codename:", None))
-        self.label_8.setText(_translate("CaseDialog", "Map Circumscription:", None))
+        self.label_8.setText(_translate("CaseDialog", "Cartouche Circumscription:", None))
         self.label_9.setText(_translate("CaseDialog", "Supplement Title:", None))
         self.label_10.setText(_translate("CaseDialog", "Scale Title:", None))
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'printdialog.ui'
 #
-# Created: Mon Sep 21 14:05:32 2015
+# Created: Mon Sep 28 11:10:10 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -153,5 +153,5 @@ class Ui_PrintDialog(object):
         self.label_2.setText(_translate("PrintDialog", "Interval X:", None))
         self.label_3.setText(_translate("PrintDialog", "Interval Y:", None))
         self.checkBox_caption.setText(_translate("PrintDialog", "Caption", None))
-        self.caseButton.setText(_translate("PrintDialog", "Map Cartridge", None))
+        self.caseButton.setText(_translate("PrintDialog", "Map Cartouche", None))
 

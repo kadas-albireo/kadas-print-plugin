@@ -188,7 +188,7 @@
    <item>
     <widget class="QPushButton" name="caseButton">
      <property name="text">
-      <string>Map Cartridge</string>
+      <string>Map Cartouche</string>
      </property>
     </widget>
    </item>

@@ -10,8 +10,8 @@ class Case(QDialog, Ui_CaseDialog):
         QDialog.__init__(self, parent)
         self.setupUi(self)
         self.scene = scene
-        self.mapcartridgeView.setInteractive(False)
-        self.cartridge = self.scene.getComposerItemById("mapcartridge")
+        self.mapcartoucheView.setInteractive(False)
+        self.cartouche = self.scene.getComposerItemById("mapcartouche")
 
         self.exercisedateLE.textEdited.connect(self.valueChanged)
         self.classificationLE.textEdited.connect(self.valueChanged)
@@ -19,7 +19,7 @@ class Case(QDialog, Ui_CaseDialog):
         self.coursetitleLE.textEdited.connect(self.valueChanged)
         self.troopstitleLE.textEdited.connect(self.valueChanged)
         self.codenameLE.textEdited.connect(self.valueChanged)
-        self.mapcircumscriptionLE.textEdited.connect(self.valueChanged)
+        self.cartouchecircumscriptionLE.textEdited.connect(self.valueChanged)
         self.supplementtitleLE.textEdited.connect(self.valueChanged)
         self.scaletitleLE.textEdited.connect(self.valueChanged)
         self.exercisetitleLE.textEdited.connect(self.valueChanged)
@@ -27,16 +27,16 @@ class Case(QDialog, Ui_CaseDialog):
         self.placedateLE.textEdited.connect(self.valueChanged)
         self.exerciseGroupBox.toggled.connect(self.boxChanged)
 
-        self.mapcartridgeView.setScene(self.scene)
-        # self.mapcartridgeView.fitInView(self.cartridge, Qt.KeepAspectRatio)
-        self.mapcartridgeView.setSceneRect(self.cartridge.mapRectToScene(self.cartridge.boundingRect()))
+        self.mapcartoucheView.setScene(self.scene)
+        # self.mapcartoucheView.fitInView(self.cartouche, Qt.KeepAspectRatio)
+        self.mapcartoucheView.setSceneRect(self.cartouche.mapRectToScene(self.cartouche.boundingRect()))
 
     def insertLE(self):
 
         self.codenameLE.setText(unicode(self.scene.getComposerItemById("codename").text()))
         self.troopstitleLE.setText(unicode(self.scene.getComposerItemById("troopstitle").text()))
         self.supplementtitleLE.setText(unicode(self.scene.getComposerItemById("supplementtitle").text()))
-        self.mapcircumscriptionLE.setText(unicode(self.scene.getComposerItemById("mapcircumscription").text()))
+        self.cartouchecircumscriptionLE.setText(unicode(self.scene.getComposerItemById("cartouchecircumscription").text()))
         self.scaletitleLE.setText(unicode(self.scene.getComposerItemById("scaletitle").text()))
         self.placedateLE.setText(unicode(self.scene.getComposerItemById("placedate").text()))
         self.exercisedateLE.setText(unicode(self.scene.getComposerItemById("exercisedate").text()))
@@ -58,7 +58,7 @@ class Case(QDialog, Ui_CaseDialog):
         self.scene.getComposerItemById("classification1").setText(unicode(self.classificationLE.text()))
         self.scene.getComposerItemById("troopstitle").setText(unicode(self.troopstitleLE.text()))
         self.scene.getComposerItemById("codename").setText(unicode(self.codenameLE.text()))
-        self.scene.getComposerItemById("mapcircumscription").setText(unicode(self.mapcircumscriptionLE.text()))
+        self.scene.getComposerItemById("cartouchecircumscription").setText(unicode(self.cartouchecircumscriptionLE.text()))
         self.scene.getComposerItemById("supplementtitle").setText(unicode(self.supplementtitleLE.text()))
         self.scene.getComposerItemById("scaletitle").setText(unicode(self.scaletitleLE.text()))
         self.scene.getComposerItemById("placedate").setText(unicode(self.placedateLE.text()))
@@ -72,7 +72,7 @@ class Case(QDialog, Ui_CaseDialog):
             self.scene.getComposerItemById("documenttitle").setText(unicode(self.documenttitleLE.text()))
 
         self.scene.update()
-        self.mapcartridgeView.update()
+        self.mapcartoucheView.update()
 
     def boxChanged(self, active):
         if not active:
@@ -90,4 +90,4 @@ class Case(QDialog, Ui_CaseDialog):
             self.scene.getComposerItemById("exercisetitle").setText(unicode(self.exercisetitleLE.text()))
             self.scene.getComposerItemById("documenttitle").setText(unicode(self.documenttitleLE.text()))
         self.scene.update()
-        self.mapcartridgeView.update()
+        self.mapcartoucheView.update()
