@@ -156,7 +156,8 @@ class PrintTool(QgsMapTool):
         self.dialogui.previewGraphic.update()
 
     def __case(self):
-        self.case = Case(self.composerView.composition(), self.dialog)
+        if not hasattr(self, "case"):
+            self.case = Case(self.composerView.composition(), self.dialog)
         self.case.insertLE()
         self.case.exec_()
 

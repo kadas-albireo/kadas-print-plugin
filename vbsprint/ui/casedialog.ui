@@ -17,10 +17,10 @@
    <string>MapCartouche</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="18" column="0">
+   <item row="17" column="0">
     <widget class="QGraphicsView" name="mapcartoucheView"/>
    </item>
-   <item row="1" column="0">
+   <item row="0" column="0">
     <widget class="QGroupBox" name="exerciseGroupBox">
      <property name="title">
       <string>Exercise</string>
@@ -42,54 +42,77 @@
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="1" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Exercise Date:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="coursetitleLE"/>
-         </item>
-         <item row="2" column="3">
-          <widget class="QLineEdit" name="exercisetitleLE"/>
-         </item>
-         <item row="3" column="2">
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>Document Title:</string>
+          <widget class="QDateEdit" name="exercisedateLE">
+           <property name="calendarPopup">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
          <item row="3" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Course Title:</string>
+          <widget class="QLineEdit" name="coursetitleLE">
+           <property name="placeholderText">
+            <string>Course name</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="exerciseorganisationLE"/>
-         </item>
          <item row="2" column="2">
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>Exercise Title:</string>
+          <widget class="QLineEdit" name="exercisetitleLE">
+           <property name="placeholderText">
+            <string>Exercise name</string>
            </property>
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>Exercise Organisation:</string>
+          <widget class="QLineEdit" name="exerciseorganisationLE">
+           <property name="placeholderText">
+            <string>Exercise organisation</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="3">
-          <widget class="QLineEdit" name="documenttitleLE"/>
+         <item row="3" column="2">
+          <widget class="QLineEdit" name="documenttitleLE">
+           <property name="placeholderText">
+            <string>Document name</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QComboBox" name="classification1">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string>CLASSIFICATION</string>
+            </property>
+           </item>
+          </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="exercisedateLE"/>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="3" column="1">
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -97,7 +120,7 @@
      </layout>
     </widget>
    </item>
-   <item row="19" column="0">
+   <item row="18" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -107,21 +130,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Classification:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="classificationLE"/>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="0">
+   <item row="1" column="0">
     <widget class="QFrame" name="frame_2">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -130,65 +139,160 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Troops Title:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QLineEdit" name="placedateLE"/>
-      </item>
       <item row="0" column="2">
-       <widget class="QLabel" name="label_13">
-        <property name="text">
-         <string>Place, Date:</string>
+       <widget class="QComboBox" name="classification2">
+        <property name="editable">
+         <bool>true</bool>
         </property>
+        <item>
+         <property name="text">
+          <string>CLASSIFICATION</string>
+         </property>
+        </item>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>Codename:</string>
+      <item row="0" column="1">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="troopstitleLE">
+        <property name="placeholderText">
+         <string>Unit</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>Cartouche Circumscription:</string>
+       <widget class="QLineEdit" name="codenameLE">
+        <property name="placeholderText">
+         <string>&quot;CODE NAME&quot;</string>
         </property>
        </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_9">
-        <property name="text">
-         <string>Supplement Title:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="troopstitleLE"/>
       </item>
       <item row="4" column="0">
-       <widget class="QLabel" name="label_10">
-        <property name="text">
-         <string>Scale Title:</string>
+       <widget class="QLineEdit" name="cartouchecircumscriptionLE">
+        <property name="placeholderText">
+         <string>Title of cartouche</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="codenameLE"/>
+      <item row="5" column="0">
+       <widget class="QLineEdit" name="supplementtitleLE">
+        <property name="placeholderText">
+         <string>Annex name</string>
+        </property>
+       </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QLineEdit" name="cartouchecircumscriptionLE"/>
+      <item row="6" column="0">
+       <widget class="QLineEdit" name="scaletitleLE">
+        <property name="inputMask">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string>Scale information</string>
+        </property>
+       </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="supplementtitleLE"/>
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,0">
+        <item>
+         <widget class="QLineEdit" name="lineEdit">
+          <property name="placeholderText">
+           <string>Blank line</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_7">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
-      <item row="4" column="1">
-       <widget class="QLineEdit" name="scaletitleLE"/>
+      <item row="3" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,0">
+        <item>
+         <widget class="QLineEdit" name="lineEdit_2">
+          <property name="placeholderText">
+           <string>Blank line</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="7" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="2,0">
+        <item>
+         <widget class="QLineEdit" name="lineEdit_3">
+          <property name="placeholderText">
+           <string>Blank line</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="7" column="1">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLineEdit" name="placedateLE">
+        <property name="placeholderText">
+         <string>Place, date</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
