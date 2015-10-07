@@ -242,7 +242,7 @@ class PrintTool(QgsMapTool):
 
         self.composerView = composerView
         self.mapitem = maps[0]
-        self.dialogui.spinBoxScale.setValue(self.mapitem.scale())
+        self.dialogui.spinBoxScale.setValue(self.iface.mapCanvas().scale())
         self.__createRubberBand()
         self.createObjects()
 
