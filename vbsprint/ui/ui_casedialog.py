@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'casedialog.ui'
 #
-# Created: Thu Oct  1 10:27:18 2015
+# Created: Thu Oct  8 13:39:03 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -108,27 +108,27 @@ class Ui_CaseDialog(object):
         self.gridLayout_4.addWidget(self.scaletitleLE, 6, 0, 1, 1)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
-        self.lineEdit = QtGui.QLineEdit(self.frame_2)
-        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
-        self.horizontalLayout_3.addWidget(self.lineEdit)
+        self.bz1LE = QtGui.QLineEdit(self.frame_2)
+        self.bz1LE.setObjectName(_fromUtf8("bz1LE"))
+        self.horizontalLayout_3.addWidget(self.bz1LE)
         spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem3)
         self.horizontalLayout_3.setStretch(0, 2)
         self.gridLayout_4.addLayout(self.horizontalLayout_3, 1, 0, 1, 1)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
-        self.lineEdit_2 = QtGui.QLineEdit(self.frame_2)
-        self.lineEdit_2.setObjectName(_fromUtf8("lineEdit_2"))
-        self.horizontalLayout_4.addWidget(self.lineEdit_2)
+        self.bz2LE = QtGui.QLineEdit(self.frame_2)
+        self.bz2LE.setObjectName(_fromUtf8("bz2LE"))
+        self.horizontalLayout_4.addWidget(self.bz2LE)
         spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem4)
         self.horizontalLayout_4.setStretch(0, 2)
         self.gridLayout_4.addLayout(self.horizontalLayout_4, 3, 0, 1, 1)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
-        self.lineEdit_3 = QtGui.QLineEdit(self.frame_2)
-        self.lineEdit_3.setObjectName(_fromUtf8("lineEdit_3"))
-        self.horizontalLayout_5.addWidget(self.lineEdit_3)
+        self.bz3LE = QtGui.QLineEdit(self.frame_2)
+        self.bz3LE.setObjectName(_fromUtf8("bz3LE"))
+        self.horizontalLayout_5.addWidget(self.bz3LE)
         spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem5)
         self.horizontalLayout_5.setStretch(0, 2)
@@ -159,8 +159,8 @@ class Ui_CaseDialog(object):
         self.cartouchecircumscriptionLE.setPlaceholderText(_translate("CaseDialog", "Title of cartouche", None))
         self.supplementtitleLE.setPlaceholderText(_translate("CaseDialog", "Annex name", None))
         self.scaletitleLE.setPlaceholderText(_translate("CaseDialog", "Scale information", None))
-        self.lineEdit.setPlaceholderText(_translate("CaseDialog", "Blank line", None))
-        self.lineEdit_2.setPlaceholderText(_translate("CaseDialog", "Blank line", None))
-        self.lineEdit_3.setPlaceholderText(_translate("CaseDialog", "Blank line", None))
+        self.bz1LE.setPlaceholderText(_translate("CaseDialog", "Blank line", None))
+        self.bz2LE.setPlaceholderText(_translate("CaseDialog", "Blank line", None))
+        self.bz3LE.setPlaceholderText(_translate("CaseDialog", "Blank line", None))
         self.placedateLE.setPlaceholderText(_translate("CaseDialog", "Place, date", None))
 

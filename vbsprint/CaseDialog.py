@@ -28,6 +28,9 @@ class Case(QDialog, Ui_CaseDialog):
         self.exercisetitleLE.textEdited.connect(self.valueChanged)
         self.documenttitleLE.textEdited.connect(self.valueChanged)
         self.placedateLE.textEdited.connect(self.valueChanged)
+        self.bz1LE.textEdited.connect(self.valueChanged)
+        self.bz2LE.textEdited.connect(self.valueChanged)
+        self.bz3LE.textEdited.connect(self.valueChanged)
         self.exerciseGroupBox.toggled.connect(self.boxChanged)
 
         self.mapcartoucheView.setScene(self.scene)
@@ -36,14 +39,25 @@ class Case(QDialog, Ui_CaseDialog):
 
     def insertLE(self):
 
+        self.classification1.clear()
+        self.classification2.clear()
+
+        self.classification1.addItem(self.tr("CLASSIFICATION"))
+        self.classification1.addItem(self.tr("INTERNAL"))
+        self.classification1.addItem(self.tr("CONFIDENTIAL"))
+        self.classification1.addItem(self.tr("SECRET"))
+
+        self.classification2.addItem(self.tr("CLASSIFICATION"))
+        self.classification2.addItem(self.tr("INTERNAL"))
+        self.classification2.addItem(self.tr("CONFIDENTIAL"))
+        self.classification2.addItem(self.tr("SECRET"))
+
         self.codenameLE.setText(unicode(self.scene.getComposerItemById("codename").text()))
         self.troopstitleLE.setText(unicode(self.scene.getComposerItemById("troopstitle").text()))
         self.supplementtitleLE.setText(unicode(self.scene.getComposerItemById("supplementtitle").text()))
         self.cartouchecircumscriptionLE.setText(unicode(self.scene.getComposerItemById("cartouchecircumscription").text()))
         self.scaletitleLE.setText(unicode(self.scene.getComposerItemById("scaletitle").text()))
         self.placedateLE.setText(unicode(self.scene.getComposerItemById("placedate").text()))
-        self.classification2.setItemText(self.classification2.currentIndex(), unicode(self.scene.getComposerItemById("classification1").text()))
-        self.classification1.setItemText(self.classification1.currentIndex(), unicode(self.scene.getComposerItemById("classification2").text()))
         self.exerciseorganisationLE.setText(unicode(self.scene.getComposerItemById("exerciseorganisation").text()))
         self.coursetitleLE.setText(unicode(self.scene.getComposerItemById("coursetitle").text()))
         self.exercisetitleLE.setText(unicode(self.scene.getComposerItemById("exercisetitle").text()))
@@ -73,6 +87,9 @@ class Case(QDialog, Ui_CaseDialog):
         self.scene.getComposerItemById("supplementtitle").setText(unicode(self.supplementtitleLE.text()))
         self.scene.getComposerItemById("scaletitle").setText(unicode(self.scaletitleLE.text()))
         self.scene.getComposerItemById("placedate").setText(unicode(self.placedateLE.text()))
+        self.scene.getComposerItemById("bz1").setText(unicode(self.bz1LE.text()))
+        self.scene.getComposerItemById("bz2").setText(unicode(self.bz2LE.text()))
+        self.scene.getComposerItemById("bz3").setText(unicode(self.bz3LE.text()))
 
         if self.exerciseGroupBox.isChecked():
             self.scene.getComposerItemById("exercisedate").setText(unicode(self.exercisedateLE.text()))

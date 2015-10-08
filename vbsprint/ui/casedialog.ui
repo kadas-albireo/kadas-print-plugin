@@ -205,7 +205,7 @@
       <item row="1" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,0">
         <item>
-         <widget class="QLineEdit" name="lineEdit">
+         <widget class="QLineEdit" name="bz1LE">
           <property name="placeholderText">
            <string>Blank line</string>
           </property>
@@ -229,7 +229,7 @@
       <item row="3" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,0">
         <item>
-         <widget class="QLineEdit" name="lineEdit_2">
+         <widget class="QLineEdit" name="bz2LE">
           <property name="placeholderText">
            <string>Blank line</string>
           </property>
@@ -253,7 +253,7 @@
       <item row="7" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="2,0">
         <item>
-         <widget class="QLineEdit" name="lineEdit_3">
+         <widget class="QLineEdit" name="bz3LE">
           <property name="placeholderText">
            <string>Blank line</string>
           </property>
