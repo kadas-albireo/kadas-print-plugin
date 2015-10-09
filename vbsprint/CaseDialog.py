@@ -43,12 +43,12 @@ class Case(QDialog, Ui_CaseDialog):
         self.classification2.clear()
 
         self.classification1.addItem(self.tr("CLASSIFICATION"))
-        self.classification1.addItem(self.tr("INTERNAL"))
+        self.classification1.addItem(self.tr("RESTRICTED"))
         self.classification1.addItem(self.tr("CONFIDENTIAL"))
         self.classification1.addItem(self.tr("SECRET"))
 
         self.classification2.addItem(self.tr("CLASSIFICATION"))
-        self.classification2.addItem(self.tr("INTERNAL"))
+        self.classification2.addItem(self.tr("RESTRICTED"))
         self.classification2.addItem(self.tr("CONFIDENTIAL"))
         self.classification2.addItem(self.tr("SECRET"))
 
