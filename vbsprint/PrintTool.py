@@ -33,6 +33,7 @@ class PrintTool(QgsMapTool):
         self.dialogui = Ui_PrintDialog()
         self.dialogui.setupUi(self.dialog)
         self.exportButton = self.dialogui.buttonBox.addButton(self.tr("Export"), QDialogButtonBox.ActionRole)
+        self.printButton = self.dialogui.buttonBox.addButton(self.tr("Print"), QDialogButtonBox.ActionRole)
         self.advancedButton = self.dialogui.buttonBox.addButton(self.tr("Advanced"), QDialogButtonBox.HelpRole)
         self.dialogui.comboBox_fileformat.addItem("PDF", self.tr("PDF Document (*.pdf);;"))
         self.dialogui.comboBox_fileformat.addItem("JPG", self.tr("JPG Image (*.jpg);;"))
@@ -62,6 +63,7 @@ class PrintTool(QgsMapTool):
         self.dialogui.spinBox_intervalx.valueChanged.connect(self.__intervalXChanged)
         self.dialogui.spinBox_intervaly.valueChanged.connect(self.__intervalYChanged)
         self.exportButton.clicked.connect(self.__export)
+        self.printButton.clicked.connect(self.__print)
         self.advancedButton.clicked.connect(self.__advanced)
         self.dialogui.buttonBox.button(QDialogButtonBox.Close).clicked.connect(lambda: self.setEnabled(False))
         self.setCursor(Qt.OpenHandCursor)
@@ -361,6 +363,10 @@ class PrintTool(QgsMapTool):
                 success = image.save(filename)
         if not success:
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Print Failed"), self.tr("Failed to print the composition."))
+
+    def __print(self):
+        composer = self.composerView.composerWindow()
+        composer.on_mActionPrint_triggered()
 
     def __reloadComposers(self, removed=None):
         if not self.dialog.isVisible():
