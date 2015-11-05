@@ -65,6 +65,7 @@ class PrintTool(QgsMapTool):
         self.exportButton.clicked.connect(self.__export)
         self.printButton.clicked.connect(self.__print)
         self.advancedButton.clicked.connect(self.__advanced)
+        self.dialogui.coordinateButton.clicked.connect(self.__generateComposer)
         self.dialogui.buttonBox.button(QDialogButtonBox.Close).clicked.connect(lambda: self.setEnabled(False))
         self.setCursor(Qt.OpenHandCursor)
 
@@ -247,6 +248,9 @@ class PrintTool(QgsMapTool):
         self.dialogui.spinBoxScale.setValue(self.iface.mapCanvas().scale() / 2)
         self.__createRubberBand()
         self.createObjects()
+
+    def __generateComposer(self):
+        print "hi"
 
     def __createRubberBand(self):
         self.__cleanup()
