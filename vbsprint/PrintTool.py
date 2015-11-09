@@ -28,6 +28,7 @@ class PrintTool(QgsMapTool):
         self.oldrubberband = None
         self.pressPos = None
         self.populateCompositionFz = populateCompositionFz
+        self.border = 0
 
         self.dialog = QDialog(self.iface.mainWindow())
         self.dialogui = Ui_PrintDialog()
@@ -50,6 +51,7 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_crs.addItem("UTM", "EPSG:4326,UTM")
 
         self.dialogui.spinBoxScale.valueChanged.connect(self.__changeScale)
+        self.dialogui.borderSB.valueChanged.connect(self.__changeBorder)
 
         self.iface.composerAdded.connect(lambda view: self.__reloadComposers())
         self.iface.composerWillBeRemoved.connect(self.__reloadComposers)
@@ -67,6 +69,7 @@ class PrintTool(QgsMapTool):
         self.advancedButton.clicked.connect(self.__advanced)
         self.dialogui.coordinateButton.clicked.connect(self.__generateComposer)
         self.dialogui.buttonBox.button(QDialogButtonBox.Close).clicked.connect(lambda: self.setEnabled(False))
+        self.dialogui.coordinateGB.toggled.connect(self.__cgbToggled)
         self.setCursor(Qt.OpenHandCursor)
 
     def createObjects(self):
@@ -143,6 +146,7 @@ class PrintTool(QgsMapTool):
                 self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Bottom)
                 self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Left)
                 self.grid.setAnnotationPrecision(0)
+
                 scale = self.dialogui.spinBoxScale.value() / 10.0
                 self.dialogui.spinBox_intervalx.setValue(scale)
                 self.dialogui.spinBox_intervaly.setValue(scale)
@@ -151,6 +155,7 @@ class PrintTool(QgsMapTool):
                 self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Right)
                 self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Bottom)
                 self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Left)
+
                 scale = self.dialogui.spinBoxScale.value() / 1000000.0
                 self.dialogui.spinBox_intervalx.setValue(scale)
                 self.dialogui.spinBox_intervaly.setValue(scale)
@@ -203,6 +208,13 @@ class PrintTool(QgsMapTool):
         self.composerView.composition().update()
         self.dialogui.previewGraphic.update()
 
+    def __cgbToggled(self, stat):
+        if stat:
+            self.dialogui.comboBox_composers.setEnabled(False)
+        else:
+            self.dialogui.comboBox_composers.setEnabled(True)
+            self.__selectComposer()
+
     def __changeScale(self):
         if not self.mapitem:
             return
@@ -217,6 +229,19 @@ class PrintTool(QgsMapTool):
         y2 = center.y() + 0.5 * newheight
         self.mapitem.setNewExtent(QgsRectangle(x1, y1, x2, y2))
         self.__createRubberBand()
+
+    def __changeBorder(self):
+        if self.composerView.composerWindow().windowTitle() == "coordinate_model":
+            changeborder = self.dialogui.borderSB.value() - self.border
+            width = self.composerView.composition().paperWidth() + (changeborder * 2)
+            height = self.composerView.composition().paperHeight() + (changeborder * 2)
+
+            for item in self.composerView.composition().items():
+                item.moveBy(changeborder, changeborder)
+
+            self.composerView.composition().setPaperSize(width, height)
+            self.border = self.dialogui.borderSB.value()
+
 
     def __selectComposer(self):
         if not self.dialog.isVisible():
@@ -250,7 +275,27 @@ class PrintTool(QgsMapTool):
         self.createObjects()
 
     def __generateComposer(self):
-        print "hi"
+        for composer in self.iface.activeComposers():
+            if composer != "None" and composer.composerWindow():
+                cur = composer.composerWindow().windowTitle()
+                if cur == "coordinate_model":
+                    self.composerView = composer
+                    break
+
+        try:
+            maps = composer.composition().composerMapItems()
+        except:
+            # composerMapItems is not available with PyQt4 < 4.8.4
+            maps = []
+            for item in composer.composition().items():
+                if isinstance(item, QgsComposerMap):
+                    maps.append(item)
+
+        self.mapitem = maps[0]
+        self.dialogui.spinBoxScale.setValue(self.iface.mapCanvas().scale() / 2)
+        self.__createRubberBand()
+        self.__changeBorder()
+        self.createObjects()
 
     def __createRubberBand(self):
         self.__cleanup()
@@ -386,7 +431,8 @@ class PrintTool(QgsMapTool):
         for composer in self.iface.activeComposers():
             if composer != removed and composer.composerWindow():
                 cur = composer.composerWindow().windowTitle()
-                self.dialogui.comboBox_composers.addItem(cur, composer)
+                if cur != "coordinate_model":
+                    self.dialogui.comboBox_composers.addItem(cur, composer)
                 if prev == cur:
                     active = self.dialogui.comboBox_composers.count() - 1
         self.dialogui.comboBox_composers.setCurrentIndex(-1)  # Ensure setCurrentIndex below actually changes an index
