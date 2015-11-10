@@ -28,11 +28,13 @@ class PrintTool(QgsMapTool):
         self.oldrubberband = None
         self.pressPos = None
         self.populateCompositionFz = populateCompositionFz
-        self.border = 0
+        self.border = 15
 
         self.dialog = QDialog(self.iface.mainWindow())
         self.dialogui = Ui_PrintDialog()
         self.dialogui.setupUi(self.dialog)
+        if not self.dialogui.coordinateGB.isCollapsed():
+            self.dialogui.coordinateGB.setCollapsed(True)
         self.exportButton = self.dialogui.buttonBox.addButton(self.tr("Export"), QDialogButtonBox.ActionRole)
         self.printButton = self.dialogui.buttonBox.addButton(self.tr("Print"), QDialogButtonBox.ActionRole)
         self.advancedButton = self.dialogui.buttonBox.addButton(self.tr("Advanced"), QDialogButtonBox.HelpRole)
@@ -69,7 +71,7 @@ class PrintTool(QgsMapTool):
         self.advancedButton.clicked.connect(self.__advanced)
         self.dialogui.coordinateButton.clicked.connect(self.__generateComposer)
         self.dialogui.buttonBox.button(QDialogButtonBox.Close).clicked.connect(lambda: self.setEnabled(False))
-        self.dialogui.coordinateGB.toggled.connect(self.__cgbToggled)
+        self.dialogui.coordinateGB.collapsedStateChanged.connect(self.__cgbToggled)
         self.setCursor(Qt.OpenHandCursor)
 
     def createObjects(self):
@@ -160,8 +162,7 @@ class PrintTool(QgsMapTool):
                 self.dialogui.spinBox_intervalx.setValue(scale)
                 self.dialogui.spinBox_intervaly.setValue(scale)
 
-        self.composerView.composition().update()
-        self.dialogui.previewGraphic.update()
+        self.__updateView()
 
     def __case(self):
         if not hasattr(self, "case"):
@@ -171,49 +172,84 @@ class PrintTool(QgsMapTool):
 
     def __intervalXChanged(self, value):
         self.mapitem.setGridIntervalX(value)
-        self.composerView.composition().update()
-        self.dialogui.previewGraphic.update()
+        self.__updateView()
 
     def __intervalYChanged(self, value):
         self.mapitem.setGridIntervalY(value)
-        self.composerView.composition().update()
-        self.dialogui.previewGraphic.update()
+        self.__updateView()
 
     def __titleChanged(self, arg):
         self.composerView.composition().getComposerItemById("title").setText(unicode(self.dialogui.titleLE.text()))
-        self.composerView.composition().update()
-        self.dialogui.previewGraphic.update()
+        self.__updateView()
 
     def __caption(self, stat):
         if stat == 2:
             self.mapitem.setShowGridAnnotation(True)
         else:
             self.mapitem.setShowGridAnnotation(False)
-        self.composerView.composition().update()
-        self.dialogui.previewGraphic.update()
+        self.__updateView()
 
     def __legend(self, stat):
         if stat == 2:
             self.legend.show()
         else:
             self.legend.hide()
-        self.composerView.composition().update()
-        self.dialogui.previewGraphic.update()
+        self.__updateView()
 
     def __scalebar(self, stat):
         if stat == 2:
             self.scalebar.show()
         else:
             self.scalebar.hide()
+        self.__updateView()
+
+    def __updateView(self):
         self.composerView.composition().update()
         self.dialogui.previewGraphic.update()
 
     def __cgbToggled(self, stat):
-        if stat:
-            self.dialogui.comboBox_composers.setEnabled(False)
+        if not stat:
+            self.__disableComposer()
+            self.dialogui.spinBoxScale.setValue(1)
+
         else:
-            self.dialogui.comboBox_composers.setEnabled(True)
+            self.__enableComposer()
             self.__selectComposer()
+
+    def __disableComposer(self):
+        self.dialogui.comboBox_crs.setCurrentIndex(0)
+        self.composerView = None
+        self.mapitem = None
+        self.__cleanup()
+        self.legend = None
+        self.scalebar = None
+        self.grid = None
+        self.dialogui.titleLE.setEnabled(False)
+        self.dialogui.comboBox_crs.setEnabled(False)
+        self.dialogui.checkBox_scalebar.setEnabled(False)
+        self.dialogui.checkBox_legend.setEnabled(False)
+        self.dialogui.caseButton.setEnabled(False)
+        self.exportButton.setEnabled(False)
+        self.advancedButton.setEnabled(False)
+        self.printButton.setEnabled(False)
+        self.dialogui.previewGraphic.setScene(QGraphicsScene())
+        self.dialogui.titleLE.setText("")
+        self.dialogui.comboBox_composers.setEnabled(False)
+        self.dialogui.borderSB.setEnabled(False)
+        self.dialogui.previewGraphic.update()
+
+    def __enableComposer(self):
+        self.dialogui.titleLE.setEnabled(True)
+        self.dialogui.comboBox_crs.setEnabled(True)
+        self.dialogui.checkBox_scalebar.setEnabled(True)
+        self.dialogui.checkBox_legend.setEnabled(True)
+        self.dialogui.caseButton.setEnabled(True)
+        self.exportButton.setEnabled(True)
+        self.advancedButton.setEnabled(True)
+        self.printButton.setEnabled(True)
+        self.dialogui.comboBox_composers.setEnabled(True)
+        self.dialogui.borderSB.setEnabled(True)
+        self.dialogui.previewGraphic.update()
 
     def __changeScale(self):
         if not self.mapitem:
@@ -231,16 +267,15 @@ class PrintTool(QgsMapTool):
         self.__createRubberBand()
 
     def __changeBorder(self):
-        if self.composerView.composerWindow().windowTitle() == "coordinate_model":
-            changeborder = self.dialogui.borderSB.value() - self.border
-            width = self.composerView.composition().paperWidth() + (changeborder * 2)
-            height = self.composerView.composition().paperHeight() + (changeborder * 2)
+        changeborder = self.dialogui.borderSB.value() - self.border
+        width = self.composerView.composition().paperWidth() + (changeborder * 2)
+        height = self.composerView.composition().paperHeight() + (changeborder * 2)
 
-            for item in self.composerView.composition().items():
-                item.moveBy(changeborder, changeborder)
+        for item in self.composerView.composition().items():
+            item.moveBy(changeborder, changeborder)
 
-            self.composerView.composition().setPaperSize(width, height)
-            self.border = self.dialogui.borderSB.value()
+        self.composerView.composition().setPaperSize(width, height)
+        self.border = self.dialogui.borderSB.value()
 
 
     def __selectComposer(self):
@@ -292,6 +327,11 @@ class PrintTool(QgsMapTool):
                     maps.append(item)
 
         self.mapitem = maps[0]
+        self.dialogui.xtopleftLE.setText(unicode(self.mapitem.extent().toRectF().left()))
+        self.dialogui.ytopleftLE.setText(unicode(self.mapitem.extent().toRectF().top()))
+        self.dialogui.ybottomrightLE.setText(unicode(self.mapitem.extent().toRectF().bottom()))
+        self.dialogui.xbottomrightLE.setText(unicode(self.mapitem.extent().toRectF().right()))
+        self.__enableComposer()
         self.dialogui.spinBoxScale.setValue(self.iface.mapCanvas().scale() / 2)
         self.__createRubberBand()
         self.__changeBorder()
