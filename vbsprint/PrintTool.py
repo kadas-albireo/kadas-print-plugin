@@ -210,9 +210,10 @@ class PrintTool(QgsMapTool):
     def __cgbToggled(self, stat):
         if not stat:
             self.__disableComposer()
-            self.dialogui.spinBoxScale.setValue(1)
+            self.dialogui.spinBoxScale.setValue(466892)
 
         else:
+            self.dialogui.comboBox_composers.setEnabled(True)
             self.__enableComposer()
             self.__selectComposer()
 
@@ -247,24 +248,36 @@ class PrintTool(QgsMapTool):
         self.exportButton.setEnabled(True)
         self.advancedButton.setEnabled(True)
         self.printButton.setEnabled(True)
-        self.dialogui.comboBox_composers.setEnabled(True)
         self.dialogui.borderSB.setEnabled(True)
         self.dialogui.previewGraphic.update()
 
     def __changeScale(self):
         if not self.mapitem:
             return
-        newscale = self.dialogui.spinBoxScale.value()
-        extent = self.mapitem.extent()
-        center = extent.center()
-        newwidth = extent.width() / self.mapitem.scale() * newscale
-        newheight = extent.height() / self.mapitem.scale() * newscale
-        x1 = center.x() - 0.5 * newwidth
-        y1 = center.y() - 0.5 * newheight
-        x2 = center.x() + 0.5 * newwidth
-        y2 = center.y() + 0.5 * newheight
-        self.mapitem.setNewExtent(QgsRectangle(x1, y1, x2, y2))
-        self.__createRubberBand()
+        if not self.composerView.composerWindow().windowTitle() == "coordinate_model":
+            newscale = self.dialogui.spinBoxScale.value()
+            self.mapitem.setNewScale(newscale)
+            self.__createRubberBand()
+        else:
+            scale = self.dialogui.spinBoxScale.value()
+            extent = self.mapitem.extent()
+            mmoldrectwidth = self.mapitem.rect().width()
+            mmoldrectheight = self.mapitem.rect().height()
+
+            widthdiff = ((extent.xMaximum() - extent.xMinimum()) / scale * 1000.0) - mmoldrectwidth
+            heightdiff = ((extent.yMaximum() - extent.yMinimum()) / scale * 1000.0) - mmoldrectheight
+            self.mapitem.resize(widthdiff, heightdiff)
+            self.mapitem.setNewScale(scale)
+            self.mapitem.setNewExtent(QgsRectangle(extent.xMinimum(), extent.yMinimum(), extent.xMaximum(), extent.yMaximum()))
+
+            newmapwidthdiff = self.mapitem.rect().width() - mmoldrectwidth
+            newmapheightdiff = self.mapitem.rect().height() - mmoldrectheight
+
+            mapwidthchange = self.composerView.composition().paperWidth() + newmapwidthdiff
+            mapheightchange = self.composerView.composition().paperHeight() + newmapheightdiff
+
+            self.composerView.composition().setPaperSize(mapwidthchange, mapheightchange)
+            self.__createRubberBand()
 
     def __changeBorder(self):
         changeborder = self.dialogui.borderSB.value() - self.border
@@ -327,15 +340,39 @@ class PrintTool(QgsMapTool):
                     maps.append(item)
 
         self.mapitem = maps[0]
-        self.dialogui.xtopleftLE.setText(unicode(self.mapitem.extent().toRectF().left()))
-        self.dialogui.ytopleftLE.setText(unicode(self.mapitem.extent().toRectF().top()))
-        self.dialogui.ybottomrightLE.setText(unicode(self.mapitem.extent().toRectF().bottom()))
-        self.dialogui.xbottomrightLE.setText(unicode(self.mapitem.extent().toRectF().right()))
+        scale = self.dialogui.spinBoxScale.value()
+        if scale == 1:
+            self.dialogui.spinBoxScale.setValue(self.iface.mapCanvas().scale() / 2)
+            scale = self.dialogui.spinBoxScale.value()
+        scale = float(scale)
+
+        xleft = float(self.dialogui.xleftLE.text())
+        ytop = float(self.dialogui.ytopLE.text())
+        xright = float(self.dialogui.xrightLE.text())
+        ybottom = float(self.dialogui.ybottomLE.text())
+
+        mmoldrectwidth = self.mapitem.rect().width()
+        mmoldrectheight = self.mapitem.rect().height()
+
+        widthdiff = ((xright - xleft) / scale * 1000.0) - mmoldrectwidth
+        heightdiff = ((ytop - ybottom) / scale * 1000.0) - mmoldrectheight
+
+        self.mapitem.resize(widthdiff, heightdiff)
+        self.mapitem.setNewScale(scale)
+        self.mapitem.setNewExtent(QgsRectangle(xleft, ybottom, xright, ytop))
+        newmapwidthdiff = self.mapitem.rect().width() - mmoldrectwidth
+        newmapheightdiff = self.mapitem.rect().height() - mmoldrectheight
+
+        mapwidthchange = self.composerView.composition().paperWidth() + newmapwidthdiff
+        mapheightchange = self.composerView.composition().paperHeight() + newmapheightdiff
+
+        self.composerView.composition().setPaperSize(mapwidthchange, mapheightchange)
+
         self.__enableComposer()
-        self.dialogui.spinBoxScale.setValue(self.iface.mapCanvas().scale() / 2)
         self.__createRubberBand()
         self.__changeBorder()
         self.createObjects()
+        self.__updateView()
 
     def __createRubberBand(self):
         self.__cleanup()
@@ -343,7 +380,6 @@ class PrintTool(QgsMapTool):
         center = self.iface.mapCanvas().extent().center()
         self.corner = QPointF(center.x() - 0.5 * extent.width(), center.y() - 0.5 * extent.height())
         self.rect = QRectF(self.corner.x(), self.corner.y(), extent.width(), extent.height())
-        self.mapitem.setNewExtent(QgsRectangle(self.rect))
 
         self.rubberband = QgsRubberBand(self.iface.mapCanvas(), QGis.Polygon)
         self.rubberband.setToCanvasRectangle(self.__canvasRect(self.rect))
