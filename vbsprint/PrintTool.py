@@ -43,7 +43,6 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_fileformat.addItem("BMP", self.tr("BMP Image (*.bmp);;"))
         self.dialogui.comboBox_fileformat.addItem("PNG", self.tr("PNG Image (*.png);;"))
 
-        self.dialogui.comboBox_crs.addItem(self.tr("No Grid"), "nogrid,0")
         self.dialogui.comboBox_crs.addItem("LV03", "EPSG:21781,0")
         self.dialogui.comboBox_crs.addItem("LV95", "EPSG:2056,0")
         self.dialogui.comboBox_crs.addItem("DD", "EPSG:4326,0")
@@ -72,6 +71,7 @@ class PrintTool(QgsMapTool):
         self.dialogui.coordinateButton.clicked.connect(self.__generateComposer)
         self.dialogui.buttonBox.button(QDialogButtonBox.Close).clicked.connect(lambda: self.setEnabled(False))
         self.dialogui.coordinateGB.collapsedStateChanged.connect(self.__cgbToggled)
+        self.dialogui.gridGB.collapsedStateChanged.connect(self.__ggbToggled)
         self.setCursor(Qt.OpenHandCursor)
 
     def createObjects(self):
@@ -99,7 +99,7 @@ class PrintTool(QgsMapTool):
 
         self.mapitem.setPreviewMode(0)
         self.mapitem.cache()
-        self.__gridChanges()
+        self.__updateView()
 
     def setEnabled(self, enabled):
         if enabled:
@@ -114,17 +114,10 @@ class PrintTool(QgsMapTool):
 
     def __gridChanges(self):
         crs, format = self.dialogui.comboBox_crs.itemData(self.dialogui.comboBox_crs.currentIndex()).split(",")
-        if crs == "nogrid":
+        if not self.dialogui.comboBox_crs.isEnabled():
             self.mapitem.setGridEnabled(False)
-            self.dialogui.checkBox_caption.setEnabled(False)
-            self.dialogui.checkBox_caption.setChecked(False)
-            self.dialogui.spinBox_intervalx.setEnabled(False)
-            self.dialogui.spinBox_intervaly.setEnabled(False)
         else:
-            self.dialogui.spinBox_intervalx.setEnabled(True)
-            self.dialogui.spinBox_intervaly.setEnabled(True)
             self.mapitem.setGridEnabled(True)
-            self.dialogui.checkBox_caption.setEnabled(True)
             self.grid.setCrs(QgsCoordinateReferenceSystem(crs))
             if format == '0':
                 self.mapitem.setGridAnnotationFormat(0)
@@ -204,20 +197,30 @@ class PrintTool(QgsMapTool):
         self.__updateView()
 
     def __updateView(self):
-        self.composerView.composition().update()
-        self.dialogui.previewGraphic.update()
+        if hasattr(self, "composerView"):
+            self.composerView.composition().update()
+            self.dialogui.previewGraphic.update()
 
     def __cgbToggled(self, stat):
         if not stat:
             self.__disableComposer()
-            self.dialogui.spinBoxScale.setValue(466892)
-
+            self.dialogui.spinBoxScale.setValue(self.iface.mapCanvas().scale())
         else:
             self.dialogui.comboBox_composers.setEnabled(True)
             self.__enableComposer()
             self.__selectComposer()
 
+    def __ggbToggled(self, stat):
+        if not stat:
+            if hasattr(self, "composerView"):
+                self.__gridChanges()
+        else:
+            self.mapitem.setGridEnabled(False)
+            self.dialogui.checkBox_caption.setChecked(False)
+
     def __disableComposer(self):
+        self.dialogui.gridGB.setCollapsed(True)
+        self.dialogui.gridGB.setEnabled(False)
         self.dialogui.comboBox_crs.setCurrentIndex(0)
         self.composerView = None
         self.mapitem = None
@@ -240,6 +243,7 @@ class PrintTool(QgsMapTool):
         self.dialogui.previewGraphic.update()
 
     def __enableComposer(self):
+        self.dialogui.gridGB.setEnabled(True)
         self.dialogui.titleLE.setEnabled(True)
         self.dialogui.comboBox_crs.setEnabled(True)
         self.dialogui.checkBox_scalebar.setEnabled(True)
@@ -257,26 +261,6 @@ class PrintTool(QgsMapTool):
         if not self.composerView.composerWindow().windowTitle() == "coordinate_model":
             newscale = self.dialogui.spinBoxScale.value()
             self.mapitem.setNewScale(newscale)
-            self.__createRubberBand()
-        else:
-            scale = self.dialogui.spinBoxScale.value()
-            extent = self.mapitem.extent()
-            mmoldrectwidth = self.mapitem.rect().width()
-            mmoldrectheight = self.mapitem.rect().height()
-
-            widthdiff = ((extent.xMaximum() - extent.xMinimum()) / scale * 1000.0) - mmoldrectwidth
-            heightdiff = ((extent.yMaximum() - extent.yMinimum()) / scale * 1000.0) - mmoldrectheight
-            self.mapitem.resize(widthdiff, heightdiff)
-            self.mapitem.setNewScale(scale)
-            self.mapitem.setNewExtent(QgsRectangle(extent.xMinimum(), extent.yMinimum(), extent.xMaximum(), extent.yMaximum()))
-
-            newmapwidthdiff = self.mapitem.rect().width() - mmoldrectwidth
-            newmapheightdiff = self.mapitem.rect().height() - mmoldrectheight
-
-            mapwidthchange = self.composerView.composition().paperWidth() + newmapwidthdiff
-            mapheightchange = self.composerView.composition().paperHeight() + newmapheightdiff
-
-            self.composerView.composition().setPaperSize(mapwidthchange, mapheightchange)
             self.__createRubberBand()
 
     def __changeBorder(self):
@@ -298,6 +282,8 @@ class PrintTool(QgsMapTool):
         if activeIndex < 0:
             return
 
+        if not self.dialogui.coordinateGB.isCollapsed():
+            self.dialogui.coordinateGB.setCollapsed(True)
         composerView = self.dialogui.comboBox_composers.itemData(activeIndex)
         try:
             maps = composerView.composition().composerMapItems()
@@ -321,13 +307,17 @@ class PrintTool(QgsMapTool):
         self.dialogui.spinBoxScale.setValue(self.iface.mapCanvas().scale() / 2)
         self.__createRubberBand()
         self.createObjects()
+        if not self.dialogui.gridGB.isCollapsed():
+            self.dialogui.gridGB.setCollapsed(True)
 
     def __generateComposer(self):
         for composer in self.iface.activeComposers():
             if composer != "None" and composer.composerWindow():
                 cur = composer.composerWindow().windowTitle()
-                if cur == "coordinate_model":
-                    self.composerView = composer
+                if cur == "coordinate_model_origin":
+                    self.composerView = self.iface.duplicateComposer(composer, "coordinate_model")
+                    self.composerView.composerWindow().hide()
+                    composer = self.composerView
                     break
 
         try:
@@ -494,6 +484,11 @@ class PrintTool(QgsMapTool):
         composer.on_mActionPrint_triggered()
 
     def __reloadComposers(self, removed=None):
+        if hasattr(self, "composerView"):
+            if self.composerView == None:
+                return
+            elif self.composerView.composerWindow().windowTitle() == "coordinate_model":
+                return
         if not self.dialog.isVisible():
             # Make it less likely to hit the issue outlined in https://github.com/qgis/QGIS/pull/1938
             return
@@ -507,7 +502,7 @@ class PrintTool(QgsMapTool):
         for composer in self.iface.activeComposers():
             if composer != removed and composer.composerWindow():
                 cur = composer.composerWindow().windowTitle()
-                if cur != "coordinate_model":
+                if cur != "coordinate_model" and cur != "coordinate_model_origin":
                     self.dialogui.comboBox_composers.addItem(cur, composer)
                 if prev == cur:
                     active = self.dialogui.comboBox_composers.count() - 1

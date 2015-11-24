@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'printdialog.ui'
 #
-# Created: Thu Nov 12 11:50:18 2015
+# Created: Tue Nov 24 10:55:00 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -169,9 +169,14 @@ class Ui_PrintDialog(object):
         self.checkBox_legend.setObjectName(_fromUtf8("checkBox_legend"))
         self.horizontalLayout.addWidget(self.checkBox_legend)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.frame = QtGui.QFrame(PrintDialog)
-        self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.gridGB = gui.QgsCollapsibleGroupBoxBasic(PrintDialog)
+        self.gridGB.setObjectName(_fromUtf8("gridGB"))
+        self.verticalLayout_4 = QtGui.QVBoxLayout(self.gridGB)
+        self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
+        self.frame = QtGui.QFrame(self.gridGB)
+        self.frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.frame.setFrameShadow(QtGui.QFrame.Plain)
+        self.frame.setLineWidth(0)
         self.frame.setObjectName(_fromUtf8("frame"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.frame)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
@@ -212,7 +217,8 @@ class Ui_PrintDialog(object):
         self.checkBox_caption.setObjectName(_fromUtf8("checkBox_caption"))
         self.verticalLayout_2.addWidget(self.checkBox_caption)
         self.verticalLayout_3.addLayout(self.verticalLayout_2)
-        self.verticalLayout.addWidget(self.frame)
+        self.verticalLayout_4.addWidget(self.frame)
+        self.verticalLayout.addWidget(self.gridGB)
         self.previewGraphic = QtGui.QGraphicsView(PrintDialog)
         self.previewGraphic.setObjectName(_fromUtf8("previewGraphic"))
         self.verticalLayout.addWidget(self.previewGraphic)
@@ -254,6 +260,7 @@ class Ui_PrintDialog(object):
         self.caseButton.setText(_translate("PrintDialog", "Map Cartouche", None))
         self.checkBox_scalebar.setText(_translate("PrintDialog", "Scalebar", None))
         self.checkBox_legend.setText(_translate("PrintDialog", "Legend", None))
+        self.gridGB.setTitle(_translate("PrintDialog", "Grid", None))
         self.label_15.setText(_translate("PrintDialog", "Grid:", None))
         self.label_2.setText(_translate("PrintDialog", "Interval X:", None))
         self.label_3.setText(_translate("PrintDialog", "Interval Y:", None))
