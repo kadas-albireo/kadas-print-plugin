@@ -1,29 +1,17 @@
-# This file contains metadata for your plugin. Beginning
-# with version 1.8 this is the preferred way to supply information about a
-# plugin. The current method of embedding metadata in __init__.py will
-# be supported until version 2.0
-
-# This file should be included when you package your plugin.
-
-# Mandatory items:
-
-
 [general]
 name=VBS Print
 qgisMinimumVersion=2.6
 qgisMaximumVersion=2.99
 description=Instantly print map excerpts
 about=The instant print plugin allows to quickly print map excerpts to a file, utilizing an existing composer as page layout.
-version=1.1.0
+version=1.2.0
 author=Sandro Mani, Sourcepole AG
 email=smani@sourcepole.ch
 
-# end of mandatory metadata
-
-# Optional items:
-
-# Uncomment the following line and add your changelog entries:
 changelog=
+ Rev 1.2.0 (25.11.2015)
+  - Ploting mode with coordinate input
+
  Rev 1.1.0 (07.10.2015)
   - VBS Cartouche
   - Use current map scale as default
@@ -40,16 +28,13 @@ changelog=
  Rev 1.0.0 (26.02.2015)
    - Initial release
 
-# tags are comma separated with spaces allowed
 tags=print,composer
 
-homepage=https://github.com/sourcepole/qgis-instantprint-plugin
-tracker=https://github.com/sourcepole/qgis-instantprint-plugin/issues
-repository=https://github.com/sourcepole/qgis-instantprint-plugin
+homepage=https://git.sourcepole.ch/sourcepole/VBS-instantprint-plugin
+tracker=https://git.sourcepole.ch/sourcepole/VBS-instantprint-plugin
+repository=https://git.sourcepole.ch/sourcepole/VBS-instantprint-plugin
 icon=icons/icon.png
-# experimental flag
 experimental=False
 
-# deprecated flag (applies to the whole plugin, not just a single version
 deprecated=False
 
