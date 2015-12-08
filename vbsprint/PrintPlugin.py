@@ -41,6 +41,7 @@ class PrintPlugin(QObject):
         self.toolButton.setText(self.tr(" Print"))
         self.toolButton.setToolTip(self.tr(" Print"))
         self.toolButton.setCheckable(True)
+        self.toolButton.setObjectName("vbsprintaction")
         self.toolAction = self.iface.pluginToolBar().addWidget(self.toolButton)
 
         self.toolButton.toggled.connect(self.__enableTool)
