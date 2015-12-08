@@ -69,7 +69,7 @@ class PrintTool(QgsMapTool):
         self.printButton.clicked.connect(self.__print)
         self.advancedButton.clicked.connect(self.__advanced)
         self.dialogui.coordinateButton.clicked.connect(self.__generateComposer)
-        self.dialogui.buttonBox.button(QDialogButtonBox.Close).clicked.connect(lambda: self.setEnabled(False))
+        self.dialog.finished.connect(lambda: self.setEnabled(False))
         self.dialogui.coordinateGB.collapsedStateChanged.connect(self.__cgbToggled)
         self.dialogui.gridGB.collapsedStateChanged.connect(self.__ggbToggled)
         self.setCursor(Qt.OpenHandCursor)
@@ -295,12 +295,10 @@ class PrintTool(QgsMapTool):
                     maps.append(item)
         if len(maps) != 1:
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Invalid composer"), self.tr("The composer must have exactly one map item."))
-            self.exportButton.setEnabled(False)
-            self.dialogui.spinBoxScale.setEnabled(False)
+            self.__setUiEnabled(False)
             return
 
-        self.dialogui.spinBoxScale.setEnabled(True)
-        self.exportButton.setEnabled(True)
+        self.__setUiEnabled(True)
 
         self.composerView = composerView
         self.mapitem = maps[0]
@@ -510,11 +508,22 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_composers.blockSignals(False)
         if self.dialogui.comboBox_composers.count() > 0:
             self.dialogui.comboBox_composers.setCurrentIndex(active)
-            self.dialogui.spinBoxScale.setEnabled(True)
-            self.exportButton.setEnabled(True)
+            self.__setUiEnabled(True)
         else:
-            self.exportButton.setEnabled(False)
-            self.dialogui.spinBoxScale.setEnabled(False)
+            self.__setUiEnabled(False)
+
+    def __setUiEnabled(self, enabled):
+        self.dialogui.titleLE.setEnabled(enabled)
+        self.dialogui.coordinateGB.setEnabled(enabled)
+        self.dialogui.spinBoxScale.setEnabled(enabled)
+        self.dialogui.caseButton.setEnabled(enabled)
+        self.dialogui.checkBox_legend.setEnabled(enabled)
+        self.dialogui.checkBox_scalebar.setEnabled(enabled)
+        self.dialogui.gridGB.setEnabled(enabled)
+        self.dialogui.comboBox_fileformat.setEnabled(enabled)
+        self.printButton.setEnabled(enabled)
+        self.advancedButton.setEnabled(enabled)
+        self.exportButton.setEnabled(enabled)
 
     def __advanced(self):
         composer = self.composerView.composerWindow()
