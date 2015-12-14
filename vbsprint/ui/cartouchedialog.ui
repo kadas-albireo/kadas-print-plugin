@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CaseDialog</class>
- <widget class="QDialog" name="CaseDialog">
+ <class>CartoucheDialog</class>
+ <widget class="QDialog" name="CartoucheDialog">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -14,11 +14,21 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MapCartouche</string>
+   <string>Map Cartouche</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="17" column="0">
-    <widget class="QGraphicsView" name="mapcartoucheView"/>
+    <widget class="QGraphicsView" name="mapcartoucheView">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+    </widget>
    </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="exerciseGroupBox">
@@ -86,6 +96,21 @@
              <string>CLASSIFICATION</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>RESTRICTED</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>CONFIDENTIAL</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>SECRET</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item row="1" column="1">
@@ -147,6 +172,21 @@
         <item>
          <property name="text">
           <string>CLASSIFICATION</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>RESTRICTED</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>CONFIDENTIAL</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SECRET</string>
          </property>
         </item>
        </widget>
@@ -274,19 +314,6 @@
         </item>
        </layout>
       </item>
-      <item row="7" column="1">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="1" column="2">
        <widget class="QLineEdit" name="placedateLE">
         <property name="placeholderText">
@@ -299,12 +326,33 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>exerciseGroupBox</tabstop>
+  <tabstop>exercisedateLE</tabstop>
+  <tabstop>classification1</tabstop>
+  <tabstop>exerciseorganisationLE</tabstop>
+  <tabstop>exercisetitleLE</tabstop>
+  <tabstop>coursetitleLE</tabstop>
+  <tabstop>documenttitleLE</tabstop>
+  <tabstop>troopstitleLE</tabstop>
+  <tabstop>classification2</tabstop>
+  <tabstop>bz1LE</tabstop>
+  <tabstop>placedateLE</tabstop>
+  <tabstop>codenameLE</tabstop>
+  <tabstop>bz2LE</tabstop>
+  <tabstop>cartouchecircumscriptionLE</tabstop>
+  <tabstop>supplementtitleLE</tabstop>
+  <tabstop>scaletitleLE</tabstop>
+  <tabstop>bz3LE</tabstop>
+  <tabstop>mapcartoucheView</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>CaseDialog</receiver>
+   <receiver>CartoucheDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -320,7 +368,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>CaseDialog</receiver>
+   <receiver>CartoucheDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

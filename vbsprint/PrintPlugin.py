@@ -48,12 +48,12 @@ class PrintPlugin(QObject):
         self.iface.mapCanvas().mapToolSet.connect(self.__onToolSet)
 
     def unload(self):
-        self.tool.setEnabled(False)
+        self.tool.setToolEnabled(False)
         self.tool = None
         self.iface.pluginToolBar().removeAction(self.toolAction)
 
     def __enableTool(self, active):
-        self.tool.setEnabled(active)
+        self.tool.setToolEnabled(active)
 
     def __onToolSet(self, tool):
         if tool != self.tool:

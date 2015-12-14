@@ -5,36 +5,35 @@
 #    the Free Software Foundation; either version 2 of the License, or
 #    (at your option) any later version.
 #
-#    copyright            : (C) 2014-2015 by Sandro Mani / Sourcepole AG
-#    email                : smani@sourcepole.ch
+#    copyright            : (C) 2015 by Sourcepole AG
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 import os
+import math
 
-from CaseDialog import Case
+from CartoucheDialog import CartoucheDialog
 from ui.ui_printdialog import Ui_PrintDialog
 
 
 class PrintTool(QgsMapTool):
 
-    def __init__(self, iface, populateCompositionFz=None):
+    def __init__(self, iface):
         QgsMapTool.__init__(self, iface.mapCanvas())
+        self.setCursor(Qt.OpenHandCursor)
 
         self.iface = iface
         self.rubberband = None
         self.oldrubberband = None
         self.pressPos = None
-        self.populateCompositionFz = populateCompositionFz
-        self.border = 15
+        self.fixedSizeMode = True
+        self.mapitem = None
 
         self.dialog = QDialog(self.iface.mainWindow())
         self.dialogui = Ui_PrintDialog()
         self.dialogui.setupUi(self.dialog)
-        if not self.dialogui.coordinateGB.isCollapsed():
-            self.dialogui.coordinateGB.setCollapsed(True)
         self.exportButton = self.dialogui.buttonBox.addButton(self.tr("Export"), QDialogButtonBox.ActionRole)
         self.printButton = self.dialogui.buttonBox.addButton(self.tr("Print"), QDialogButtonBox.ActionRole)
         self.advancedButton = self.dialogui.buttonBox.addButton(self.tr("Advanced"), QDialogButtonBox.HelpRole)
@@ -51,341 +50,105 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_crs.addItem("MGRS", "EPSG:4326,MGRS")
         self.dialogui.comboBox_crs.addItem("UTM", "EPSG:4326,UTM")
 
-        self.dialogui.spinBoxScale.valueChanged.connect(self.__changeScale)
-        self.dialogui.borderSB.valueChanged.connect(self.__changeBorder)
+        self.dialogui.lineedit_xmin.setValidator(QDoubleValidator())
+        self.dialogui.lineedit_xmax.setValidator(QDoubleValidator())
+        self.dialogui.lineedit_ymin.setValidator(QDoubleValidator())
+        self.dialogui.lineedit_ymax.setValidator(QDoubleValidator())
 
-        self.iface.composerAdded.connect(lambda view: self.__reloadComposers())
-        self.iface.composerWillBeRemoved.connect(self.__reloadComposers)
+        self.dialogui.previewGraphic.resizeEvent = self.__resizePreview
+
+        self.iface.composerAdded.connect(lambda view: self.__reloadComposers(view, True))
+        self.iface.composerWillBeRemoved.connect(lambda view: self.__reloadComposers(view, False))
         self.dialogui.comboBox_composers.currentIndexChanged.connect(self.__selectComposer)
-        self.dialogui.caseButton.clicked.connect(self.__case)
-        self.dialogui.comboBox_crs.currentIndexChanged.connect(self.__gridChanges)
-        self.dialogui.checkBox_caption.stateChanged.connect(self.__caption)
-        self.dialogui.checkBox_legend.stateChanged.connect(self.__legend)
-        self.dialogui.checkBox_scalebar.stateChanged.connect(self.__scalebar)
-        self.dialogui.titleLE.textChanged.connect(self.__titleChanged)
+        self.dialogui.lineEdit_title.textChanged.connect(self.__titleChanged)
+        self.dialogui.spinBox_scale.valueChanged.connect(self.__changeScale)
+        self.dialogui.button_mapCartouche.clicked.connect(self.__showCartoucheDialog)
+        self.dialogui.comboBox_crs.currentIndexChanged.connect(self.__setupGrid)
+        self.dialogui.checkBox_gridAnnotations.toggled.connect(self.__toggleGridAnnotations)
+        self.dialogui.checkBox_legend.toggled.connect(self.__toggleLegend)
+        self.dialogui.checkBox_scalebar.toggled.connect(self.__toggleScalebar)
+        self.dialogui.checkBox_mapCartouche.toggled.connect(self.__toggleMapCartouche)
         self.dialogui.spinBox_intervalx.valueChanged.connect(self.__intervalXChanged)
         self.dialogui.spinBox_intervaly.valueChanged.connect(self.__intervalYChanged)
         self.exportButton.clicked.connect(self.__export)
         self.printButton.clicked.connect(self.__print)
         self.advancedButton.clicked.connect(self.__advanced)
-        self.dialogui.coordinateButton.clicked.connect(self.__generateComposer)
-        self.dialog.finished.connect(lambda: self.setEnabled(False))
-        self.dialogui.coordinateGB.collapsedStateChanged.connect(self.__cgbToggled)
-        self.dialogui.gridGB.collapsedStateChanged.connect(self.__ggbToggled)
-        self.setCursor(Qt.OpenHandCursor)
+        self.dialogui.button_updateLayout.clicked.connect(self.__generateComposer)
+        self.dialog.finished.connect(lambda: self.setToolEnabled(False))
+        self.dialogui.groupBox_grid.collapsedStateChanged.connect(self.__setupGrid)
+        self.iface.mapCanvas().mapCanvasRefreshed.connect(self.__updateMap)
 
-    def createObjects(self):
+        self.__setUiEnabled(False)
+
+    def __resizePreview(self, ev=None):
+        try:
+            page = self.composerView.composition().pages()[0]
+            self.dialogui.previewGraphic.fitInView(page, Qt.KeepAspectRatio)
+        except:
+            pass
+
+    def __updateMap(self):
+        if self.mapitem:
+            self.mapitem.cache()
+            self.mapitem.updateItem()
+
+    def __initComposer(self):
+        self.title = self.composerView.composition().getComposerItemById("title")
         self.legend = self.composerView.composition().getComposerItemById("legend")
         self.scalebar = self.composerView.composition().getComposerItemById("scalebar")
+        self.mapcartouche = self.composerView.composition().getComposerItemById("mapcartouche")
         self.grid = self.mapitem.grid()
-        self.mapitem.setGridEnabled(False)
-        self.dialogui.previewGraphic.setInteractive(False)
-        self.dialogui.previewGraphic.setScene(self.composerView.composition())
-        self.dialogui.titleLE.setText(unicode(self.composerView.composition().getComposerItemById("title").text()))
-        if not self.dialogui.checkBox_legend.isChecked():
-            self.legend.hide()
-        else:
-            self.legend.show()
+        self.cartouchedialog = CartoucheDialog(self.composerView.composition(), self.dialog)
 
-        if not self.dialogui.checkBox_scalebar.isChecked():
-            self.scalebar.hide()
-        else:
-            self.scalebar.show()
-
-        if not self.dialogui.checkBox_caption.isChecked():
-            self.mapitem.setShowGridAnnotation(False)
-        else:
-            self.mapitem.setShowGridAnnotation(True)
-
+        self.__setVariableExtentUiVisibile(not self.fixedSizeMode)
+        if not self.fixedSizeMode:
+            extent = self.iface.mapCanvas().extent()
+            self.dialogui.lineedit_xmin.setText(str(round(extent.xMinimum())))
+            self.dialogui.lineedit_xmax.setText(str(round(extent.xMaximum())))
+            self.dialogui.lineedit_ymin.setText(str(round(extent.yMinimum())))
+            self.dialogui.lineedit_ymax.setText(str(round(extent.yMaximum())))
+        self.dialogui.spinBox_scale.setValue(self.iface.mapCanvas().scale())
         self.mapitem.setPreviewMode(0)
         self.mapitem.cache()
+        self.dialogui.previewGraphic.setScene(self.composerView.composition())
+        self.__resizePreview()
         self.__updateView()
+        self.__createRubberBand()
 
-    def setEnabled(self, enabled):
+        if not self.title:
+            self.dialogui.lineEdit_title.setEnabled(False)
+        else:
+            self.title.setText(self.dialogui.lineEdit_title.text())
+        if not self.legend:
+            self.dialogui.checkBox_legend.setEnabled(False)
+        else:
+            self.legend.setVisible(self.dialogui.checkBox_legend.isChecked())
+        if not self.scalebar:
+            self.dialogui.checkBox_scalebar.setEnabled(False)
+        else:
+            self.scalebar.setVisible(self.dialogui.checkBox_scalebar.isChecked())
+        if not self.grid:
+            self.dialogui.groupBox_grid.setEnabled(False)
+        else:
+            self.__setupGrid()
+        if not self.mapcartouche:
+            self.dialogui.checkBox_mapCartouche.setEnabled(False)
+        else:
+            self.mapcartouche.setVisibility(self.dialogui.checkBox_mapCartouche.isChecked())
+        self.mapitem.setGridEnabled(not self.dialogui.groupBox_grid.isCollapsed())
+
+    def setToolEnabled(self, enabled):
         if enabled:
             self.dialog.setVisible(True)
             self.__reloadComposers()
-            self.__selectComposer()
             self.iface.mapCanvas().setMapTool(self)
         else:
             self.dialog.setVisible(False)
-            self.__cleanup()
+            self.__clearRubberBand()
             self.iface.mapCanvas().unsetMapTool(self)
 
-    def __gridChanges(self):
-        crs, format = self.dialogui.comboBox_crs.itemData(self.dialogui.comboBox_crs.currentIndex()).split(",")
-        if not self.dialogui.comboBox_crs.isEnabled():
-            self.mapitem.setGridEnabled(False)
-        else:
-            self.mapitem.setGridEnabled(True)
-            self.grid.setCrs(QgsCoordinateReferenceSystem(crs))
-            if format == '0':
-                self.mapitem.setGridAnnotationFormat(0)
-                self.grid.setAnnotationPrecision(5)
-            elif format == 'second':
-                self.grid.setAnnotationPrecision(1)
-                self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinuteSecond)
-            elif format == 'minute':
-                self.grid.setAnnotationPrecision(3)
-                self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinute)
-            elif format == 'MGRS':
-                self.grid.setAnnotationFormat(QgsComposerMapGrid.MGRS)
-                self.grid.setAnnotationPrecision(0)
-            elif format == 'UTM':
-                self.grid.setAnnotationFormat(QgsComposerMapGrid.UTM)
-                self.grid.setAnnotationPrecision(0)
-
-            if crs != "EPSG:4326":
-                self.grid.setAnnotationDisplay(QgsComposerMapGrid.HideAll, QgsComposerMapGrid.Top)
-                self.grid.setAnnotationDisplay(QgsComposerMapGrid.HideAll, QgsComposerMapGrid.Right)
-                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Bottom)
-                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Left)
-                self.grid.setAnnotationPrecision(0)
-
-                scale = self.dialogui.spinBoxScale.value() / 10.0
-                self.dialogui.spinBox_intervalx.setValue(scale)
-                self.dialogui.spinBox_intervaly.setValue(scale)
-            else:
-                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Top)
-                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Right)
-                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Bottom)
-                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Left)
-
-                scale = self.dialogui.spinBoxScale.value() / 1000000.0
-                self.dialogui.spinBox_intervalx.setValue(scale)
-                self.dialogui.spinBox_intervaly.setValue(scale)
-
-        self.__updateView()
-
-    def __case(self):
-        if not hasattr(self, "case"):
-            self.case = Case(self.composerView.composition(), self.dialog)
-        self.case.insertLE()
-        self.case.exec_()
-
-    def __intervalXChanged(self, value):
-        self.mapitem.setGridIntervalX(value)
-        self.__updateView()
-
-    def __intervalYChanged(self, value):
-        self.mapitem.setGridIntervalY(value)
-        self.__updateView()
-
-    def __titleChanged(self, arg):
-        self.composerView.composition().getComposerItemById("title").setText(unicode(self.dialogui.titleLE.text()))
-        self.__updateView()
-
-    def __caption(self, stat):
-        if stat == 2:
-            self.mapitem.setShowGridAnnotation(True)
-        else:
-            self.mapitem.setShowGridAnnotation(False)
-        self.__updateView()
-
-    def __legend(self, stat):
-        if stat == 2:
-            self.legend.show()
-        else:
-            self.legend.hide()
-        self.__updateView()
-
-    def __scalebar(self, stat):
-        if stat == 2:
-            self.scalebar.show()
-        else:
-            self.scalebar.hide()
-        self.__updateView()
-
-    def __updateView(self):
-        if hasattr(self, "composerView"):
-            self.composerView.composition().update()
-            self.dialogui.previewGraphic.update()
-
-    def __cgbToggled(self, stat):
-        if not stat:
-            self.__disableComposer()
-            self.dialogui.spinBoxScale.setValue(self.iface.mapCanvas().scale())
-        else:
-            self.dialogui.comboBox_composers.setEnabled(True)
-            self.__enableComposer()
-            self.__selectComposer()
-
-    def __ggbToggled(self, stat):
-        if not stat:
-            if hasattr(self, "composerView"):
-                self.__gridChanges()
-        else:
-            self.mapitem.setGridEnabled(False)
-            self.dialogui.checkBox_caption.setChecked(False)
-
-    def __disableComposer(self):
-        self.dialogui.gridGB.setCollapsed(True)
-        self.dialogui.gridGB.setEnabled(False)
-        self.dialogui.comboBox_crs.setCurrentIndex(0)
-        self.composerView = None
-        self.mapitem = None
-        self.__cleanup()
-        self.legend = None
-        self.scalebar = None
-        self.grid = None
-        self.dialogui.titleLE.setEnabled(False)
-        self.dialogui.comboBox_crs.setEnabled(False)
-        self.dialogui.checkBox_scalebar.setEnabled(False)
-        self.dialogui.checkBox_legend.setEnabled(False)
-        self.dialogui.caseButton.setEnabled(False)
-        self.exportButton.setEnabled(False)
-        self.advancedButton.setEnabled(False)
-        self.printButton.setEnabled(False)
-        self.dialogui.previewGraphic.setScene(QGraphicsScene())
-        self.dialogui.titleLE.setText("")
-        self.dialogui.comboBox_composers.setEnabled(False)
-        self.dialogui.borderSB.setEnabled(False)
-        self.dialogui.previewGraphic.update()
-
-    def __enableComposer(self):
-        self.dialogui.gridGB.setEnabled(True)
-        self.dialogui.titleLE.setEnabled(True)
-        self.dialogui.comboBox_crs.setEnabled(True)
-        self.dialogui.checkBox_scalebar.setEnabled(True)
-        self.dialogui.checkBox_legend.setEnabled(True)
-        self.dialogui.caseButton.setEnabled(True)
-        self.exportButton.setEnabled(True)
-        self.advancedButton.setEnabled(True)
-        self.printButton.setEnabled(True)
-        self.dialogui.borderSB.setEnabled(True)
-        self.dialogui.previewGraphic.update()
-
-    def __changeScale(self):
-        if not self.mapitem:
-            return
-        if not self.composerView.composerWindow().windowTitle() == "coordinate_model":
-            newscale = self.dialogui.spinBoxScale.value()
-            self.mapitem.setNewScale(newscale)
-            self.__createRubberBand()
-
-    def __changeBorder(self):
-        changeborder = self.dialogui.borderSB.value() - self.border
-        width = self.composerView.composition().paperWidth() + (changeborder * 2)
-        height = self.composerView.composition().paperHeight() + (changeborder * 2)
-
-        for item in self.composerView.composition().items():
-            item.moveBy(changeborder, changeborder)
-
-        self.composerView.composition().setPaperSize(width, height)
-        self.border = self.dialogui.borderSB.value()
-
-
-    def __selectComposer(self):
-        if not self.dialog.isVisible():
-            return
-        activeIndex = self.dialogui.comboBox_composers.currentIndex()
-        if activeIndex < 0:
-            return
-
-        if not self.dialogui.coordinateGB.isCollapsed():
-            self.dialogui.coordinateGB.setCollapsed(True)
-        composerView = self.dialogui.comboBox_composers.itemData(activeIndex)
-        try:
-            maps = composerView.composition().composerMapItems()
-        except:
-            # composerMapItems is not available with PyQt4 < 4.8.4
-            maps = []
-            for item in composerView.composition().items():
-                if isinstance(item, QgsComposerMap):
-                    maps.append(item)
-        if len(maps) != 1:
-            QMessageBox.warning(self.iface.mainWindow(), self.tr("Invalid composer"), self.tr("The composer must have exactly one map item."))
-            self.__setUiEnabled(False)
-            return
-
-        self.__setUiEnabled(True)
-
-        self.composerView = composerView
-        self.mapitem = maps[0]
-        self.dialogui.spinBoxScale.setValue(self.iface.mapCanvas().scale() / 2)
-        self.__createRubberBand()
-        self.createObjects()
-        if not self.dialogui.gridGB.isCollapsed():
-            self.dialogui.gridGB.setCollapsed(True)
-
-    def __generateComposer(self):
-        for composer in self.iface.activeComposers():
-            if composer != "None" and composer.composerWindow():
-                cur = composer.composerWindow().windowTitle()
-                if cur == "coordinate_model_origin":
-                    self.composerView = self.iface.duplicateComposer(composer, "coordinate_model")
-                    self.composerView.composerWindow().hide()
-                    composer = self.composerView
-                    break
-
-        try:
-            maps = composer.composition().composerMapItems()
-        except:
-            # composerMapItems is not available with PyQt4 < 4.8.4
-            maps = []
-            for item in composer.composition().items():
-                if isinstance(item, QgsComposerMap):
-                    maps.append(item)
-
-        self.mapitem = maps[0]
-        scale = self.dialogui.spinBoxScale.value()
-        if scale == 1:
-            self.dialogui.spinBoxScale.setValue(self.iface.mapCanvas().scale() / 2)
-            scale = self.dialogui.spinBoxScale.value()
-        scale = float(scale)
-
-        xleft = float(self.dialogui.xleftLE.text())
-        ytop = float(self.dialogui.ytopLE.text())
-        xright = float(self.dialogui.xrightLE.text())
-        ybottom = float(self.dialogui.ybottomLE.text())
-
-        mmoldrectwidth = self.mapitem.rect().width()
-        mmoldrectheight = self.mapitem.rect().height()
-
-        widthdiff = ((xright - xleft) / scale * 1000.0) - mmoldrectwidth
-        heightdiff = ((ytop - ybottom) / scale * 1000.0) - mmoldrectheight
-
-        self.mapitem.resize(widthdiff, heightdiff)
-        self.mapitem.setNewScale(scale)
-        self.mapitem.setNewExtent(QgsRectangle(xleft, ybottom, xright, ytop))
-        newmapwidthdiff = self.mapitem.rect().width() - mmoldrectwidth
-        newmapheightdiff = self.mapitem.rect().height() - mmoldrectheight
-
-        mapwidthchange = self.composerView.composition().paperWidth() + newmapwidthdiff
-        mapheightchange = self.composerView.composition().paperHeight() + newmapheightdiff
-
-        self.composerView.composition().setPaperSize(mapwidthchange, mapheightchange)
-
-        self.__enableComposer()
-        self.__createRubberBand()
-        self.__changeBorder()
-        self.createObjects()
-        self.__updateView()
-
-    def __createRubberBand(self):
-        self.__cleanup()
-        extent = self.mapitem.extent()
-        center = self.iface.mapCanvas().extent().center()
-        self.corner = QPointF(center.x() - 0.5 * extent.width(), center.y() - 0.5 * extent.height())
-        self.rect = QRectF(self.corner.x(), self.corner.y(), extent.width(), extent.height())
-
-        self.rubberband = QgsRubberBand(self.iface.mapCanvas(), QGis.Polygon)
-        self.rubberband.setToCanvasRectangle(self.__canvasRect(self.rect))
-        self.rubberband.setColor(QColor(127, 127, 255, 127))
-
-        self.pressPos = None
-
-    def __cleanup(self):
-        if self.rubberband:
-            self.iface.mapCanvas().scene().removeItem(self.rubberband)
-        if self.oldrubberband:
-            self.iface.mapCanvas().scene().removeItem(self.oldrubberband)
-        self.rubberband = None
-        self.oldrubberband = None
-        self.pressPos = None
-
     def canvasPressEvent(self, e):
-        if not self.rubberband:
+        if not self.rubberband or not self.fixedSizeMode:
             return
         r = self.__canvasRect(self.rect)
         if e.button() == Qt.LeftButton and self.__canvasRect(self.rect).contains(e.pos()):
@@ -441,11 +204,222 @@ class PrintTool(QgsMapTool):
             self.oldrubberband = None
             self.mapitem.setNewExtent(QgsRectangle(self.rect))
 
+    def __setupGrid(self):
+        if not self.mapitem:
+            return
+        if self.dialogui.groupBox_grid.isCollapsed():
+            self.mapitem.setGridEnabled(False)
+        else:
+            crs, format = self.dialogui.comboBox_crs.itemData(self.dialogui.comboBox_crs.currentIndex()).split(",")
+            self.mapitem.setGridEnabled(True)
+            self.grid.setCrs(QgsCoordinateReferenceSystem(crs))
+            if format == '0':
+                self.mapitem.setGridAnnotationFormat(0)
+                self.grid.setAnnotationPrecision(5)
+            elif format == 'second':
+                self.grid.setAnnotationPrecision(1)
+                self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinuteSecond)
+            elif format == 'minute':
+                self.grid.setAnnotationPrecision(3)
+                self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinute)
+            elif format == 'MGRS':
+                self.grid.setAnnotationFormat(QgsComposerMapGrid.MGRS)
+                self.grid.setAnnotationPrecision(0)
+            elif format == 'UTM':
+                self.grid.setAnnotationFormat(QgsComposerMapGrid.UTM)
+                self.grid.setAnnotationPrecision(0)
+
+            if crs != "EPSG:4326":
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.HideAll, QgsComposerMapGrid.Top)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.HideAll, QgsComposerMapGrid.Right)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Bottom)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Left)
+                self.grid.setAnnotationPrecision(0)
+            else:
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Top)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Right)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Bottom)
+                self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Left)
+
+            interval = round(self.rect.width() / 1000) * 100
+            self.dialogui.spinBox_intervalx.setValue(interval)
+            self.dialogui.spinBox_intervaly.setValue(interval)
+
+        self.__updateView()
+
+    def __showCartoucheDialog(self):
+        self.cartouchedialog.exec_()
+
+    def __intervalXChanged(self, value):
+        self.mapitem.setGridIntervalX(value)
+        self.__updateView()
+
+    def __intervalYChanged(self, value):
+        self.mapitem.setGridIntervalY(value)
+        self.__updateView()
+
+    def __titleChanged(self, arg):
+        self.title.setText(unicode(self.dialogui.lineEdit_title.text()))
+        self.__updateView()
+
+    def __toggleGridAnnotations(self, active):
+        self.mapitem.setShowGridAnnotation(active)
+        self.__updateView()
+
+    def __toggleLegend(self, active):
+        self.legend.setVisible(active)
+        self.__updateView()
+
+    def __toggleScalebar(self, active):
+        self.scalebar.setVisible(active)
+        self.__updateView()
+
+    def __toggleMapCartouche(self, active):
+        self.dialogui.button_mapCartouche.setEnabled(active)
+        self.mapcartouche.setVisibility(active)
+        self.__updateView()
+
+    def __changeScale(self):
+        if self.fixedSizeMode:
+            self.mapitem.setNewScale(self.dialogui.spinBox_scale.value())
+            self.__createRubberBand()
+        else:
+            self.__generateComposer()
+
+    def __updateView(self):
+        self.composerView.composition().update()
+        self.dialogui.previewGraphic.update()
+
+    def __reloadComposers(self, changedView=None, added=False):
+        self.cartouchedialog = None
+        self.dialogui.comboBox_composers.blockSignals(True)
+        prev = self.dialogui.comboBox_composers.currentText()
+        self.dialogui.comboBox_composers.clear()
+        active = 0
+        for composer in self.iface.activeComposers():
+            if (not changedView or added) and composer.composerWindow():
+                cur = composer.composerWindow().windowTitle()
+                self.dialogui.comboBox_composers.addItem(cur, composer)
+                if prev == cur:
+                    active = self.dialogui.comboBox_composers.count() - 1
+        # Ensure that changed signal is emitted
+        self.dialogui.comboBox_composers.setCurrentIndex(-1)
+        self.dialogui.comboBox_composers.blockSignals(False)
+        if self.dialogui.comboBox_composers.count() > 0:
+            self.__setUiEnabled(True)
+            self.dialogui.comboBox_composers.setCurrentIndex(active)
+        else:
+            self.__setUiEnabled(False)
+
+    def __selectComposer(self):
+        if not self.dialog.isVisible():
+            return
+
+        self.__clearRubberBand()
+        self.mapitem = None
+        try:
+            activeIndex = self.dialogui.comboBox_composers.currentIndex()
+            composerView = self.dialogui.comboBox_composers.itemData(activeIndex)
+            self.fixedSizeMode = composerView.composerWindow().windowTitle() != "custom_extent"
+        except:
+            self.__setUiEnabled(False)
+            return
+
+        try:
+            maps = composerView.composition().composerMapItems()
+        except:
+            # composerMapItems is not available with PyQt4 < 4.8.4
+            maps = []
+            for item in composerView.composition().items():
+                if isinstance(item, QgsComposerMap):
+                    maps.append(item)
+        if len(maps) != 1:
+            QMessageBox.warning(self.iface.mainWindow(), self.tr("Invalid composer"), self.tr("The composer must have exactly one map item."))
+            self.__setUiEnabled(False)
+            return
+
+        self.__setUiEnabled(True)
+
+        self.composerView = composerView
+        self.mapitem = maps[0]
+        self.__initComposer()
+
+    def __floatval(self, string):
+        try:
+            return float(string)
+        except:
+            return 0
+
+    def __generateComposer(self):
+        scale = self.dialogui.spinBox_scale.value()
+        xmin = self.__floatval(self.dialogui.lineedit_xmin.text())
+        ymin = self.__floatval(self.dialogui.lineedit_ymin.text())
+        xmax = self.__floatval(self.dialogui.lineedit_xmax.text())
+        ymax = self.__floatval(self.dialogui.lineedit_ymax.text())
+        border = self.dialogui.spinBox_border.value()
+        borderdelta = border - self.mapitem.x()
+
+        if xmin > xmax:
+            tmp = xmin
+            xmin = xmax
+            xmax = tmp
+
+        if ymin > ymax:
+            tmp = ymin
+            ymin = ymax
+            ymax = tmp
+
+        mapwidth = ((xmax - xmin) / scale * 1000.0)
+        mapheight = ((ymax - ymin) / scale * 1000.0)
+
+        self.mapitem.setSceneRect( QRectF(border, border, mapwidth, mapheight ) )
+        self.mapitem.setPos(border, border)
+        self.mapitem.setNewExtent(QgsRectangle(xmin, ymin, xmax, ymax))
+        self.mapitem.setNewScale(scale)
+        self.mapitem.updateItem()
+
+        newwidth = 2 * border + mapwidth
+        newheight = 2 * border + mapheight
+
+        for item in self.composerView.composition().items():
+            if item is not self.mapitem:
+                item.moveBy(borderdelta, borderdelta)
+
+        self.composerView.composition().setPaperSize(newwidth, newheight)
+        self.dialogui.label_paperSize.setText(self.tr("Paper size: %.2f cm x %.2f cm") % (newwidth / 10., newheight / 10.))
+
+        self.rect = QRectF(xmin, ymin, xmax - xmin, ymax - ymin)
+        self.__createRubberBand()
+        self.__resizePreview()
+        self.__updateView()
+
+    def __createRubberBand(self):
+        self.__clearRubberBand()
+        extent = self.mapitem.extent()
+        center = self.iface.mapCanvas().extent().center()
+        self.corner = QPointF(center.x() - 0.5 * extent.width(), center.y() - 0.5 * extent.height())
+        self.rect = QRectF(self.corner.x(), self.corner.y(), extent.width(), extent.height())
+
+        self.rubberband = QgsRubberBand(self.iface.mapCanvas(), QGis.Polygon)
+        self.rubberband.setToCanvasRectangle(self.__canvasRect(self.rect))
+        self.rubberband.setColor(QColor(127, 127, 255, 127))
+
+        self.pressPos = None
+
+    def __clearRubberBand(self):
+        if self.rubberband:
+            self.iface.mapCanvas().scene().removeItem(self.rubberband)
+        if self.oldrubberband:
+            self.iface.mapCanvas().scene().removeItem(self.oldrubberband)
+        self.rubberband = None
+        self.oldrubberband = None
+        self.pressPos = None
+
     def __canvasRect(self, rect):
         mtp = self.iface.mapCanvas().mapSettings().mapToPixel()
         p1 = mtp.transform(QgsPoint(rect.left(), rect.top()))
         p2 = mtp.transform(QgsPoint(rect.right(), rect.bottom()))
-        return QRect(p1.x(), p1.y(), p2.x() - p1.x(), p2.y() - p1.y())
+        return QRect(int(p1.x()), int(p1.y()), int(p2.x() - p1.x()), int(p2.y() - p1.y()))
 
     def __export(self):
         settings = QSettings()
@@ -464,9 +438,6 @@ class PrintTool(QgsMapTool):
 
         settings.setValue("/print/lastfile", filename)
 
-        if self.populateCompositionFz:
-            self.populateCompositionFz(self.composerView.composition())
-
         success = False
         if filename[-3:].lower() == u"pdf":
             success = self.composerView.composition().exportAsPDF(filename)
@@ -481,49 +452,27 @@ class PrintTool(QgsMapTool):
         composer = self.composerView.composerWindow()
         composer.on_mActionPrint_triggered()
 
-    def __reloadComposers(self, removed=None):
-        if hasattr(self, "composerView"):
-            if self.composerView == None:
-                return
-            elif self.composerView.composerWindow().windowTitle() == "coordinate_model":
-                return
-        if not self.dialog.isVisible():
-            # Make it less likely to hit the issue outlined in https://github.com/qgis/QGIS/pull/1938
-            return
-
-        self.dialogui.comboBox_composers.blockSignals(True)
-        prev = None
-        if self.dialogui.comboBox_composers.currentIndex() >= 0:
-            prev = self.dialogui.comboBox_composers.currentText()
-        self.dialogui.comboBox_composers.clear()
-        active = 0
-        for composer in self.iface.activeComposers():
-            if composer != removed and composer.composerWindow():
-                cur = composer.composerWindow().windowTitle()
-                if cur != "coordinate_model" and cur != "coordinate_model_origin":
-                    self.dialogui.comboBox_composers.addItem(cur, composer)
-                if prev == cur:
-                    active = self.dialogui.comboBox_composers.count() - 1
-        self.dialogui.comboBox_composers.setCurrentIndex(-1)  # Ensure setCurrentIndex below actually changes an index
-        self.dialogui.comboBox_composers.blockSignals(False)
-        if self.dialogui.comboBox_composers.count() > 0:
-            self.dialogui.comboBox_composers.setCurrentIndex(active)
-            self.__setUiEnabled(True)
-        else:
-            self.__setUiEnabled(False)
-
     def __setUiEnabled(self, enabled):
-        self.dialogui.titleLE.setEnabled(enabled)
-        self.dialogui.coordinateGB.setEnabled(enabled)
-        self.dialogui.spinBoxScale.setEnabled(enabled)
-        self.dialogui.caseButton.setEnabled(enabled)
+        self.dialogui.lineEdit_title.setEnabled(enabled)
+        self.dialogui.spinBox_scale.setEnabled(enabled)
+        self.dialogui.button_mapCartouche.setEnabled(self.dialogui.checkBox_mapCartouche.isChecked())
         self.dialogui.checkBox_legend.setEnabled(enabled)
         self.dialogui.checkBox_scalebar.setEnabled(enabled)
-        self.dialogui.gridGB.setEnabled(enabled)
+        self.dialogui.groupBox_grid.setEnabled(enabled)
         self.dialogui.comboBox_fileformat.setEnabled(enabled)
+        self.dialogui.checkBox_mapCartouche.setEnabled(enabled)
         self.printButton.setEnabled(enabled)
         self.advancedButton.setEnabled(enabled)
         self.exportButton.setEnabled(enabled)
+        self.__setVariableExtentUiVisibile(False)
+
+    def __setVariableExtentUiVisibile(self, visible):
+        self.dialogui.label_extent.setVisible(visible)
+        self.dialogui.widget_extent.setVisible(visible)
+        self.dialogui.label_border.setVisible(visible)
+        self.dialogui.spinBox_border.setVisible(visible)
+        self.dialogui.label_paperSize.setVisible(visible)
+        self.dialogui.button_updateLayout.setVisible(visible)
 
     def __advanced(self):
         composer = self.composerView.composerWindow()
