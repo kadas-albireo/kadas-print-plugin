@@ -62,6 +62,11 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_composers.currentIndexChanged.connect(self.__selectComposer)
         self.dialogui.lineEdit_title.textChanged.connect(self.__titleChanged)
         self.dialogui.spinBox_scale.valueChanged.connect(self.__changeScale)
+        self.dialogui.spinBox_border.valueChanged.connect(self.__generateComposer)
+        self.dialogui.lineedit_xmin.editingFinished.connect(self.__generateComposer)
+        self.dialogui.lineedit_xmax.editingFinished.connect(self.__generateComposer)
+        self.dialogui.lineedit_ymin.editingFinished.connect(self.__generateComposer)
+        self.dialogui.lineedit_ymax.editingFinished.connect(self.__generateComposer)
         self.dialogui.button_mapCartouche.clicked.connect(self.__showCartoucheDialog)
         self.dialogui.comboBox_crs.currentIndexChanged.connect(self.__setupGrid)
         self.dialogui.checkBox_gridAnnotations.toggled.connect(self.__toggleGridAnnotations)
@@ -73,10 +78,10 @@ class PrintTool(QgsMapTool):
         self.exportButton.clicked.connect(self.__export)
         self.printButton.clicked.connect(self.__print)
         self.advancedButton.clicked.connect(self.__advanced)
-        self.dialogui.button_updateLayout.clicked.connect(self.__generateComposer)
         self.dialog.finished.connect(lambda: self.setToolEnabled(False))
         self.dialogui.groupBox_grid.collapsedStateChanged.connect(self.__setupGrid)
         self.iface.mapCanvas().mapCanvasRefreshed.connect(self.__updateMap)
+        self.iface.mapCanvas().mapUnitsChanged.connect(self.__mapUnitsChanged)
 
         self.__setUiEnabled(False)
 
@@ -92,6 +97,14 @@ class PrintTool(QgsMapTool):
             self.mapitem.cache()
             self.mapitem.updateItem()
 
+    def __mapUnitsChanged(self):
+        if not self.fixedSizeMode and self.iface.mapCanvas().mapSettings().mapUnits() != QGis.Meters:
+            self.__setUiEnabled(False)
+            self.dialogui.label_unitWarning.setVisible(True)
+        elif self.dialogui.label_unitWarning.isVisible():
+            self.__setUiEnabled(True)
+            self.__initComposer()
+
     def __initComposer(self):
         self.title = self.composerView.composition().getComposerItemById("title")
         self.legend = self.composerView.composition().getComposerItemById("legend")
@@ -100,16 +113,29 @@ class PrintTool(QgsMapTool):
         self.grid = self.mapitem.grid()
         self.cartouchedialog = CartoucheDialog(self.composerView.composition(), self.dialog)
 
-        self.__setVariableExtentUiVisibile(not self.fixedSizeMode)
+        self.mapitem.setPreviewMode(1)
         if not self.fixedSizeMode:
             extent = self.iface.mapCanvas().extent()
+            self.dialogui.spinBox_scale.blockSignals(True)
+            self.dialogui.spinBox_scale.setValue(self.iface.mapCanvas().scale())
+            self.dialogui.spinBox_scale.blockSignals(False)
             self.dialogui.lineedit_xmin.setText(str(round(extent.xMinimum())))
             self.dialogui.lineedit_xmax.setText(str(round(extent.xMaximum())))
             self.dialogui.lineedit_ymin.setText(str(round(extent.yMinimum())))
             self.dialogui.lineedit_ymax.setText(str(round(extent.yMaximum())))
-        self.dialogui.spinBox_scale.setValue(self.iface.mapCanvas().scale())
-        self.mapitem.setPreviewMode(0)
+            self.__generateComposer()
+        else:
+            extent = self.iface.mapCanvas().extent()
+            extentheight = self.mapitem.rect().height() / self.mapitem.rect().width() * extent.width()
+            center = extent.center().y()
+            extent.setYMinimum(center - extentheight / 2.)
+            extent.setYMaximum(center + extentheight / 2.)
+            self.mapitem.setNewExtent(extent)
+            self.dialogui.spinBox_scale.blockSignals(True)
+            self.dialogui.spinBox_scale.setValue(self.mapitem.scale())
+            self.dialogui.spinBox_scale.blockSignals(False)
         self.mapitem.cache()
+        self.mapitem.updateItem()
         self.dialogui.previewGraphic.setScene(self.composerView.composition())
         self.__resizePreview()
         self.__updateView()
@@ -242,8 +268,14 @@ class PrintTool(QgsMapTool):
                 self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Left)
 
             interval = round(self.rect.width() / 1000) * 100
+            self.dialogui.spinBox_intervalx.blockSignals(True)
             self.dialogui.spinBox_intervalx.setValue(interval)
+            self.dialogui.spinBox_intervalx.blockSignals(False)
+            self.dialogui.spinBox_intervaly.blockSignals(True)
             self.dialogui.spinBox_intervaly.setValue(interval)
+            self.dialogui.spinBox_intervaly.blockSignals(False)
+            self.mapitem.setGridIntervalX(interval)
+            self.mapitem.setGridIntervalY(interval)
 
         self.__updateView()
 
@@ -325,6 +357,11 @@ class PrintTool(QgsMapTool):
             self.__setUiEnabled(False)
             return
 
+        if not self.fixedSizeMode and self.iface.mapCanvas().mapSettings().mapUnits() != QGis.Meters:
+            self.__setUiEnabled(False)
+            self.dialogui.label_unitWarning.setVisible(True)
+            return
+
         try:
             maps = composerView.composition().composerMapItems()
         except:
@@ -344,18 +381,16 @@ class PrintTool(QgsMapTool):
         self.mapitem = maps[0]
         self.__initComposer()
 
-    def __floatval(self, string):
-        try:
-            return float(string)
-        except:
-            return 0
-
     def __generateComposer(self):
         scale = self.dialogui.spinBox_scale.value()
-        xmin = self.__floatval(self.dialogui.lineedit_xmin.text())
-        ymin = self.__floatval(self.dialogui.lineedit_ymin.text())
-        xmax = self.__floatval(self.dialogui.lineedit_xmax.text())
-        ymax = self.__floatval(self.dialogui.lineedit_ymax.text())
+        try:
+            xmin = float(self.dialogui.lineedit_xmin.text())
+            ymin = float(self.dialogui.lineedit_ymin.text())
+            xmax = float(self.dialogui.lineedit_xmax.text())
+            ymax = float(self.dialogui.lineedit_ymax.text())
+        except:
+            # One or more extent inputs empty
+            return
         border = self.dialogui.spinBox_border.value()
         borderdelta = border - self.mapitem.x()
 
@@ -419,7 +454,10 @@ class PrintTool(QgsMapTool):
         mtp = self.iface.mapCanvas().mapSettings().mapToPixel()
         p1 = mtp.transform(QgsPoint(rect.left(), rect.top()))
         p2 = mtp.transform(QgsPoint(rect.right(), rect.bottom()))
-        return QRect(int(p1.x()), int(p1.y()), int(p2.x() - p1.x()), int(p2.y() - p1.y()))
+        try:
+            return QRect(int(p1.x()), int(p1.y()), int(p2.x() - p1.x()), int(p2.y() - p1.y()))
+        except:
+            return QRect(0, 0, 0, 0)
 
     def __export(self):
         settings = QSettings()
@@ -464,7 +502,8 @@ class PrintTool(QgsMapTool):
         self.printButton.setEnabled(enabled)
         self.advancedButton.setEnabled(enabled)
         self.exportButton.setEnabled(enabled)
-        self.__setVariableExtentUiVisibile(False)
+        self.__setVariableExtentUiVisibile(enabled and not self.fixedSizeMode)
+        self.dialogui.label_unitWarning.setVisible(False)
 
     def __setVariableExtentUiVisibile(self, visible):
         self.dialogui.label_extent.setVisible(visible)
@@ -472,7 +511,6 @@ class PrintTool(QgsMapTool):
         self.dialogui.label_border.setVisible(visible)
         self.dialogui.spinBox_border.setVisible(visible)
         self.dialogui.label_paperSize.setVisible(visible)
-        self.dialogui.button_updateLayout.setVisible(visible)
 
     def __advanced(self):
         composer = self.composerView.composerWindow()
