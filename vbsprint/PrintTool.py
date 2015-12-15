@@ -169,6 +169,7 @@ class PrintTool(QgsMapTool):
             self.__reloadComposers()
             self.iface.mapCanvas().setMapTool(self)
         else:
+            self.mapitem = None
             self.dialog.setVisible(False)
             self.__clearRubberBand()
             self.iface.mapCanvas().unsetMapTool(self)
@@ -324,6 +325,7 @@ class PrintTool(QgsMapTool):
 
     def __reloadComposers(self, changedView=None, added=False):
         self.cartouchedialog = None
+        self.mapitem = 0
         self.dialogui.comboBox_composers.blockSignals(True)
         prev = self.dialogui.comboBox_composers.currentText()
         self.dialogui.comboBox_composers.clear()
