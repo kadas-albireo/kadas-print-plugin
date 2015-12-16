@@ -30,6 +30,7 @@ class PrintTool(QgsMapTool):
         self.pressPos = None
         self.fixedSizeMode = True
         self.mapitem = None
+        self.printing = False
 
         self.dialog = QDialog(self.iface.mainWindow())
         self.dialogui = Ui_PrintDialog()
@@ -93,7 +94,7 @@ class PrintTool(QgsMapTool):
             pass
 
     def __updateMap(self):
-        if self.mapitem:
+        if self.mapitem and not self.printing:
             self.mapitem.cache()
             self.mapitem.updateItem()
 
@@ -473,6 +474,8 @@ class PrintTool(QgsMapTool):
         if not filename:
             return
 
+        self.printing = True
+
         # Ensure output filename has correct extension
         filename = os.path.splitext(filename)[0] + "." + self.dialogui.comboBox_fileformat.currentText().lower()
 
@@ -487,6 +490,8 @@ class PrintTool(QgsMapTool):
                 success = image.save(filename)
         if not success:
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Print Failed"), self.tr("Failed to print the composition."))
+
+        self.printing = False
 
     def __print(self):
         composer = self.composerView.composerWindow()
