@@ -13,17 +13,17 @@ LRELEASE = lrelease-qt4
 # translation
 SOURCES = \
 	__init__.py \
-	PrintPlugin.py PrintTool.py    
+	PrintPlugin.py PrintTool.py
 
 PLUGINNAME = vbsprint
 
 PY_FILES = \
 	__init__.py \
-	PrintPlugin.py PrintTool.py    
+	PrintPlugin.py PrintTool.py
 
-UI_FILES = ui/printdialog.ui ui/casedialog.ui
+UI_FILES = ui/printdialog.ui ui/cartouchedialog.ui
 
-COMPILED_UI_FILES = ui/ui_printdialog.py ui/ui_casedialog.py
+COMPILED_UI_FILES = ui/ui_printdialog.py ui/ui_cartouchedialog.py
 
 EXTRAS = metadata.txt icons/icon.png
 
