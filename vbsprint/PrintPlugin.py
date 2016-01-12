@@ -25,6 +25,7 @@ class PrintPlugin(QObject):
         self.iface = iface
         self.pluginDir = os.path.dirname(__file__)
         self.tool = PrintTool(self.iface)
+        self.toolAction = None
 
         # Localize
         locale = QSettings().value("locale/userLocale")[0:2]
@@ -36,25 +37,27 @@ class PrintPlugin(QObject):
             QCoreApplication.installTranslator(self.translator)
 
     def initGui(self):
-        self.toolButton = QToolButton(self.iface.mapNavToolToolBar())
-        self.toolButton.setIcon(QIcon(":/plugins/print/icons/icon.png"))
-        self.toolButton.setText(self.tr(" Print"))
-        self.toolButton.setToolTip(self.tr(" Print"))
-        self.toolButton.setCheckable(True)
-        self.toolButton.setObjectName("vbsprintaction")
-        self.toolAction = self.iface.pluginToolBar().addWidget(self.toolButton)
-
-        self.toolButton.toggled.connect(self.__enableTool)
-        self.iface.mapCanvas().mapToolSet.connect(self.__onToolSet)
+        printAction = self.iface.findAction("mActionPrint")
+        if printAction:
+            printAction.setCheckable(True)
+            printAction.triggered.connect(self.__toggleTool)
+            self.tool.setAction(printAction)
+        else:
+            self.toolButton = QToolButton(self.iface.mapNavToolToolBar())
+            self.toolButton.setIcon(QIcon(":/plugins/print/icons/icon.png"))
+            self.toolButton.setText(self.tr(" Print"))
+            self.toolButton.setToolTip(self.tr(" Print"))
+            self.toolButton.setCheckable(True)
+            self.toolButton.setObjectName("vbsprintaction")
+            self.toolAction = self.iface.pluginToolBar().addWidget(self.toolButton)
+            self.tool.setButton(self.toolButton)
+            self.toolButton.toggled.connect(self.__toggleTool)
 
     def unload(self):
         self.tool.setToolEnabled(False)
         self.tool = None
-        self.iface.pluginToolBar().removeAction(self.toolAction)
+        if self.toolAction:
+            self.iface.pluginToolBar().removeAction(self.toolAction)
 
-    def __enableTool(self, active):
+    def __toggleTool(self, active):
         self.tool.setToolEnabled(active)
-
-    def __onToolSet(self, tool):
-        if tool != self.tool:
-            self.toolButton.setChecked(False)

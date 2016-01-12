@@ -166,12 +166,12 @@ class PrintTool(QgsMapTool):
 
     def setToolEnabled(self, enabled):
         if enabled:
-            self.dialog.setVisible(True)
+            self.dialog.show()
             self.__reloadComposers()
             self.iface.mapCanvas().setMapTool(self)
         else:
             self.mapitem = None
-            self.dialog.setVisible(False)
+            self.dialog.hide()
             self.__clearRubberBand()
             self.iface.mapCanvas().unsetMapTool(self)
 
