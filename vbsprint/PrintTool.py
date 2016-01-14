@@ -475,6 +475,9 @@ class PrintTool(QgsMapTool):
             return
 
         self.printing = True
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        self.dialogui.previewGraphic.setUpdatesEnabled(False)
+        self.dialog.setEnabled(False)
 
         # Ensure output filename has correct extension
         filename = os.path.splitext(filename)[0] + "." + self.dialogui.comboBox_fileformat.currentText().lower()
@@ -491,6 +494,9 @@ class PrintTool(QgsMapTool):
         if not success:
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Print Failed"), self.tr("Failed to print the composition."))
 
+        self.dialog.setEnabled(True)
+        self.dialogui.previewGraphic.setUpdatesEnabled(True)
+        QApplication.restoreOverrideCursor()
         self.printing = False
 
     def __print(self):
