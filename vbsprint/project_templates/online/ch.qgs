@@ -1234,6 +1234,9 @@
       <Ellipsoid type="QString">WGS84</Ellipsoid>
     </Measure>
     <WMSPrecision type="QString">8</WMSPrecision>
+    <Heightmap>
+      <layer type="QString">swissALTI3D_5m20160125172215330</layer>
+    </Heightmap>
     <WFSTLayers>
       <Insert type="QStringList"/>
       <Update type="QStringList"/>
