@@ -475,7 +475,7 @@ class PrintTool(QgsMapTool):
         filename = QFileDialog.getSaveFileName(
             self.iface.mainWindow(),
             self.tr("Print Composition"),
-            settings.value("/print/lastfile", ""),
+            settings.value("/print/lastfile", QDir.homePath()),
             format
         )
         if not filename:
