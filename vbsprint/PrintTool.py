@@ -56,6 +56,8 @@ class PrintTool(QgsMapTool):
         self.dialogui.lineedit_ymin.setValidator(QDoubleValidator())
         self.dialogui.lineedit_ymax.setValidator(QDoubleValidator())
 
+        self.dialogui.checkBox_gridAnnotations.setChecked(True)
+
         self.dialogui.previewGraphic.resizeEvent = self.__resizePreview
 
         self.iface.composerAdded.connect(lambda view: self.__reloadComposers(view, True))
