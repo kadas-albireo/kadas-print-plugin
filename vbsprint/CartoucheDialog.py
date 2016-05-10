@@ -62,14 +62,7 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.coursetitleLE.setText(unicode(self.__getComposerItemText("coursetitle")))
         self.exercisetitleLE.setText(unicode(self.__getComposerItemText("exercisetitle")))
         self.documenttitleLE.setText(unicode(self.__getComposerItemText("documenttitle")))
-
-        date = self.__getComposerItemText("exercisedate")
-        if not date:
-            date = QDate(0,0,0)
-        else:
-            y,m,d = date.split('.')
-            date = QDate(int(y),int(m),int(d))
-        self.exercisedateLE.setDate(date)
+        self.exercisedateLE.setDate(QDate.currentDate())
 
 
     def updateComposition(self, x=None):
