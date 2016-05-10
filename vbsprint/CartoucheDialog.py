@@ -20,7 +20,6 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.setupUi(self)
         self.scene = scene
         self.mapcartoucheView.setInteractive(False)
-        self.cartouche = self.scene.getComposerItemById("mapcartouche")
 
         self.exercisedateLE.dateChanged.connect(self.updateComposition)
         self.classification1.currentIndexChanged.connect(self.updateComposition)
@@ -48,7 +47,9 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.updateUi()
 
     def __resizeEvent(self, ev):
-        self.mapcartoucheView.fitInView(self.cartouche, Qt.KeepAspectRatio)
+        cartouche = self.scene.getComposerItemById("mapcartouche")
+        if cartouche:
+            self.mapcartoucheView.fitInView(cartouche, Qt.KeepAspectRatio)
 
     def updateUi(self):
         self.codenameLE.setText(unicode(self.__getComposerItemText("codename")))
