@@ -98,10 +98,14 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
     def __setComposerItemText(self, itemid, text):
         item = self.scene.getComposerItemById(itemid)
         if item:
+            item.__class__ = QgsComposerLabel
+            dir(item)
             item.setText(text)
 
     def __getComposerItemText(self, itemid):
-        try:
-            return self.scene.getComposerItemById(itemid).text()
-        except:
-            return ""
+        item = self.scene.getComposerItemById(itemid)
+        if item:
+            item.__class__ = QgsComposerLabel
+            dir(item)
+            return item.text()
+        return ""

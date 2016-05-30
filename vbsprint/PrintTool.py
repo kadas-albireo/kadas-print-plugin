@@ -108,8 +108,12 @@ class PrintTool(QgsMapTool):
             self.__setUiEnabled(True)
             self.__initComposer()
 
-    def __composerItem(self, id):
-        return self.composerView.composition().getComposerItemById(id)
+    def __composerItem(self, id, classtype):
+        item = self.composerView.composition().getComposerItemById(id)
+        if item:
+            item.__class__ = classtype
+            dir(item)
+        return item
 
     def __initComposer(self):
         self.grid = self.mapitem.grid()
@@ -143,17 +147,17 @@ class PrintTool(QgsMapTool):
         self.__updateView()
         self.__createRubberBand()
 
-        titleItem = self.__composerItem("title")
+        titleItem = self.__composerItem("title", QgsComposerLabel)
         if not titleItem:
             self.dialogui.lineEdit_title.setEnabled(False)
         else:
             titleItem.setText(self.dialogui.lineEdit_title.text())
-        legendItem = self.__composerItem("legend")
+        legendItem = self.__composerItem("legend", QgsComposerLegend)
         if not legendItem:
             self.dialogui.checkBox_legend.setEnabled(False)
         else:
             legendItem.setVisible(self.dialogui.checkBox_legend.isChecked())
-        scaleBarItem = self.__composerItem("scalebar")
+        scaleBarItem = self.__composerItem("scalebar", QgsComposerScaleBar)
         if not scaleBarItem:
             self.dialogui.checkBox_scalebar.setEnabled(False)
         else:
@@ -162,7 +166,7 @@ class PrintTool(QgsMapTool):
             self.dialogui.groupBox_grid.setEnabled(False)
         else:
             self.__setupGrid()
-        cartoucheItem = self.__composerItem("mapcartouche")
+        cartoucheItem = self.__composerItem("mapcartouche", QgsComposerItemGroup)
         if not cartoucheItem:
             self.dialogui.checkBox_mapCartouche.setEnabled(False)
         else:
@@ -305,7 +309,7 @@ class PrintTool(QgsMapTool):
         self.__updateView()
 
     def __titleChanged(self, arg):
-        titleItem = self.__composerItem("title")
+        titleItem = self.__composerItem("title", QgsComposerLabel)
         if titleItem:
             titleItem.setText(unicode(self.dialogui.lineEdit_title.text()))
             self.__updateView()
@@ -315,20 +319,20 @@ class PrintTool(QgsMapTool):
         self.__updateView()
 
     def __toggleLegend(self, active):
-        legendItem = self.__composerItem("legend")
+        legendItem = self.__composerItem("legend", QgsComposerLegend)
         if legendItem:
             legendItem.setVisible(active)
             self.__updateView()
 
     def __toggleScalebar(self, active):
-        scaleBarItem = self.__composerItem("scalebar")
+        scaleBarItem = self.__composerItem("scalebar", QgsComposerScaleBar)
         if scaleBarItem:
             scaleBarItem.setVisible(active)
             self.__updateView()
 
     def __toggleMapCartouche(self, active):
         self.dialogui.button_mapCartouche.setEnabled(active)
-        cartoucheItem = self.__composerItem("mapcartouche")
+        cartoucheItem = self.__composerItem("mapcartouche", QgsComposerItemGroup)
         if cartoucheItem:
             cartoucheItem.setVisibility(active)
         self.__updateView()
