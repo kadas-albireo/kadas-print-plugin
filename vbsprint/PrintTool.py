@@ -74,6 +74,7 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_crs.currentIndexChanged.connect(self.__setupGrid)
         self.dialogui.checkBox_gridAnnotations.toggled.connect(self.__toggleGridAnnotations)
         self.dialogui.checkBox_legend.toggled.connect(self.__toggleLegend)
+        self.dialogui.button_configureLegend.clicked.connect(lambda: self.__configureLegend())
         self.dialogui.checkBox_scalebar.toggled.connect(self.__toggleScalebar)
         self.dialogui.checkBox_mapCartouche.toggled.connect(self.__toggleMapCartouche)
         self.dialogui.spinBox_intervalx.valueChanged.connect(self.__intervalXChanged)
@@ -109,7 +110,7 @@ class PrintTool(QgsMapTool):
             self.__initComposer()
 
     def __composerItem(self, id, classtype):
-        item = self.composerView.composition().getComposerItemById(id)
+        item = self.composerView.composition().getComposerItemById(id) if self.composerView else None
         if item:
             item.__class__ = classtype
             dir(item)
@@ -177,6 +178,7 @@ class PrintTool(QgsMapTool):
         if enabled:
             self.dialog.show()
             self.__reloadComposers()
+            self.__configureLegend(False)
             self.iface.mapCanvas().setMapTool(self)
         else:
             self.mapitem = None
@@ -320,9 +322,78 @@ class PrintTool(QgsMapTool):
 
     def __toggleLegend(self, active):
         legendItem = self.__composerItem("legend", QgsComposerLegend)
+        self.dialogui.button_configureLegend.setEnabled(active)
         if legendItem:
             legendItem.setVisible(active)
             self.__updateView()
+
+    def __configureLegend(self, execDialog = True):
+        legendItem = self.__composerItem("legend", QgsComposerLegend)
+        if not legendItem:
+            return
+        model = legendItem.modelV2()
+
+        # Get previously displayed layers
+        prevLayers = {}
+        for layerNode in model.rootGroup().findLayers():
+            index = model.node2index(layerNode)
+            prevLayers[layerNode.layerId()] = model.rowCount(index) > 0
+
+        # Build list-widget of layers
+        layersList = QTableWidget(0, 2)
+        layersList.horizontalHeader().hide()
+        layersList.horizontalHeader().setStretchLastSection(True)
+        layersList.verticalHeader().hide()
+        layerReg = QgsMapLayerRegistry.instance()
+        for layerNode in QgsProject.instance().layerTreeRoot().findLayers():
+            row = layersList.rowCount()
+            layersList.insertRow(row)
+            layer = layerReg.mapLayer(layerNode.layerId())
+            item = QTableWidgetItem(layer.name())
+            item.setData(Qt.UserRole, layerNode.layerId())
+            layersList.setItem(row, 0, item)
+            combo = QComboBox()
+            combo.addItems([self.tr("Hidden"), self.tr("Visible without layer legend"), self.tr("Visible with layer legend")])
+            if layerNode.layerId() in prevLayers:
+                combo.setCurrentIndex(2 if prevLayers[layerNode.layerId()] == True else 1)
+            else:
+                combo.setCurrentIndex(0)
+            layersList.setCellWidget(row, 1, combo)
+        legendDialog = QDialog(self.dialog)
+        if execDialog:
+            legendDialog.resize(320, 240)
+            bbox = QDialogButtonBox(QDialogButtonBox.Ok|QDialogButtonBox.Cancel)
+            legendDialog.setWindowTitle(self.tr("Configure legend"))
+            legendDialog.setLayout(QVBoxLayout())
+            legendDialog.layout().addWidget(QLabel(self.tr("Select layers to display in legend:")))
+            legendDialog.layout().addWidget(layersList)
+            legendDialog.layout().addWidget(bbox)
+            bbox.accepted.connect(legendDialog.accept)
+            bbox.rejected.connect(legendDialog.reject)
+        if not execDialog or legendDialog.exec_() == QDialog.Accepted:
+            # Reset model
+            legendItem.setAutoUpdateModel(True)
+            legendItem.setAutoUpdateModel(False)
+            removeLayers = []
+            removeLegends = []
+            for i in range(0, layersList.rowCount()):
+                layerId = layersList.item(i, 0).data(Qt.UserRole)
+                comboIdx = layersList.cellWidget(i, 1).currentIndex()
+                if comboIdx == 0:
+                    removeLayers.append(layerId)
+                elif comboIdx == 1:
+                    removeLegends.append(layerId)
+            for layerNode in model.rootGroup().findLayers():
+                if layerNode.layerId() in removeLayers:
+                    index = model.node2index(layerNode)
+                    model.removeRow(index.row(), index.parent())
+                elif layerNode.layerId() in removeLegends:
+                    index = model.node2index(layerNode)
+                    if model.rowCount(index) > 0:
+                        layerNode.setCustomProperty("legend/node-order", "empty")
+                        model.refreshLayerLegend(layerNode)
+            legendItem.adjustBoxSize()
+            legendItem.update()
 
     def __toggleScalebar(self, active):
         scaleBarItem = self.__composerItem("scalebar", QgsComposerScaleBar)

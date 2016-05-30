@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_PrintDialog(object):
     def setupUi(self, PrintDialog):
         PrintDialog.setObjectName(_fromUtf8("PrintDialog"))
-        PrintDialog.resize(494, 670)
+        PrintDialog.resize(501, 670)
         icon = QtGui.QIcon.fromTheme(_fromUtf8("printer"))
         PrintDialog.setWindowIcon(icon)
         self.gridLayout = QtGui.QGridLayout(PrintDialog)
@@ -253,6 +253,10 @@ class Ui_PrintDialog(object):
         self.label_unitWarning.setWordWrap(True)
         self.label_unitWarning.setObjectName(_fromUtf8("label_unitWarning"))
         self.gridLayout.addWidget(self.label_unitWarning, 0, 0, 1, 2)
+        self.button_configureLegend = QtGui.QPushButton(PrintDialog)
+        self.button_configureLegend.setEnabled(False)
+        self.button_configureLegend.setObjectName(_fromUtf8("button_configureLegend"))
+        self.gridLayout.addWidget(self.button_configureLegend, 10, 1, 1, 1)
 
         self.retranslateUi(PrintDialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), PrintDialog.accept)
@@ -296,5 +300,6 @@ class Ui_PrintDialog(object):
         self.checkBox_mapCartouche.setText(_translate("PrintDialog", "Map cartouche", None))
         self.label_scale.setText(_translate("PrintDialog", "Scale:", None))
         self.label_unitWarning.setText(_translate("PrintDialog", "Only meter based coordinate systems are supported in variable extent mode.", None))
+        self.button_configureLegend.setText(_translate("PrintDialog", "Configure", None))
 
 from qgis.gui import QgsCollapsibleGroupBox
