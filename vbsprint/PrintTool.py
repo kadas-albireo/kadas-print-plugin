@@ -43,8 +43,8 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_fileformat.addItem("BMP", self.tr("BMP Image (*.bmp);;"))
         self.dialogui.comboBox_fileformat.addItem("PNG", self.tr("PNG Image (*.png);;"))
 
-        self.dialogui.comboBox_crs.addItem("LV03", "EPSG:21781,0")
         self.dialogui.comboBox_crs.addItem("LV95", "EPSG:2056,0")
+        self.dialogui.comboBox_crs.addItem("LV03", "EPSG:21781,0")
         self.dialogui.comboBox_crs.addItem("DD", "EPSG:4326,0")
         self.dialogui.comboBox_crs.addItem("DM", "EPSG:4326,minute")
         self.dialogui.comboBox_crs.addItem("DMS", "EPSG:4326,second")
@@ -287,15 +287,13 @@ class PrintTool(QgsMapTool):
             self.dialogui.spinBox_intervaly.setEnabled(showInterval)
             self.dialogui.label_intervaly.setEnabled(showInterval)
             if showInterval:
-                interval = round(self.rect.width() / 1000) * 100
+                # Get interval from composer
                 self.dialogui.spinBox_intervalx.blockSignals(True)
-                self.dialogui.spinBox_intervalx.setValue(interval)
+                self.dialogui.spinBox_intervalx.setValue(self.mapitem.gridIntervalX())
                 self.dialogui.spinBox_intervalx.blockSignals(False)
                 self.dialogui.spinBox_intervaly.blockSignals(True)
-                self.dialogui.spinBox_intervaly.setValue(interval)
+                self.dialogui.spinBox_intervaly.setValue(self.mapitem.gridIntervalY())
                 self.dialogui.spinBox_intervaly.blockSignals(False)
-                self.mapitem.setGridIntervalX(interval)
-                self.mapitem.setGridIntervalY(interval)
 
         self.__updateView()
 
