@@ -253,21 +253,21 @@ class PrintTool(QgsMapTool):
             self.mapitem.setGridEnabled(True)
             self.grid.setCrs(QgsCoordinateReferenceSystem(crs))
             if format == '0':
-                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected);
+                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
                 self.mapitem.setGridAnnotationFormat(0)
                 self.grid.setAnnotationPrecision(5)
             elif format == 'second':
-                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected);
+                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
                 self.grid.setAnnotationPrecision(1)
                 self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinuteSecond)
             elif format == 'minute':
-                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected);
+                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
                 self.grid.setAnnotationPrecision(3)
                 self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinute)
             elif format == 'MGRS':
-                self.grid.setGridCrsType(QgsComposerMapGrid.CrsMGRS);
+                self.grid.setGridCrsType(QgsComposerMapGrid.CrsMGRS)
             elif format == 'UTM':
-                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUTM);
+                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUTM)
 
             if crs != "EPSG:4326":
                 self.grid.setAnnotationDisplay(QgsComposerMapGrid.HideAll, QgsComposerMapGrid.Top)
@@ -287,15 +287,15 @@ class PrintTool(QgsMapTool):
             self.dialogui.spinBox_intervaly.setEnabled(showInterval)
             self.dialogui.label_intervaly.setEnabled(showInterval)
             if showInterval:
-              interval = round(self.rect.width() / 1000) * 100
-              self.dialogui.spinBox_intervalx.blockSignals(True)
-              self.dialogui.spinBox_intervalx.setValue(interval)
-              self.dialogui.spinBox_intervalx.blockSignals(False)
-              self.dialogui.spinBox_intervaly.blockSignals(True)
-              self.dialogui.spinBox_intervaly.setValue(interval)
-              self.dialogui.spinBox_intervaly.blockSignals(False)
-              self.mapitem.setGridIntervalX(interval)
-              self.mapitem.setGridIntervalY(interval)
+                interval = round(self.rect.width() / 1000) * 100
+                self.dialogui.spinBox_intervalx.blockSignals(True)
+                self.dialogui.spinBox_intervalx.setValue(interval)
+                self.dialogui.spinBox_intervalx.blockSignals(False)
+                self.dialogui.spinBox_intervaly.blockSignals(True)
+                self.dialogui.spinBox_intervaly.setValue(interval)
+                self.dialogui.spinBox_intervaly.blockSignals(False)
+                self.mapitem.setGridIntervalX(interval)
+                self.mapitem.setGridIntervalY(interval)
 
         self.__updateView()
 
