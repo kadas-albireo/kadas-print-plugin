@@ -37,7 +37,10 @@ class PrintPlugin(QObject):
             QCoreApplication.installTranslator(self.translator)
 
     def initGui(self):
-        printAction = self.iface.findAction("mActionPrint")
+        try:
+            printAction = self.iface.findAction("mActionPrint")
+        except:
+            printAction = None
         if printAction:
             printAction.setCheckable(True)
             printAction.triggered.connect(self.__toggleTool)
