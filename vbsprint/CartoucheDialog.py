@@ -36,9 +36,6 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.exercisetitleLE.textEdited.connect(self.updateComposition)
         self.documenttitleLE.textEdited.connect(self.updateComposition)
         self.placedateLE.textEdited.connect(self.updateComposition)
-        self.bz1LE.textEdited.connect(self.updateComposition)
-        self.bz2LE.textEdited.connect(self.updateComposition)
-        self.bz3LE.textEdited.connect(self.updateComposition)
         self.exerciseGroupBox.toggled.connect(self.updateComposition)
 
         self.mapcartoucheView.setScene(self.scene)
@@ -73,9 +70,6 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.__setComposerItemText("supplementtitle", unicode(self.supplementtitleLE.text()))
         self.__setComposerItemText("scaletitle", unicode(self.scaletitleLE.text()))
         self.__setComposerItemText("placedate", unicode(self.placedateLE.text()))
-        self.__setComposerItemText("bz1", unicode(self.bz1LE.text()))
-        self.__setComposerItemText("bz2", unicode(self.bz2LE.text()))
-        self.__setComposerItemText("bz3", unicode(self.bz3LE.text()))
 
         if self.exerciseGroupBox.isChecked():
             self.__setComposerItemText("exercisedate", unicode(self.exercisedateLE.text()))
