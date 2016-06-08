@@ -83,7 +83,7 @@ class PrintTool(QgsMapTool):
         self.printButton.clicked.connect(self.__print)
         self.advancedButton.clicked.connect(self.__advanced)
         self.dialog.finished.connect(lambda: self.setToolEnabled(False))
-        self.dialogui.groupBox_grid.collapsedStateChanged.connect(self.__setupGrid)
+        self.dialogui.groupBox_grid.toggled.connect(self.__setupGrid)
         self.iface.mapCanvas().mapCanvasRefreshed.connect(self.__updateMap)
         self.iface.mapCanvas().mapUnitsChanged.connect(self.__mapUnitsChanged)
 
@@ -172,7 +172,7 @@ class PrintTool(QgsMapTool):
             self.dialogui.checkBox_mapCartouche.setEnabled(False)
         else:
             cartoucheItem.setVisibility(self.dialogui.checkBox_mapCartouche.isChecked())
-        self.mapitem.setGridEnabled(not self.dialogui.groupBox_grid.isCollapsed())
+        self.mapitem.setGridEnabled(self.dialogui.groupBox_grid.isChecked())
 
     def setToolEnabled(self, enabled):
         if enabled:
@@ -246,7 +246,7 @@ class PrintTool(QgsMapTool):
     def __setupGrid(self):
         if not self.mapitem:
             return
-        if self.dialogui.groupBox_grid.isCollapsed():
+        if not self.dialogui.groupBox_grid.isChecked():
             self.mapitem.setGridEnabled(False)
         else:
             crs, format = self.dialogui.comboBox_crs.itemData(self.dialogui.comboBox_crs.currentIndex()).split(",")

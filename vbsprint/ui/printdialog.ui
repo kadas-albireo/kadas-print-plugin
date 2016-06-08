@@ -166,9 +166,15 @@
     </widget>
    </item>
    <item row="7" column="0" colspan="2">
-    <widget class="QgsCollapsibleGroupBox" name="groupBox_grid">
+    <widget class="QGroupBox" name="groupBox_grid">
      <property name="title">
       <string>Grid</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="2">
@@ -421,14 +427,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QgsCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>qgis/gui.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>comboBox_composers</tabstop>
   <tabstop>lineEdit_title</tabstop>

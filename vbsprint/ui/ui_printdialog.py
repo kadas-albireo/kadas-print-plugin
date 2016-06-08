@@ -122,7 +122,9 @@ class Ui_PrintDialog(object):
         self.label_paperSize.setObjectName(_fromUtf8("label_paperSize"))
         self.gridLayout_2.addWidget(self.label_paperSize, 2, 0, 1, 5)
         self.gridLayout.addWidget(self.widget_extent, 4, 1, 1, 1)
-        self.groupBox_grid = QgsCollapsibleGroupBox(PrintDialog)
+        self.groupBox_grid = QtGui.QGroupBox(PrintDialog)
+        self.groupBox_grid.setCheckable(True)
+        self.groupBox_grid.setChecked(False)
         self.groupBox_grid.setObjectName(_fromUtf8("groupBox_grid"))
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox_grid)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
@@ -302,4 +304,3 @@ class Ui_PrintDialog(object):
         self.label_unitWarning.setText(_translate("PrintDialog", "Only meter based coordinate systems are supported in variable extent mode.", None))
         self.button_configureLegend.setText(_translate("PrintDialog", "Configure", None))
 
-from qgis.gui import QgsCollapsibleGroupBox
