@@ -110,11 +110,14 @@ class PrintTool(QgsMapTool):
             self.__initComposer()
 
     def __composerItem(self, id, classtype):
-        item = self.composerView.composition().getComposerItemById(id) if self.composerView else None
-        if item:
-            item.__class__ = classtype
-            dir(item)
-        return item
+        try:
+            item = self.composerView.composition().getComposerItemById(id) if self.composerView else None
+            if item:
+                item.__class__ = classtype
+                dir(item)
+            return item
+        except:
+            return None
 
     def __initComposer(self):
         self.grid = self.mapitem.grid()
