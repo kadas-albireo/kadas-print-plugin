@@ -1,8 +1,11 @@
-SOURCES += \
-    InstantPrintPlugin.py \
-    InstantPrintTool.py \
-    ui/ui_printdialog.py
+SOURCES += PrintPlugin.py \
+           CartoucheDialog.py \
+           ui/ui_printdialog.py \
+           ui/ui_cartouchedialog.py \
+           PrintTool.py
 
 
-TRANSLATIONS += i18n/instantprint_de.ts \
-                i18n/instantprint_it.ts
+
+TRANSLATIONS += i18n/print_de.ts \
+                i18n/print_it.ts \
+                i18n/print_fr.ts

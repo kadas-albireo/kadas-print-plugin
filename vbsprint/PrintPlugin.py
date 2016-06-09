@@ -21,11 +21,8 @@ import resources_rc
 class PrintPlugin(QObject):
     def __init__(self, iface):
         QObject.__init__(self)
-
         self.iface = iface
         self.pluginDir = os.path.dirname(__file__)
-        self.tool = PrintTool(self.iface)
-        self.toolAction = None
 
         # Localize
         locale = QSettings().value("locale/userLocale")[0:2]
@@ -35,6 +32,9 @@ class PrintPlugin(QObject):
             self.translator = QTranslator()
             self.translator.load(localePath)
             QCoreApplication.installTranslator(self.translator)
+
+        self.tool = PrintTool(self.iface)
+        self.toolAction = None
 
     def initGui(self):
         try:
