@@ -79,6 +79,7 @@ class PrintTool(QgsMapTool):
         self.dialogui.checkBox_mapCartouche.toggled.connect(self.__toggleMapCartouche)
         self.dialogui.spinBox_intervalx.valueChanged.connect(self.__intervalXChanged)
         self.dialogui.spinBox_intervaly.valueChanged.connect(self.__intervalYChanged)
+        self.dialogui.groupBox_grid.setChecked(True)
         self.exportButton.clicked.connect(self.__export)
         self.printButton.clicked.connect(self.__print)
         self.advancedButton.clicked.connect(self.__advanced)
