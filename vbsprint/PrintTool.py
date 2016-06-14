@@ -31,6 +31,7 @@ class PrintTool(QgsMapTool):
         self.fixedSizeMode = True
         self.mapitem = None
         self.printing = False
+        self.composerView = None
 
         self.dialog = QDialog(self.iface.mainWindow())
         self.dialogui = Ui_PrintDialog()
@@ -199,6 +200,7 @@ class PrintTool(QgsMapTool):
             self.iface.mapCanvas().setMapTool(self)
         else:
             self.mapitem = None
+            self.composerView = None
             self.dialog.hide()
             self.__clearRubberBand()
             self.iface.mapCanvas().unsetMapTool(self)
@@ -490,7 +492,12 @@ class PrintTool(QgsMapTool):
 
         self.__setUiEnabled(True)
 
+        if self.composerView:
+            self.composerView.composerViewHide.disconnect(self.__initComposer)
         self.composerView = composerView
+        self.composerView.composerViewHide.connect(self.__initComposer)
+        # Default to twice the screen resolution
+        self.composerView.composition().setPrintResolution(2 * QApplication.desktop().logicalDpiX())
         self.mapitem = maps[0]
         self.__initComposer()
 
@@ -637,4 +644,6 @@ class PrintTool(QgsMapTool):
 
     def __advanced(self):
         composer = self.composerView.composerWindow()
+        composer.setWindowModality(Qt.ApplicationModal)
         composer.showNormal()
+        composer.raise_()
