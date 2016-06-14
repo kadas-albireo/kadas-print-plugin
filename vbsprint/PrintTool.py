@@ -64,7 +64,7 @@ class PrintTool(QgsMapTool):
         self.iface.composerWillBeRemoved.connect(lambda view: self.__reloadComposers(view, False))
         self.dialogui.comboBox_composers.currentIndexChanged.connect(self.__selectComposer)
         self.dialogui.lineEdit_title.textChanged.connect(self.__titleChanged)
-        self.dialogui.spinBox_scale.valueChanged.connect(self.__changeScale)
+        self.dialogui.comboBox_scale.scaleChanged.connect(self.__changeScale)
         self.dialogui.spinBox_border.valueChanged.connect(self.__generateComposer)
         self.dialogui.lineedit_xmin.editingFinished.connect(self.__generateComposer)
         self.dialogui.lineedit_xmax.editingFinished.connect(self.__generateComposer)
@@ -126,9 +126,6 @@ class PrintTool(QgsMapTool):
         self.mapitem.setPreviewMode(1)
         if not self.fixedSizeMode:
             extent = self.iface.mapCanvas().extent()
-            self.dialogui.spinBox_scale.blockSignals(True)
-            self.dialogui.spinBox_scale.setValue(self.iface.mapCanvas().scale())
-            self.dialogui.spinBox_scale.blockSignals(False)
             self.dialogui.lineedit_xmin.setText(str(round(extent.xMinimum())))
             self.dialogui.lineedit_xmax.setText(str(round(extent.xMaximum())))
             self.dialogui.lineedit_ymin.setText(str(round(extent.yMinimum())))
@@ -141,15 +138,31 @@ class PrintTool(QgsMapTool):
             extent.setYMinimum(center - extentheight / 2.)
             extent.setYMaximum(center + extentheight / 2.)
             self.mapitem.setNewExtent(extent)
-            self.dialogui.spinBox_scale.blockSignals(True)
-            self.dialogui.spinBox_scale.setValue(self.mapitem.scale())
-            self.dialogui.spinBox_scale.blockSignals(False)
+        wmtsScales = []
+        refRes = 0.0254 / self.composerView.composition().printResolution()
+        resolutions = self.iface.mapCanvas().wmtsResolutions()
+        minDist = -1
+        bestScale = 1. / self.mapitem.scale()
+        if resolutions:
+            minDist = abs(1. / self.mapitem.scale() - refRes / resolutions[0])
+        for resolution in resolutions:
+            scale = refRes / resolution
+            dist = abs(1. / self.mapitem.scale() - scale)
+            if dist < minDist:
+                minDist = dist
+                bestScale = scale
+            wmtsScales.append(QgsScaleComboBox.toString(scale))
+        self.dialogui.comboBox_scale.updateScales(wmtsScales)
+        self.dialogui.comboBox_scale.blockSignals(True)
+        self.dialogui.comboBox_scale.setScale(bestScale)
+        self.dialogui.comboBox_scale.blockSignals(False)
         self.mapitem.cache()
         self.mapitem.updateItem()
         self.dialogui.previewGraphic.setScene(self.composerView.composition())
         self.__resizePreview()
         self.__updateView()
-        self.__createRubberBand()
+        self.__changeScale()
+
 
         titleItem = self.__composerItem("title", QgsComposerLabel)
         if not titleItem:
@@ -411,7 +424,7 @@ class PrintTool(QgsMapTool):
 
     def __changeScale(self):
         if self.fixedSizeMode:
-            self.mapitem.setNewScale(self.dialogui.spinBox_scale.value())
+            self.mapitem.setNewScale(1. / self.dialogui.comboBox_scale.scale())
             self.__createRubberBand()
         else:
             self.__generateComposer()
@@ -481,7 +494,7 @@ class PrintTool(QgsMapTool):
         self.__initComposer()
 
     def __generateComposer(self):
-        scale = self.dialogui.spinBox_scale.value()
+        scale = 1. / self.dialogui.comboBox_scale.scale()
         try:
             xmin = float(self.dialogui.lineedit_xmin.text())
             ymin = float(self.dialogui.lineedit_ymin.text())
@@ -601,7 +614,7 @@ class PrintTool(QgsMapTool):
 
     def __setUiEnabled(self, enabled):
         self.dialogui.lineEdit_title.setEnabled(enabled)
-        self.dialogui.spinBox_scale.setEnabled(enabled)
+        self.dialogui.comboBox_scale.setEnabled(enabled)
         self.dialogui.button_mapCartouche.setEnabled(self.dialogui.checkBox_mapCartouche.isChecked())
         self.dialogui.checkBox_legend.setEnabled(enabled)
         self.dialogui.checkBox_scalebar.setEnabled(enabled)
