@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="it" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.0" language="it">
 <context>
     <name>CartoucheDialog</name>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="142"/>
         <source>Map Cartouche</source>
-        <translation type="unfinished"></translation>
+        <translation>Cartiglio</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="143"/>
         <source>Exercise</source>
-        <translation type="unfinished"></translation>
+        <translation>Esercizio</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="144"/>
@@ -98,107 +99,107 @@
     <message>
         <location filename="../ui/ui_printdialog.py" line="283"/>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation>Stampa</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="284"/>
         <source>Border:</source>
-        <translation type="unfinished"></translation>
+        <translation>Margine:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="285"/>
         <source>Extent:</source>
-        <translation type="unfinished"></translation>
+        <translation>Estensione:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="286"/>
         <source> mm</source>
-        <translation type="unfinished"></translation>
+        <translation>mm</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="287"/>
         <source>X Max.:</source>
-        <translation type="unfinished"></translation>
+        <translation>X Max.:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="288"/>
         <source>X Min.:</source>
-        <translation type="unfinished"></translation>
+        <translation>X Min.:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="289"/>
         <source>Y Max.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Y Max.:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="290"/>
         <source>Y Min.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Y Min.:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="291"/>
         <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Reticolo</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="292"/>
         <source>Coordinate system:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistema di coordinate:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="293"/>
         <source>Interval X:</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervallo X:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="294"/>
         <source>Coordinate labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra coordinate</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="295"/>
         <source>Interval Y:</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervallo Y:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="296"/>
         <source>Layout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modello:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="297"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Titolo:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="298"/>
         <source>Scalebar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra della scala</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="299"/>
         <source>Legend</source>
-        <translation type="unfinished"></translation>
+        <translation>Legenda</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="300"/>
         <source>Edit map cartouche</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica cartiglio</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="302"/>
         <source>Map cartouche</source>
-        <translation type="unfinished"></translation>
+        <translation>Cartiglio</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="304"/>
         <source>Only meter based coordinate systems are supported in variable extent mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>La modalità ad estensione variabile è solamente disponibile per sistemi di coordinate metrici.</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="305"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Configura</translation>
     </message>
 </context>
 <context>
@@ -206,7 +207,7 @@
     <message>
         <location filename="../PrintPlugin.py" line="52"/>
         <source> Print</source>
-        <translation type="unfinished"></translation>
+        <translation>Stampa</translation>
     </message>
 </context>
 <context>
@@ -214,92 +215,92 @@
     <message>
         <location filename="../PrintTool.py" line="38"/>
         <source>Export</source>
-        <translation type="unfinished">Esporta</translation>
+        <translation>Esporta</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="39"/>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation>Stampa</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="40"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Avanzato</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="41"/>
         <source>PDF Document (*.pdf);;</source>
-        <translation type="unfinished">Documento PDF (*.pdf);;</translation>
+        <translation>Documento PDF (*.pdf);;</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="42"/>
         <source>JPG Image (*.jpg);;</source>
-        <translation type="unfinished">Immagine JPG (*.jpg);;</translation>
+        <translation>Immagine JPG (*.jpg);;</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="43"/>
         <source>BMP Image (*.bmp);;</source>
-        <translation type="unfinished">Immagine BMP (*.bmp);;</translation>
+        <translation>Immagine BMP (*.bmp);;</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="44"/>
         <source>PNG Image (*.png);;</source>
-        <translation type="unfinished">Immagine PNG (*.png);;</translation>
+        <translation>Immagine PNG (*.png);;</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="357"/>
         <source>Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Nascosto</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="357"/>
         <source>Visible without layer legend</source>
-        <translation type="unfinished"></translation>
+        <translation>Visibile, senza legenda del layer</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="357"/>
         <source>Visible with layer legend</source>
-        <translation type="unfinished"></translation>
+        <translation>Visible, con legenda del layer</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="367"/>
         <source>Configure legend</source>
-        <translation type="unfinished"></translation>
+        <translation>Configura legenda</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="369"/>
         <source>Select layers to display in legend:</source>
-        <translation type="unfinished"></translation>
+        <translation>Selezionare i layer da mostrare nella legenda:</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="473"/>
         <source>Invalid composer</source>
-        <translation type="unfinished">Composizione invalida</translation>
+        <translation>Composizione invalida</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="473"/>
         <source>The composer must have exactly one map item.</source>
-        <translation type="unfinished">La composizione deve contenere esattamente una mappa.</translation>
+        <translation>La composizione deve contenere esattamente una mappa.</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="523"/>
         <source>Paper size: %.2f cm x %.2f cm</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimensioni:%.2f cm x %.2f cm</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="564"/>
         <source>Print Composition</source>
-        <translation type="unfinished">Stampa composizione</translation>
+        <translation>Stampa composizione</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="591"/>
         <source>Print Failed</source>
-        <translation type="unfinished">Stampa non riuscita</translation>
+        <translation>Stampa non riuscita</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="591"/>
         <source>Failed to print the composition.</source>
-        <translation type="unfinished">La stampa della composizione non è riuscita.</translation>
+        <translation>La stampa della composizione non è riuscita.</translation>
     </message>
 </context>
 </TS>
