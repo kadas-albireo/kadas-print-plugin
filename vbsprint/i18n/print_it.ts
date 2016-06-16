@@ -16,72 +16,72 @@
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="144"/>
         <source>Course name</source>
-        <translation type="unfinished"></translation>
+        <translation>Designazione del corso</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="145"/>
         <source>Exercise name</source>
-        <translation type="unfinished"></translation>
+        <translation>Designazione dell&apos;esercizio</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="146"/>
         <source>Document name</source>
-        <translation type="unfinished"></translation>
+        <translation>Designazione del documento</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="154"/>
         <source>CLASSIFICATION</source>
-        <translation type="unfinished"></translation>
+        <translation>CLASSIFICAZIONE</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="155"/>
         <source>RESTRICTED</source>
-        <translation type="unfinished"></translation>
+        <translation>LIMITATO</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="156"/>
         <source>CONFIDENTIAL</source>
-        <translation type="unfinished"></translation>
+        <translation>CONFIDENZIALE</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="157"/>
         <source>SECRET</source>
-        <translation type="unfinished"></translation>
+        <translation>SEGRETO</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="151"/>
         <source>Exercise organisation</source>
-        <translation type="unfinished"></translation>
+        <translation>Organizzazione dell&apos;esercizio</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="152"/>
         <source>Annex name</source>
-        <translation type="unfinished"></translation>
+        <translation>Indicazione dell&apos;allegato</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="153"/>
         <source>Title of cartouche</source>
-        <translation type="unfinished"></translation>
+        <translation>Trascrizione dei cartigli</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="158"/>
         <source>Place, date</source>
-        <translation type="unfinished"></translation>
+        <translation>Luogo, data</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="159"/>
         <source>&quot;CODE NAME&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;NOME DI COPERTURA&quot;</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="160"/>
         <source>Unit</source>
-        <translation type="unfinished"></translation>
+        <translation>Designazione della truppa</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="161"/>
         <source>Scale information</source>
-        <translation type="unfinished"></translation>
+        <translation>Indicazione della scala</translation>
     </message>
 </context>
 <context>
@@ -89,12 +89,12 @@
     <message>
         <location filename="../ui/ui_printdialog.py" line="301"/>
         <source>File format:</source>
-        <translation type="unfinished">Formato:</translation>
+        <translation>Formato:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="303"/>
         <source>Scale:</source>
-        <translation type="unfinished">Scala:</translation>
+        <translation>Scala:</translation>
     </message>
     <message>
         <location filename="../ui/ui_printdialog.py" line="283"/>
