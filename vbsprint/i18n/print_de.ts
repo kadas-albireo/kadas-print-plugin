@@ -3,82 +3,82 @@
 <context>
     <name>CartoucheDialog</name>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="143"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="142"/>
         <source>Map Cartouche</source>
         <translation>Karten Kartusche</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="144"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="143"/>
         <source>Exercise</source>
         <translation>Übung</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="145"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="144"/>
         <source>Course name</source>
         <translation>Kursbezeichnung</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="146"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="145"/>
         <source>Exercise name</source>
         <translation>Übungsbezeichnung</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="147"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="146"/>
         <source>Document name</source>
         <translation>Dokumentname</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="155"/>
+        <location filename="../CartoucheDialog.py" line="28"/>
         <source>CLASSIFICATION</source>
         <translation>KLASSIFIZIERUNG</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="156"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="153"/>
         <source>RESTRICTED</source>
-        <translation>EINGESCHRÄNKT</translation>
+        <translation>INTERN</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="157"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="154"/>
         <source>CONFIDENTIAL</source>
         <translation>VERTRAULICH</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="158"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="155"/>
         <source>SECRET</source>
         <translation>GEHEIM</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="152"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="150"/>
         <source>Exercise organisation</source>
         <translation>Übungsorganisation</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="153"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="151"/>
         <source>Annex name</source>
         <translation>Beilagebezeichnung</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="154"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="152"/>
         <source>Title of cartouche</source>
         <translation>Kartuschentitel</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="159"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="156"/>
         <source>Place, date</source>
         <translation>Ort, Datum</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="160"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="157"/>
         <source>&quot;CODE NAME&quot;</source>
         <translation>&quot;DECKNAME&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="161"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="158"/>
         <source>Unit</source>
         <translation>Truppenbezeichnung</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="162"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="159"/>
         <source>Scale information</source>
         <translation>Massstabbezeichnung</translation>
     </message>
