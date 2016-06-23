@@ -23,7 +23,9 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
 
         self.exercisedateLE.dateChanged.connect(self.updateComposition)
         self.classification1.currentIndexChanged.connect(self.updateComposition)
+        self.classification1.lineEdit().setPlaceholderText(self.tr("CLASSIFICATION"))
         self.classification2.currentIndexChanged.connect(self.updateComposition)
+        self.classification2.lineEdit().setPlaceholderText(self.tr("CLASSIFICATION"))
         self.classification1.lineEdit().textEdited.connect(self.updateComposition)
         self.classification2.lineEdit().textEdited.connect(self.updateComposition)
         self.exerciseorganisationLE.textEdited.connect(self.updateComposition)

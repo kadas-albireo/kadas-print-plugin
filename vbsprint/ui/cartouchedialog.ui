@@ -84,11 +84,9 @@
            <property name="editable">
             <bool>true</bool>
            </property>
-           <item>
-            <property name="text">
-             <string>CLASSIFICATION</string>
-            </property>
-           </item>
+           <property name="currentIndex">
+            <number>-1</number>
+           </property>
            <item>
             <property name="text">
              <string>RESTRICTED</string>
@@ -157,11 +155,9 @@
         <property name="editable">
          <bool>true</bool>
         </property>
-        <item>
-         <property name="text">
-          <string>CLASSIFICATION</string>
-         </property>
-        </item>
+        <property name="currentIndex">
+         <number>-1</number>
+        </property>
         <item>
          <property name="text">
           <string>RESTRICTED</string>
@@ -180,10 +176,10 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch=""/>
+       <layout class="QHBoxLayout" name="horizontalLayout_4"/>
       </item>
       <item row="7" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_5" stretch=""/>
+       <layout class="QHBoxLayout" name="horizontalLayout_5"/>
       </item>
       <item row="1" column="1">
        <widget class="QLineEdit" name="placedateLE">
