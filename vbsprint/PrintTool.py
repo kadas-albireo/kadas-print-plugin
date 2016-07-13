@@ -464,7 +464,7 @@ class PrintTool(QgsMapTool):
         try:
             activeIndex = self.dialogui.comboBox_composers.currentIndex()
             composerView = self.dialogui.comboBox_composers.itemData(activeIndex)
-            self.fixedSizeMode = composerView.composerWindow().windowTitle() != "custom_extent"
+            self.fixedSizeMode = composerView.composerWindow().windowTitle() != "Custom"
         except:
             self.__setUiEnabled(False)
             return
