@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'cartouchedialog.ui'
+# Form implementation generated from reading ui file 'ui/cartouchedialog.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -130,7 +130,8 @@ class Ui_CartoucheDialog(object):
         CartoucheDialog.setTabOrder(self.exercisetitleLE, self.coursetitleLE)
         CartoucheDialog.setTabOrder(self.coursetitleLE, self.documenttitleLE)
         CartoucheDialog.setTabOrder(self.documenttitleLE, self.classification2)
-        CartoucheDialog.setTabOrder(self.classification2, self.placedateLE)
+        CartoucheDialog.setTabOrder(self.classification2, self.troopstitleLE)
+        CartoucheDialog.setTabOrder(self.troopstitleLE, self.placedateLE)
         CartoucheDialog.setTabOrder(self.placedateLE, self.codenameLE)
         CartoucheDialog.setTabOrder(self.codenameLE, self.cartouchecircumscriptionLE)
         CartoucheDialog.setTabOrder(self.cartouchecircumscriptionLE, self.supplementtitleLE)
