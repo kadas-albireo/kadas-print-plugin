@@ -142,7 +142,10 @@ class PrintTool(QgsMapTool):
             self.mapitem.setNewExtent(extent)
         wmtsScales = []
         refRes = 0.0254 / self.composerView.composition().printResolution()
-        resolutions = self.iface.mapCanvas().wmtsResolutions()
+        try:
+            resolutions = self.iface.mapCanvas().wmtsResolutions()
+        except:
+            resolutions = []
         minDist = -1
         bestScale = 1. / self.mapitem.scale()
         if resolutions:
@@ -171,6 +174,7 @@ class PrintTool(QgsMapTool):
             self.dialogui.lineEdit_title.setEnabled(False)
         else:
             titleItem.setText(self.dialogui.lineEdit_title.text())
+            titleItem.setVisible(not not titleItem.text())
         legendItem = self.__composerItem("legend", QgsComposerLegend)
         if not legendItem:
             self.dialogui.checkBox_legend.setEnabled(False)
@@ -271,22 +275,26 @@ class PrintTool(QgsMapTool):
             crs, format = self.dialogui.comboBox_crs.itemData(self.dialogui.comboBox_crs.currentIndex()).split(",")
             self.mapitem.setGridEnabled(True)
             self.grid.setCrs(QgsCoordinateReferenceSystem(crs))
-            if format == '0':
-                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
-                self.mapitem.setGridAnnotationFormat(0)
-                self.grid.setAnnotationPrecision(5)
-            elif format == 'second':
-                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
-                self.grid.setAnnotationPrecision(1)
-                self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinuteSecond)
-            elif format == 'minute':
-                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
-                self.grid.setAnnotationPrecision(3)
-                self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinute)
-            elif format == 'MGRS':
-                self.grid.setGridCrsType(QgsComposerMapGrid.CrsMGRS)
-            elif format == 'UTM':
-                self.grid.setGridCrsType(QgsComposerMapGrid.CrsUTM)
+            try:
+                if format == '0':
+                    self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
+                    self.mapitem.setGridAnnotationFormat(0)
+                    self.grid.setAnnotationPrecision(5)
+                elif format == 'second':
+                    self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
+                    self.grid.setAnnotationPrecision(1)
+                    self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinuteSecond)
+                elif format == 'minute':
+                    self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
+                    self.grid.setAnnotationPrecision(3)
+                    self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinute)
+                elif format == 'MGRS':
+                    self.grid.setGridCrsType(QgsComposerMapGrid.CrsMGRS)
+                elif format == 'UTM':
+                    self.grid.setGridCrsType(QgsComposerMapGrid.CrsUTM)
+            except:
+                # Ignore missing setGridCrsType method
+                pass
 
             self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Top)
             self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Right)
@@ -328,6 +336,7 @@ class PrintTool(QgsMapTool):
         titleItem = self.__composerItem("title", QgsComposerLabel)
         if titleItem:
             titleItem.setText(unicode(self.dialogui.lineEdit_title.text()))
+            titleItem.setVisible(not not titleItem.text())
             self.__updateView()
 
     def __toggleGridAnnotations(self, active):
