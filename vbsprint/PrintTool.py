@@ -39,6 +39,13 @@ class PrintTool(QgsMapTool):
         self.exportButton = self.dialogui.buttonBox.addButton(self.tr("Export"), QDialogButtonBox.ActionRole)
         self.printButton = self.dialogui.buttonBox.addButton(self.tr("Print"), QDialogButtonBox.ActionRole)
         self.advancedButton = self.dialogui.buttonBox.addButton(self.tr("Advanced"), QDialogButtonBox.HelpRole)
+
+        proxy = QSortFilterProxyModel(self.dialogui.comboBox_composers)
+        proxy.setSourceModel(self.dialogui.comboBox_composers.model())
+        self.dialogui.comboBox_composers.model().setParent(proxy)
+        self.dialogui.comboBox_composers.setModel(proxy)
+
+
         self.dialogui.comboBox_fileformat.addItem("PDF", self.tr("PDF Document (*.pdf);;"))
         self.dialogui.comboBox_fileformat.addItem("JPG", self.tr("JPG Image (*.jpg);;"))
         self.dialogui.comboBox_fileformat.addItem("BMP", self.tr("BMP Image (*.bmp);;"))
@@ -448,18 +455,19 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_composers.blockSignals(True)
         prev = self.dialogui.comboBox_composers.currentText()
         self.dialogui.comboBox_composers.clear()
-        active = 0
         for composer in self.iface.activeComposers():
             if (not changedView or added) and composer.composerWindow():
                 cur = composer.composerWindow().windowTitle()
                 self.dialogui.comboBox_composers.addItem(cur, composer)
-                if prev == cur:
-                    active = self.dialogui.comboBox_composers.count() - 1
         # Ensure that changed signal is emitted
         self.dialogui.comboBox_composers.setCurrentIndex(-1)
         self.dialogui.comboBox_composers.blockSignals(False)
         if self.dialogui.comboBox_composers.count() > 0:
             self.__setUiEnabled(True)
+            self.dialogui.comboBox_composers.model().sort(0)
+            active = self.dialogui.comboBox_composers.findText(prev)
+            if active == -1:
+              active = 0
             self.dialogui.comboBox_composers.setCurrentIndex(active)
         else:
             self.__setUiEnabled(False)
