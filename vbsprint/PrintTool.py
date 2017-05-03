@@ -596,10 +596,18 @@ class PrintTool(QgsMapTool):
     def __export(self):
         settings = QSettings()
         format = self.dialogui.comboBox_fileformat.itemData(self.dialogui.comboBox_fileformat.currentIndex())
+
+        # Ensure output filename has correct extension
+        filename = settings.value("/print/lastfile", "")
+        if filename:
+            filename = os.path.splitext(filename)[0] + "." + self.dialogui.comboBox_fileformat.currentText().lower()
+        else:
+            filename = QDir.homePath()
+
         filename = QFileDialog.getSaveFileName(
             self.iface.mainWindow(),
             self.tr("Print Composition"),
-            settings.value("/print/lastfile", QDir.homePath()),
+            filename,
             format
         )
         if not filename:
