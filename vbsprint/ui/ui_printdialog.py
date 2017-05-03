@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'printdialog.ui'
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created by: PyQt4 UI code generator 4.12
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -44,8 +44,9 @@ class Ui_PrintDialog(object):
         self.spinBox_border.setSizePolicy(sizePolicy)
         self.spinBox_border.setKeyboardTracking(False)
         self.spinBox_border.setDecimals(0)
-        self.spinBox_border.setMinimum(15.0)
+        self.spinBox_border.setMinimum(10.0)
         self.spinBox_border.setMaximum(1000.0)
+        self.spinBox_border.setProperty("value", 10.0)
         self.spinBox_border.setObjectName(_fromUtf8("spinBox_border"))
         self.gridLayout.addWidget(self.spinBox_border, 5, 1, 1, 1)
         self.widget_extent = QtGui.QWidget(PrintDialog)
