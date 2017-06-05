@@ -9,6 +9,7 @@
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtXml import *
 from qgis.core import *
 from qgis.gui import *
 
@@ -42,6 +43,11 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
 
         self.mapcartoucheView.setScene(self.scene)
         self.mapcartoucheView.resizeEvent = self.__resizeEvent
+
+        exportButton = self.buttonBox.addButton(self.tr("Export"), QDialogButtonBox.ActionRole)
+        importButton = self.buttonBox.addButton(self.tr("Import"), QDialogButtonBox.ActionRole)
+        exportButton.clicked.connect(self.__exportCartouche)
+        importButton.clicked.connect(self.__importCartouche)
 
         self.updateUi()
 
@@ -105,3 +111,97 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
             dir(item)
             return item.text()
         return ""
+
+
+    def __addTextElement(self, parent, element, text):
+        el = parent.ownerDocument().createElement(element)
+        el.appendChild(parent.ownerDocument().createTextNode(text))
+        parent.appendChild(el)
+
+    def __getElementText(self, parent, element, default=""):
+        try:
+            return parent.elementsByTagName(element).at(0).toElement().text()
+        except Exception as e:
+            return default
+
+    def __serializeCartouche(self):
+        doc = QDomDocument()
+        legend = doc.createElement("Legend")
+        doc.appendChild(legend)
+
+        self.__addTextElement(legend, "ExerciseInfoVisible", ("1" if self.exerciseGroupBox.isChecked() else "0"))
+        self.__addTextElement(legend, "ExerciseDate", self.exercisedateLE.date().toString("yyyy-MM-ddT00:00:00"))
+        self.__addTextElement(legend, "ExerciseCommandUnit", self.exerciseorganisationLE.text())
+        self.__addTextElement(legend, "ExerciseServiceContext", self.coursetitleLE.text())
+        self.__addTextElement(legend, "ExerciseClassification", self.classification1.lineEdit().text())
+        self.__addTextElement(legend, "ExerciseCodeName", self.exercisetitleLE.text())
+        self.__addTextElement(legend, "ExerciseDocumentRef", self.documenttitleLE.text())
+        self.__addTextElement(legend, "MissionClassification", self.classification2.lineEdit().text())
+        self.__addTextElement(legend, "MissionUnit", self.troopstitleLE.text())
+        self.__addTextElement(legend, "MissionLocation", self.placedateLE.text())
+        self.__addTextElement(legend, "MissionCodeName", self.codenameLE.text())
+        self.__addTextElement(legend, "PrintName", self.cartouchecircumscriptionLE.text())
+        self.__addTextElement(legend, "PrintAnnexRef", self.supplementtitleLE.text())
+        self.__addTextElement(legend, "PrintScaleRef", self.scaletitleLE.text())
+
+        return doc.toString()
+
+    def __deserializeCartouche(self, xmlstr):
+        doc = QDomDocument()
+        if not doc.setContent(xmlstr):
+            return False
+
+        legend = doc.documentElement()
+        if legend.nodeName() != "Legend":
+            return False
+
+        try:
+            self.exerciseGroupBox.setChecked(int(self.__getElementText(legend, "ExerciseInfoVisible", "0")))
+        except:
+            self.exerciseGroupBox.setChecked(False)
+
+        self.exercisedateLE.setDate(QDate.fromString(self.__getElementText(legend, "ExerciseDate"), "yyyy-MM-ddT00:00:00"))
+        self.exerciseorganisationLE.setText(self.__getElementText(legend, "ExerciseCommandUnit"))
+        self.coursetitleLE.setText(self.__getElementText(legend, "ExerciseServiceContext"))
+        self.classification1.lineEdit().setText(self.__getElementText(legend, "ExerciseClassification"))
+        self.exercisetitleLE.setText(self.__getElementText(legend, "ExerciseCodeName"))
+        self.documenttitleLE.setText(self.__getElementText(legend, "ExerciseDocumentRef"))
+        self.classification2.lineEdit().setText(self.__getElementText(legend, "MissionClassification"))
+        self.troopstitleLE.setText(self.__getElementText(legend, "MissionUnit"))
+        self.placedateLE.setText(self.__getElementText(legend, "MissionLocation"))
+        self.codenameLE.setText(self.__getElementText(legend, "MissionCodeName"))
+        self.cartouchecircumscriptionLE.setText(self.__getElementText(legend, "PrintName"))
+        self.supplementtitleLE.setText(self.__getElementText(legend, "PrintAnnexRef"))
+        self.scaletitleLE.setText(self.__getElementText(legend, "PrintScaleRef"))
+        return True
+
+    def __exportCartouche(self):
+        lastDir = QSettings().value("/UI/lastImportExportDir", ".")
+        filename = QFileDialog.getSaveFileName(self, self.tr("Export cartouche"), lastDir, self.tr("XML Files (*.xml);;"))
+        fileinfo = QFileInfo(filename)
+        QSettings().setValue("/UI/lastImportExportDir", fileinfo.absolutePath())
+
+        file = QFile(filename)
+        if not file.open(QIODevice.WriteOnly):
+            QMessageBox.critical(self, self.tr("Export failed"), self.tr("Unable to write to file."))
+
+        file.write(self.__serializeCartouche())
+
+    def __importCartouche(self):
+        lastDir = QSettings().value("/UI/lastImportExportDir", ".")
+        filename = QFileDialog.getOpenFileName(self, self.tr("Import cartouche"), lastDir, self.tr("XML Files (*.xml);;"))
+        fileinfo = QFileInfo(filename)
+        if not fileinfo.exists():
+            return
+
+        QSettings().setValue("/UI/lastImportExportDir", fileinfo.absolutePath())
+
+        file = QFile(filename)
+        if not file.open(QIODevice.ReadOnly):
+            QMessageBox.critical(self, self.tr("Import failed"), self.tr("Unable to read file."))
+
+        xmlstr = file.readAll()
+        if not self.__deserializeCartouche(xmlstr):
+            QMessageBox.critical(self, self.tr("Import failed"), self.tr("The file does not appear to contain valid cartouche data."))
+        else:
+            self.updateComposition()
