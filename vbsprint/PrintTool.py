@@ -330,6 +330,7 @@ class PrintTool(QgsMapTool):
 
     def __showCartoucheDialog(self):
         self.cartouchedialog.exec_()
+        self.cartouchedialog.storeInProject()
 
     def __intervalXChanged(self, value):
         self.mapitem.setGridIntervalX(value)

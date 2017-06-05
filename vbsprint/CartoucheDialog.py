@@ -22,6 +22,10 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.scene = scene
         self.mapcartoucheView.setInteractive(False)
 
+        xmlstr, ok = QgsProject.instance().readEntry("VBS-Print", "cartouche")
+        if ok:
+            self.__deserializeCartouche(xmlstr)
+
         self.exercisedateLE.dateChanged.connect(self.updateComposition)
         self.classification1.currentIndexChanged.connect(self.updateComposition)
         self.classification1.lineEdit().setPlaceholderText(self.tr("CLASSIFICATION"))
@@ -55,6 +59,9 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         cartouche = self.scene.getComposerItemById("mapcartouche")
         if cartouche:
             self.mapcartoucheView.fitInView(cartouche, Qt.KeepAspectRatio)
+
+    def storeInProject(self):
+        QgsProject.instance().writeEntry("VBS-Print", "cartouche", self.__serializeCartouche())
 
     def updateUi(self):
         self.codenameLE.setText(unicode(self.__getComposerItemText("codename")))
