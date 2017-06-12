@@ -22,18 +22,14 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.scene = scene
         self.mapcartoucheView.setInteractive(False)
 
-        self.classification1.addItem(self.tr("NONE"), "None")
         self.classification1.addItem(self.tr("RESTRICTED"), "Internal")
         self.classification1.addItem(self.tr("CONFIDENTIAL"), "Confidential")
         self.classification1.addItem(self.tr("SECRET"), "Secret")
-        self.classification1.addItem(self.tr("FOR EXERCISE"), "ForExercise")
         self.classification1.setCurrentIndex(-1)
 
-        self.classification2.addItem(self.tr("NONE"), "None")
         self.classification2.addItem(self.tr("RESTRICTED"), "Internal")
         self.classification2.addItem(self.tr("CONFIDENTIAL"), "Confidential")
         self.classification2.addItem(self.tr("SECRET"), "Secret")
-        self.classification2.addItem(self.tr("FOR EXERCISE"), "ForExercise")
         self.classification2.setCurrentIndex(-1)
 
         xmlstr, ok = QgsProject.instance().readEntry("VBS-Print", "cartouche")
@@ -149,8 +145,8 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         doc = QDomDocument()
         legend = doc.createElement("Legend")
         doc.appendChild(legend)
-        classification1 = self.classification1.itemData(self.classification1.findText(self.classification1.lineEdit().text())) or self.classification1.lineEdit().text()
-        classification2 = self.classification2.itemData(self.classification2.findText(self.classification2.lineEdit().text())) or self.classification2.lineEdit().text()
+        classification1 = self.classification1.itemData(self.classification1.findText(self.classification1.lineEdit().text())) or self.classification1.lineEdit().text() or "None"
+        classification2 = self.classification2.itemData(self.classification2.findText(self.classification2.lineEdit().text())) or self.classification2.lineEdit().text() or "None"
 
         self.__addTextElement(legend, "ExerciseInfoVisible", ("1" if self.exerciseGroupBox.isChecked() else "0"))
         self.__addTextElement(legend, "ExerciseDate", self.exercisedateLE.date().toString("yyyy-MM-ddT00:00:00"))
@@ -184,7 +180,11 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
             self.exerciseGroupBox.setChecked(False)
 
         classification1 = self.__getElementText(legend, "ExerciseClassification")
+        if classification1 == "None":
+            classification1 = ""
         classification2 = self.__getElementText(legend, "MissionClassification")
+        if classification2 == "None":
+            classification2 = ""
         classification1idx = self.classification1.findData(classification1)
         classification2idx = self.classification2.findData(classification2)
 
