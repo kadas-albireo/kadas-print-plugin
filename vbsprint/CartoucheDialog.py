@@ -22,6 +22,20 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.scene = scene
         self.mapcartoucheView.setInteractive(False)
 
+        self.classification1.addItem(self.tr("NONE"), "None")
+        self.classification1.addItem(self.tr("RESTRICTED"), "Internal")
+        self.classification1.addItem(self.tr("CONFIDENTIAL"), "Confidential")
+        self.classification1.addItem(self.tr("SECRET"), "Secret")
+        self.classification1.addItem(self.tr("FOR EXERCISE"), "ForExercise")
+        self.classification1.setCurrentIndex(-1)
+
+        self.classification2.addItem(self.tr("NONE"), "None")
+        self.classification2.addItem(self.tr("RESTRICTED"), "Internal")
+        self.classification2.addItem(self.tr("CONFIDENTIAL"), "Confidential")
+        self.classification2.addItem(self.tr("SECRET"), "Secret")
+        self.classification2.addItem(self.tr("FOR EXERCISE"), "ForExercise")
+        self.classification2.setCurrentIndex(-1)
+
         xmlstr, ok = QgsProject.instance().readEntry("VBS-Print", "cartouche")
         if ok:
             self.__deserializeCartouche(xmlstr)
@@ -135,15 +149,17 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         doc = QDomDocument()
         legend = doc.createElement("Legend")
         doc.appendChild(legend)
+        classification1 = self.classification1.itemData(self.classification1.findText(self.classification1.lineEdit().text())) or self.classification1.lineEdit().text()
+        classification2 = self.classification2.itemData(self.classification2.findText(self.classification2.lineEdit().text())) or self.classification2.lineEdit().text()
 
         self.__addTextElement(legend, "ExerciseInfoVisible", ("1" if self.exerciseGroupBox.isChecked() else "0"))
         self.__addTextElement(legend, "ExerciseDate", self.exercisedateLE.date().toString("yyyy-MM-ddT00:00:00"))
         self.__addTextElement(legend, "ExerciseCommandUnit", self.exerciseorganisationLE.text())
         self.__addTextElement(legend, "ExerciseServiceContext", self.coursetitleLE.text())
-        self.__addTextElement(legend, "ExerciseClassification", self.classification1.lineEdit().text())
+        self.__addTextElement(legend, "ExerciseClassification", classification1)
         self.__addTextElement(legend, "ExerciseCodeName", self.exercisetitleLE.text())
         self.__addTextElement(legend, "ExerciseDocumentRef", self.documenttitleLE.text())
-        self.__addTextElement(legend, "MissionClassification", self.classification2.lineEdit().text())
+        self.__addTextElement(legend, "MissionClassification", classification2)
         self.__addTextElement(legend, "MissionUnit", self.troopstitleLE.text())
         self.__addTextElement(legend, "MissionLocation", self.placedateLE.text())
         self.__addTextElement(legend, "MissionCodeName", self.codenameLE.text())
@@ -167,13 +183,24 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         except:
             self.exerciseGroupBox.setChecked(False)
 
+        classification1 = self.__getElementText(legend, "ExerciseClassification")
+        classification2 = self.__getElementText(legend, "MissionClassification")
+        classification1idx = self.classification1.findData(classification1)
+        classification2idx = self.classification2.findData(classification2)
+
         self.exercisedateLE.setDate(QDate.fromString(self.__getElementText(legend, "ExerciseDate"), "yyyy-MM-ddT00:00:00"))
         self.exerciseorganisationLE.setText(self.__getElementText(legend, "ExerciseCommandUnit"))
         self.coursetitleLE.setText(self.__getElementText(legend, "ExerciseServiceContext"))
-        self.classification1.lineEdit().setText(self.__getElementText(legend, "ExerciseClassification"))
+        if classification1idx >= 0:
+            self.classification1.setCurrentIndex(classification1idx)
+        else:
+            self.classification1.lineEdit().setText(classification1)
         self.exercisetitleLE.setText(self.__getElementText(legend, "ExerciseCodeName"))
         self.documenttitleLE.setText(self.__getElementText(legend, "ExerciseDocumentRef"))
-        self.classification2.lineEdit().setText(self.__getElementText(legend, "MissionClassification"))
+        if classification2idx >= 0:
+            self.classification2.setCurrentIndex(classification2idx)
+        else:
+            self.classification2.lineEdit().setText(classification2)
         self.troopstitleLE.setText(self.__getElementText(legend, "MissionUnit"))
         self.placedateLE.setText(self.__getElementText(legend, "MissionLocation"))
         self.codenameLE.setText(self.__getElementText(legend, "MissionCodeName"))

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/cartouchedialog.ui'
+# Form implementation generated from reading ui file 'cartouchedialog.ui'
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created by: PyQt4 UI code generator 4.12
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -63,9 +63,6 @@ class Ui_CartoucheDialog(object):
         self.classification1 = QtGui.QComboBox(self.frame)
         self.classification1.setEditable(True)
         self.classification1.setObjectName(_fromUtf8("classification1"))
-        self.classification1.addItem(_fromUtf8(""))
-        self.classification1.addItem(_fromUtf8(""))
-        self.classification1.addItem(_fromUtf8(""))
         self.gridLayout_3.addWidget(self.classification1, 1, 2, 1, 1)
         self.exerciseorganisationLE = QtGui.QLineEdit(self.frame)
         self.exerciseorganisationLE.setObjectName(_fromUtf8("exerciseorganisationLE"))
@@ -92,9 +89,6 @@ class Ui_CartoucheDialog(object):
         self.classification2 = QtGui.QComboBox(self.frame_2)
         self.classification2.setEditable(True)
         self.classification2.setObjectName(_fromUtf8("classification2"))
-        self.classification2.addItem(_fromUtf8(""))
-        self.classification2.addItem(_fromUtf8(""))
-        self.classification2.addItem(_fromUtf8(""))
         self.gridLayout_4.addWidget(self.classification2, 0, 1, 1, 1)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
@@ -145,15 +139,9 @@ class Ui_CartoucheDialog(object):
         self.coursetitleLE.setPlaceholderText(_translate("CartoucheDialog", "Course name", None))
         self.exercisetitleLE.setPlaceholderText(_translate("CartoucheDialog", "Exercise name", None))
         self.documenttitleLE.setPlaceholderText(_translate("CartoucheDialog", "Document name", None))
-        self.classification1.setItemText(0, _translate("CartoucheDialog", "RESTRICTED", None))
-        self.classification1.setItemText(1, _translate("CartoucheDialog", "CONFIDENTIAL", None))
-        self.classification1.setItemText(2, _translate("CartoucheDialog", "SECRET", None))
         self.exerciseorganisationLE.setPlaceholderText(_translate("CartoucheDialog", "Exercise organisation", None))
         self.supplementtitleLE.setPlaceholderText(_translate("CartoucheDialog", "Annex name", None))
         self.cartouchecircumscriptionLE.setPlaceholderText(_translate("CartoucheDialog", "Title of cartouche", None))
-        self.classification2.setItemText(0, _translate("CartoucheDialog", "RESTRICTED", None))
-        self.classification2.setItemText(1, _translate("CartoucheDialog", "CONFIDENTIAL", None))
-        self.classification2.setItemText(2, _translate("CartoucheDialog", "SECRET", None))
         self.placedateLE.setPlaceholderText(_translate("CartoucheDialog", "Place, date", None))
         self.codenameLE.setPlaceholderText(_translate("CartoucheDialog", "\"CODE NAME\"", None))
         self.troopstitleLE.setPlaceholderText(_translate("CartoucheDialog", "Unit", None))

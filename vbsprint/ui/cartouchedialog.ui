@@ -87,21 +87,6 @@
            <property name="currentIndex">
             <number>-1</number>
            </property>
-           <item>
-            <property name="text">
-             <string>RESTRICTED</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>CONFIDENTIAL</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>SECRET</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item row="2" column="0">
@@ -158,21 +143,6 @@
         <property name="currentIndex">
          <number>-1</number>
         </property>
-        <item>
-         <property name="text">
-          <string>RESTRICTED</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>CONFIDENTIAL</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>SECRET</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item row="3" column="0">
