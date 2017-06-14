@@ -15,6 +15,7 @@ import os
 import math
 
 from CartoucheDialog import CartoucheDialog
+from PrintLayoutManager import PrintLayoutManager
 from ui.ui_printdialog import Ui_PrintDialog
 
 
@@ -516,6 +517,9 @@ class PrintTool(QgsMapTool):
         self.composerView.composition().setPrintResolution(2 * QApplication.desktop().logicalDpiX())
         self.mapitem = maps[0]
         self.__initComposer()
+
+    def __manageLayouts(self):
+        PrintLayoutManager(self.iface, self.dialog).exec_()
 
     def __generateComposer(self):
         scale = 1. / self.dialogui.comboBox_scale.scale()
