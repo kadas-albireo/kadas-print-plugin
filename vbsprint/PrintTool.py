@@ -611,6 +611,7 @@ class PrintTool(QgsMapTool):
             filename,
             format
         )
+        if type(filename) == tuple: filename = filename[0]
         if not filename:
             return
 
