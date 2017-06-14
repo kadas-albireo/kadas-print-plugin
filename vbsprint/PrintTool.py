@@ -458,16 +458,19 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_composers.blockSignals(True)
         prev = self.dialogui.comboBox_composers.currentText()
         self.dialogui.comboBox_composers.clear()
+        items = []
         for composer in self.iface.activeComposers():
             if composer != removedView and composer.composerWindow():
                 cur = composer.composerWindow().windowTitle()
-                self.dialogui.comboBox_composers.addItem(cur, composer)
+                items.append((cur, composer))
+        items.sort(key=lambda x: x[0])
+        for item in items:
+            self.dialogui.comboBox_composers.addItem(item[0], item[1])
         # Ensure that changed signal is emitted
         self.dialogui.comboBox_composers.setCurrentIndex(-1)
         self.dialogui.comboBox_composers.blockSignals(False)
         if self.dialogui.comboBox_composers.count() > 0:
             self.__setUiEnabled(True)
-            self.dialogui.comboBox_composers.model().sort(0)
             active = self.dialogui.comboBox_composers.findText(prev)
             if active == -1:
               active = 0

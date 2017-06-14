@@ -88,7 +88,7 @@ class PrintLayoutManager(QDialog, Ui_PrintLayoutManager):
         if not file.open(QIODevice.WriteOnly):
             QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to open the output file for writing."), QMessageBox.Ok)
         else:
-            file.write(doc.toString())
+            file.write(bytes(doc.toString()))
 
     def __remove(self):
         item = self.listWidgetLayouts.selectedItems()[0]
