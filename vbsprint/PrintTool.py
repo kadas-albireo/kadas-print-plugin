@@ -68,9 +68,10 @@ class PrintTool(QgsMapTool):
 
         self.dialogui.previewGraphic.resizeEvent = self.__resizePreview
 
-        self.iface.composerAdded.connect(lambda view: self.__reloadComposers(view, True))
-        self.iface.composerWillBeRemoved.connect(lambda view: self.__reloadComposers(view, False))
+        self.iface.composerAdded.connect(lambda view: self.__reloadComposers())
+        self.iface.composerWillBeRemoved.connect(self.__reloadComposers)
         self.dialogui.comboBox_composers.currentIndexChanged.connect(self.__selectComposer)
+        self.dialogui.toolButton_layoutManager.clicked.connect(self.__manageLayouts)
         self.dialogui.lineEdit_title.textChanged.connect(self.__titleChanged)
         self.dialogui.comboBox_scale.scaleChanged.connect(self.__changeScale)
         self.dialogui.spinBox_border.valueChanged.connect(self.__generateComposer)
@@ -450,14 +451,14 @@ class PrintTool(QgsMapTool):
         self.composerView.composition().update()
         self.dialogui.previewGraphic.update()
 
-    def __reloadComposers(self, changedView=None, added=False):
+    def __reloadComposers(self, removedView=None):
         self.cartouchedialog = None
         self.mapitem = 0
         self.dialogui.comboBox_composers.blockSignals(True)
         prev = self.dialogui.comboBox_composers.currentText()
         self.dialogui.comboBox_composers.clear()
         for composer in self.iface.activeComposers():
-            if (not changedView or added) and composer.composerWindow():
+            if composer != removedView and composer.composerWindow():
                 cur = composer.composerWindow().windowTitle()
                 self.dialogui.comboBox_composers.addItem(cur, composer)
         # Ensure that changed signal is emitted
