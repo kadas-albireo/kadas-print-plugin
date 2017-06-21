@@ -4,12 +4,21 @@ qgisMinimumVersion=2.6
 qgisMaximumVersion=2.99
 description=Instantly print map excerpts
 about=The instant print plugin allows to quickly print map excerpts to a file, utilizing an existing composer as page layout.
-version=1.4.9
+version=1.4.10
 author=Sandro Mani, Sourcepole AG
 email=smani@sourcepole.ch
 
 changelog=
- Rev 1.4.9 (3.05.2017)
+ Rev 1.4.10 (21.06.2017)
+  - Reduce border lower bound to 0, default to 15
+  - Add support for saving and restoring cartouches to/from xml
+  - Adapt cartouche classification entries to values supported by MSS MILXLY format
+  - Remove ForExercise classification, don't explicitly list None as classification
+  - PyQt5 compatibility
+  - Fix reloadComposers calls
+  - Store and restore current cartouche contents in project
+  - Add print layout manager
+Rev 1.4.9 (3.05.2017)
   - Ensure initial print output filename has correct extension before showing file save dialog
   - Sort composers in combobox
   - Decrease lower limit for margin to 10mm
