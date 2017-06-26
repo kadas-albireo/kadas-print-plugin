@@ -18,7 +18,8 @@ changelog=
   - Fix reloadComposers calls
   - Store and restore current cartouche contents in project
   - Add print layout manager
-Rev 1.4.9 (3.05.2017)
+
+ Rev 1.4.9 (3.05.2017)
   - Ensure initial print output filename has correct extension before showing file save dialog
   - Sort composers in combobox
   - Decrease lower limit for margin to 10mm
