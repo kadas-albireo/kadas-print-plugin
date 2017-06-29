@@ -2,60 +2,47 @@
 
 # Form implementation generated from reading ui file 'printlayoutmanager.ui'
 #
-# Created by: PyQt4 UI code generator 4.12
+# Created by: PyQt5 UI code generator 5.8.2
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
-
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_PrintLayoutManager(object):
     def setupUi(self, PrintLayoutManager):
-        PrintLayoutManager.setObjectName(_fromUtf8("PrintLayoutManager"))
+        PrintLayoutManager.setObjectName("PrintLayoutManager")
         PrintLayoutManager.resize(400, 300)
-        self.gridLayout = QtGui.QGridLayout(PrintLayoutManager)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.pushButtonImport = QtGui.QPushButton(PrintLayoutManager)
-        self.pushButtonImport.setObjectName(_fromUtf8("pushButtonImport"))
+        self.gridLayout = QtWidgets.QGridLayout(PrintLayoutManager)
+        self.gridLayout.setObjectName("gridLayout")
+        self.pushButtonImport = QtWidgets.QPushButton(PrintLayoutManager)
+        self.pushButtonImport.setObjectName("pushButtonImport")
         self.gridLayout.addWidget(self.pushButtonImport, 1, 0, 1, 1)
-        self.pushButtonExport = QtGui.QPushButton(PrintLayoutManager)
+        self.pushButtonExport = QtWidgets.QPushButton(PrintLayoutManager)
         self.pushButtonExport.setEnabled(False)
-        self.pushButtonExport.setObjectName(_fromUtf8("pushButtonExport"))
+        self.pushButtonExport.setObjectName("pushButtonExport")
         self.gridLayout.addWidget(self.pushButtonExport, 1, 1, 1, 1)
-        self.pushButtonRemove = QtGui.QPushButton(PrintLayoutManager)
+        self.pushButtonRemove = QtWidgets.QPushButton(PrintLayoutManager)
         self.pushButtonRemove.setEnabled(False)
-        self.pushButtonRemove.setObjectName(_fromUtf8("pushButtonRemove"))
+        self.pushButtonRemove.setObjectName("pushButtonRemove")
         self.gridLayout.addWidget(self.pushButtonRemove, 1, 2, 1, 1)
-        self.listWidgetLayouts = QtGui.QListWidget(PrintLayoutManager)
-        self.listWidgetLayouts.setObjectName(_fromUtf8("listWidgetLayouts"))
+        self.listWidgetLayouts = QtWidgets.QListWidget(PrintLayoutManager)
+        self.listWidgetLayouts.setObjectName("listWidgetLayouts")
         self.gridLayout.addWidget(self.listWidgetLayouts, 0, 0, 1, 3)
-        self.buttonBox = QtGui.QDialogButtonBox(PrintLayoutManager)
+        self.buttonBox = QtWidgets.QDialogButtonBox(PrintLayoutManager)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Close)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Close)
+        self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 2, 0, 1, 3)
 
         self.retranslateUi(PrintLayoutManager)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), PrintLayoutManager.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), PrintLayoutManager.reject)
+        self.buttonBox.accepted.connect(PrintLayoutManager.accept)
+        self.buttonBox.rejected.connect(PrintLayoutManager.reject)
         QtCore.QMetaObject.connectSlotsByName(PrintLayoutManager)
 
     def retranslateUi(self, PrintLayoutManager):
-        PrintLayoutManager.setWindowTitle(_translate("PrintLayoutManager", "Print Layout Manager", None))
-        self.pushButtonImport.setText(_translate("PrintLayoutManager", "Import", None))
-        self.pushButtonExport.setText(_translate("PrintLayoutManager", "Export", None))
-        self.pushButtonRemove.setText(_translate("PrintLayoutManager", "Remove", None))
+        _translate = QtCore.QCoreApplication.translate
+        PrintLayoutManager.setWindowTitle(_translate("PrintLayoutManager", "Print Layout Manager"))
+        self.pushButtonImport.setText(_translate("PrintLayoutManager", "Import"))
+        self.pushButtonExport.setText(_translate("PrintLayoutManager", "Export"))
+        self.pushButtonRemove.setText(_translate("PrintLayoutManager", "Remove"))
 
