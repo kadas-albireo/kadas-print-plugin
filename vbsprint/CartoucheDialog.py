@@ -32,10 +32,6 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.classification2.addItem(self.tr("SECRET"), "Secret")
         self.classification2.setCurrentIndex(-1)
 
-        xmlstr, ok = QgsProject.instance().readEntry("VBS-Print", "cartouche")
-        if ok:
-            self.__deserializeCartouche(xmlstr)
-
         self.exercisedateLE.dateChanged.connect(self.updateComposition)
         self.classification1.currentIndexChanged.connect(self.updateComposition)
         self.classification1.lineEdit().setPlaceholderText(self.tr("CLASSIFICATION"))
@@ -64,6 +60,10 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         importButton.clicked.connect(self.__importCartouche)
 
         self.updateUi()
+
+        xmlstr, ok = QgsProject.instance().readEntry("VBS-Print", "cartouche")
+        if ok:
+            self.__deserializeCartouche(xmlstr)
 
     def __resizeEvent(self, ev):
         cartouche = self.scene.getComposerItemById("mapcartouche")
