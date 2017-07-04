@@ -220,7 +220,7 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         if not file.open(QIODevice.WriteOnly):
             QMessageBox.critical(self, self.tr("Export failed"), self.tr("Unable to write to file."))
 
-        file.write(self.__serializeCartouche())
+        file.write(bytes(self.__serializeCartouche()))
 
     def __importCartouche(self):
         lastDir = QSettings().value("/UI/lastImportExportDir", ".")
