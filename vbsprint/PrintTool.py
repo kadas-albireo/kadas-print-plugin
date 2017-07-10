@@ -136,11 +136,14 @@ class PrintTool(QgsMapTool):
 
         self.mapitem.setPreviewMode(1)
         if not self.fixedSizeMode:
-            extent = self.iface.mapCanvas().extent()
-            self.dialogui.lineedit_xmin.setText(str(round(extent.xMinimum())))
-            self.dialogui.lineedit_xmax.setText(str(round(extent.xMaximum())))
-            self.dialogui.lineedit_ymin.setText(str(round(extent.yMinimum())))
-            self.dialogui.lineedit_ymax.setText(str(round(extent.yMaximum())))
+            # Only update extent if it does not intersect with full extent of map
+            extent = self.__getCustomExtent()
+            if not extent or not self.iface.mapCanvas().fullExtent().contains(extent):
+                extent = self.iface.mapCanvas().extent()
+                self.dialogui.lineedit_xmin.setText(str(round(extent.xMinimum() + 0.125 * extent.width())))
+                self.dialogui.lineedit_xmax.setText(str(round(extent.xMaximum() - 0.125 * extent.width())))
+                self.dialogui.lineedit_ymin.setText(str(round(extent.yMinimum() + 0.125 * extent.height())))
+                self.dialogui.lineedit_ymax.setText(str(round(extent.yMaximum() - 0.125 * extent.height())))
             self.__generateComposer()
         else:
             extent = self.iface.mapCanvas().extent()
@@ -524,8 +527,7 @@ class PrintTool(QgsMapTool):
     def __manageLayouts(self):
         PrintLayoutManager(self.iface, self.dialog).exec_()
 
-    def __generateComposer(self):
-        scale = 1. / self.dialogui.comboBox_scale.scale()
+    def __getCustomExtent(self):
         try:
             xmin = float(self.dialogui.lineedit_xmin.text())
             ymin = float(self.dialogui.lineedit_ymin.text())
@@ -533,9 +535,7 @@ class PrintTool(QgsMapTool):
             ymax = float(self.dialogui.lineedit_ymax.text())
         except:
             # One or more extent inputs empty
-            return
-        border = self.dialogui.spinBox_border.value()
-        borderdelta = border - self.mapitem.x()
+            return None
 
         if xmin > xmax:
             tmp = xmin
@@ -547,12 +547,22 @@ class PrintTool(QgsMapTool):
             ymin = ymax
             ymax = tmp
 
-        mapwidth = ((xmax - xmin) / scale * 1000.0)
-        mapheight = ((ymax - ymin) / scale * 1000.0)
+        return QgsRectangle(xmin, ymin, xmax, ymax)
+
+    def __generateComposer(self):
+        scale = 1. / self.dialogui.comboBox_scale.scale()
+        extent = self.__getCustomExtent()
+        if not extent:
+            return
+        border = self.dialogui.spinBox_border.value()
+        borderdelta = border - self.mapitem.x()
+
+        mapwidth = ((extent.xMaximum() - extent.xMinimum()) / scale * 1000.0)
+        mapheight = ((extent.yMaximum() - extent.yMinimum()) / scale * 1000.0)
 
         self.mapitem.setSceneRect( QRectF(border, border, mapwidth, mapheight ) )
         self.mapitem.setPos(border, border)
-        self.mapitem.setNewExtent(QgsRectangle(xmin, ymin, xmax, ymax))
+        self.mapitem.setNewExtent(extent)
         self.mapitem.setNewScale(scale)
         self.mapitem.updateItem()
 
@@ -566,7 +576,7 @@ class PrintTool(QgsMapTool):
         self.composerView.composition().setPaperSize(newwidth, newheight)
         self.dialogui.label_paperSize.setText(self.tr("Paper size: %.2f cm x %.2f cm") % (newwidth / 10., newheight / 10.))
 
-        self.rect = QRectF(xmin, ymin, xmax - xmin, ymax - ymin)
+        self.rect = extent.toRectF()
         self.__createRubberBand()
         self.__resizePreview()
         self.__updateView()
