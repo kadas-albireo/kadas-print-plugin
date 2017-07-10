@@ -582,7 +582,7 @@ class PrintTool(QgsMapTool):
     def __createRubberBand(self):
         self.__clearRubberBand()
         extent = self.mapitem.extent()
-        center = self.iface.mapCanvas().extent().center()
+        center = extent.center()
         self.corner = QPointF(center.x() - 0.5 * extent.width(), center.y() - 0.5 * extent.height())
         self.rect = QRectF(self.corner.x(), self.corner.y(), extent.width(), extent.height())
 
