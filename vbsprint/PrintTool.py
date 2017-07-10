@@ -455,7 +455,7 @@ class PrintTool(QgsMapTool):
 
     def __reloadComposers(self, removedView=None):
         self.cartouchedialog = None
-        self.mapitem = 0
+        self.mapitem = None
         self.dialogui.comboBox_composers.blockSignals(True)
         prev = self.dialogui.comboBox_composers.currentText()
         self.dialogui.comboBox_composers.clear()
