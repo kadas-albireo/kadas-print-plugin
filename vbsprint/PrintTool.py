@@ -684,6 +684,5 @@ class PrintTool(QgsMapTool):
 
     def __advanced(self):
         composer = self.composerView.composerWindow()
-        composer.setWindowModality(Qt.ApplicationModal)
         composer.showNormal()
         composer.raise_()
