@@ -213,6 +213,8 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         lastDir = QSettings().value("/UI/lastImportExportDir", ".")
         filename = QFileDialog.getSaveFileName(self, self.tr("Export cartouche"), lastDir, self.tr("XML Files (*.xml);;"))
         if type(filename) == tuple: filename = filename[0]
+        if not filename:
+            return
         fileinfo = QFileInfo(filename)
         QSettings().setValue("/UI/lastImportExportDir", fileinfo.absolutePath())
 
