@@ -15,7 +15,7 @@ SOURCES = \
 	__init__.py \
 	PrintPlugin.py PrintTool.py
 
-PLUGINNAME = vbsprint
+PLUGINNAME = kadas_print
 
 PY_FILES = \
 	__init__.py \
