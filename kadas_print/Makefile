@@ -52,7 +52,7 @@ compile: $(COMPILED_UI_FILES) $(COMPILED_RESOURCE_FILES)
 	pyrcc4 -o $*_rc.py  $<
 
 ui_%.py : %.ui
-	pyuic4 -o $@ $<
+	pyuic5 -o $@ $<
 
 %.qm : %.ts
 	$(LRELEASE) $<
