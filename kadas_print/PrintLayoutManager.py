@@ -13,6 +13,9 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
+from qgis.core import *
+
+
 class PrintLayoutManager(QDialog, Ui_PrintLayoutManager):
 
     def __init__(self, iface, parent=None):
@@ -22,26 +25,30 @@ class PrintLayoutManager(QDialog, Ui_PrintLayoutManager):
 
         self.__reloadComposers()
 
-        self.iface.composerAdded.connect(lambda view: self.__reloadComposers())
-        self.iface.composerWillBeRemoved.connect(self.__reloadComposers)
+        self.iface.compositionAdded.connect(lambda view: self.__reloadComposers())
+        self.iface.compositionWillBeRemoved.connect(self.__reloadComposers)
         self.listWidgetLayouts.selectionModel().selectionChanged.connect(self.__listSelectionChanged)
         self.pushButtonImport.clicked.connect(self.__import)
         self.pushButtonExport.clicked.connect(self.__export)
         self.pushButtonRemove.clicked.connect(self.__remove)
 
-    def __reloadComposers(self, removedView=None):
+    def __reloadComposers(self, removedComposition=None):
         self.listWidgetLayouts.clear()
-        for composer in self.iface.activeComposers():
-            if composer != removedView and composer.composerWindow():
-                title = composer.composerWindow().windowTitle()
+        for composition in self.iface.printCompositions():
+            if composition != removedComposition:
+                title = composition.title()
                 item = QListWidgetItem(title)
-                item.setData(Qt.UserRole, composer)
+                item.setData(Qt.UserRole, composition)
                 self.listWidgetLayouts.addItem(item)
         self.listWidgetLayouts.sortItems()
 
     def __listSelectionChanged(self):
         selected = len(self.listWidgetLayouts.selectedItems()) > 0
-        fixedMode = selected and self.listWidgetLayouts.selectedItems()[0].data(Qt.UserRole).composerWindow().windowTitle() == "Custom"
+        fixedMode = False
+        if selected:
+            composition = self.listWidgetLayouts.selectedItems()[0].data(Qt.UserRole)
+            composition.__class__ = QgsComposition
+            fixedMode = composition.title() == "Custom"
         self.pushButtonExport.setEnabled(selected)
         self.pushButtonRemove.setEnabled(selected and not fixedMode)
 
@@ -63,20 +70,17 @@ class PrintLayoutManager(QDialog, Ui_PrintLayoutManager):
                 QMessageBox.critical(self, self.tr("Import Failed"), self.tr("The file does not appear to be a valid print layout."), QMessageBox.Ok)
                 return
             composerEl = composerEls.at(0).toElement()
-            composer = self.iface.createNewComposer(composerEl.attribute("title"), False)
-            if not composer.composition().loadFromTemplate(doc):
+            composition = self.iface.createNewComposition(composerEl.attribute("title"))
+            if not composition.loadFromTemplate(doc):
                 QMessageBox.critical(self, self.tr("Import Failed"), self.tr("The file does not appear to be a valid print layout."), QMessageBox.Ok)
-                self.iface.deleteComposer(composer)
+                self.iface.deleteComposition(composition)
 
     def __export(self):
         item = self.listWidgetLayouts.selectedItems()[0]
-        composer = item.data(Qt.UserRole)
+        composition = item.data(Qt.UserRole)
+        composition.__class__ = QgsComposition
         doc = QDomDocument()
-        composerEl = doc.createElement("Composer")
-        composerEl.setAttribute("title", item.text())
-        composerEl.setAttribute("visible", "0")
-        doc.appendChild(composerEl)
-        composer.composition().writeXML(composerEl, doc)
+        composition.writeXML(doc, doc)
 
         lastDir = QSettings().value( "/UI/lastImportExportDir", "." )
         filename = QFileDialog.getSaveFileName(self, self.tr("Export Layout"), lastDir, self.tr("QPT Files (*.qpt);;"))
@@ -92,5 +96,6 @@ class PrintLayoutManager(QDialog, Ui_PrintLayoutManager):
 
     def __remove(self):
         item = self.listWidgetLayouts.selectedItems()[0]
-        composer = item.data(Qt.UserRole)
-        self.iface.deleteComposer(composer)
+        composition = item.data(Qt.UserRole)
+        composition.__class__ = QgsComposition
+        self.iface.deleteComposition(composition)

@@ -32,7 +32,7 @@ class PrintTool(QgsMapTool):
         self.fixedSizeMode = True
         self.mapitem = None
         self.printing = False
-        self.composerView = None
+        self.composition = None
 
         self.dialog = QDialog(self.iface.mainWindow())
         self.dialogui = Ui_PrintDialog()
@@ -69,8 +69,8 @@ class PrintTool(QgsMapTool):
 
         self.dialogui.previewGraphic.resizeEvent = self.__resizePreview
 
-        self.iface.composerAdded.connect(lambda view: self.__reloadComposers())
-        self.iface.composerWillBeRemoved.connect(self.__reloadComposers)
+        self.iface.compositionAdded.connect(lambda view: self.__reloadComposers())
+        self.iface.compositionWillBeRemoved.connect(self.__reloadComposers)
         self.dialogui.comboBox_composers.currentIndexChanged.connect(self.__selectComposer)
         self.dialogui.toolButton_layoutManager.clicked.connect(self.__manageLayouts)
         self.dialogui.lineEdit_title.textChanged.connect(self.__titleChanged)
@@ -102,7 +102,7 @@ class PrintTool(QgsMapTool):
 
     def __resizePreview(self, ev=None):
         try:
-            page = self.composerView.composition().pages()[0]
+            page = self.composition.pages()[0]
             self.dialogui.previewGraphic.fitInView(page, Qt.KeepAspectRatio)
         except:
             pass
@@ -122,7 +122,7 @@ class PrintTool(QgsMapTool):
 
     def __composerItem(self, id, classtype):
         try:
-            item = self.composerView.composition().getComposerItemById(id) if self.composerView else None
+            item = self.composition.getComposerItemById(id) if self.composition else None
             if item:
                 item.__class__ = classtype
                 dir(item)
@@ -132,7 +132,7 @@ class PrintTool(QgsMapTool):
 
     def __initComposer(self):
         self.grid = self.mapitem.grid()
-        self.cartouchedialog = CartoucheDialog(self.composerView.composition(), self.dialog)
+        self.cartouchedialog = CartoucheDialog(self.composition, self.dialog)
 
         self.mapitem.setPreviewMode(1)
         if not self.fixedSizeMode:
@@ -153,7 +153,7 @@ class PrintTool(QgsMapTool):
             extent.setYMaximum(center + extentheight / 2.)
             self.mapitem.setNewExtent(extent)
         wmtsScales = []
-        refRes = 0.0254 / self.composerView.composition().printResolution()
+        refRes = 0.0254 / self.composition.printResolution()
         try:
             resolutions = self.iface.mapCanvas().wmtsResolutions()
         except:
@@ -173,28 +173,27 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_scale.blockSignals(False)
         self.mapitem.cache()
         self.mapitem.updateItem()
-        self.dialogui.previewGraphic.setScene(self.composerView.composition())
+        self.dialogui.previewGraphic.setScene(self.composition)
         self.__resizePreview()
         self.__updateView()
         self.__changeScale()
-
 
         titleItem = self.__composerItem("title", QgsComposerLabel)
         if not titleItem:
             self.dialogui.lineEdit_title.setEnabled(False)
         else:
-            titleItem.setText(self.dialogui.lineEdit_title.text())
+            self.dialogui.lineEdit_title.setText(titleItem.text())
             titleItem.setVisible(not not titleItem.text())
         legendItem = self.__composerItem("legend", QgsComposerLegend)
         if not legendItem:
             self.dialogui.checkBox_legend.setEnabled(False)
         else:
-            legendItem.setVisible(self.dialogui.checkBox_legend.isChecked())
+            self.dialogui.checkBox_legend.setChecked(legendItem.isVisible())
         scaleBarItem = self.__composerItem("scalebar", QgsComposerScaleBar)
         if not scaleBarItem:
             self.dialogui.checkBox_scalebar.setEnabled(False)
         else:
-            scaleBarItem.setVisible(self.dialogui.checkBox_scalebar.isChecked())
+            self.dialogui.checkBox_scalebar.setChecked(scaleBarItem.isVisible())
         if not self.grid:
             self.dialogui.groupBox_grid.setEnabled(False)
         else:
@@ -203,8 +202,8 @@ class PrintTool(QgsMapTool):
         if not cartoucheItem:
             self.dialogui.checkBox_mapCartouche.setEnabled(False)
         else:
-            cartoucheItem.setVisibility(self.dialogui.checkBox_mapCartouche.isChecked())
-        self.mapitem.setGridEnabled(self.dialogui.groupBox_grid.isChecked())
+            self.dialogui.checkBox_mapCartouche.setChecked(cartoucheItem.isVisible())
+        self.dialogui.groupBox_grid.setChecked(self.mapitem.gridEnabled())
 
     def setToolEnabled(self, enabled):
         if enabled:
@@ -214,7 +213,7 @@ class PrintTool(QgsMapTool):
             self.iface.mapCanvas().setMapTool(self)
         else:
             self.mapitem = None
-            self.composerView = None
+            self.composition = None
             self.dialog.hide()
             self.__clearRubberBand()
             self.iface.mapCanvas().unsetMapTool(self)
@@ -450,20 +449,24 @@ class PrintTool(QgsMapTool):
             self.__generateComposer()
 
     def __updateView(self):
-        self.composerView.composition().update()
+        self.composition.update()
         self.dialogui.previewGraphic.update()
 
-    def __reloadComposers(self, removedView=None):
+    def __reloadComposers(self, removedComposition=None):
+        # Only reload if dialog is visible
+        if not self.dialog.isVisible():
+            return
+
         self.cartouchedialog = None
         self.mapitem = None
         self.dialogui.comboBox_composers.blockSignals(True)
         prev = self.dialogui.comboBox_composers.currentText()
         self.dialogui.comboBox_composers.clear()
         items = []
-        for composer in self.iface.activeComposers():
-            if composer != removedView and composer.composerWindow():
-                cur = composer.composerWindow().windowTitle()
-                items.append((cur, composer))
+        for composition in self.iface.printCompositions():
+            if composition != removedComposition:
+                cur = composition.title()
+                items.append((cur, composition))
         items.sort(key=lambda x: x[0])
         for item in items:
             self.dialogui.comboBox_composers.addItem(item[0], item[1])
@@ -480,16 +483,15 @@ class PrintTool(QgsMapTool):
             self.__setUiEnabled(False)
 
     def __selectComposer(self):
-        if not self.dialog.isVisible():
-            return
-
         self.__clearRubberBand()
         self.mapitem = None
+        self.dialogui.previewGraphic.setScene(None)
         try:
             activeIndex = self.dialogui.comboBox_composers.currentIndex()
-            composerView = self.dialogui.comboBox_composers.itemData(activeIndex)
-            self.fixedSizeMode = composerView.composerWindow().windowTitle() != "Custom"
-        except:
+            composition = self.dialogui.comboBox_composers.itemData(activeIndex)
+            composition.__class__ = QgsComposition
+            self.fixedSizeMode = composition.title() != "Custom"
+        except Exception as e:
             self.__setUiEnabled(False)
             return
 
@@ -499,11 +501,11 @@ class PrintTool(QgsMapTool):
             return
 
         try:
-            maps = composerView.composition().composerMapItems()
+            maps = composition.composerMapItems()
         except:
             # composerMapItems is not available with PyQt4 < 4.8.4
             maps = []
-            for item in composerView.composition().items():
+            for item in composition.items():
                 if isinstance(item, QgsComposerMap):
                     maps.append(item)
         if len(maps) != 1:
@@ -513,12 +515,9 @@ class PrintTool(QgsMapTool):
 
         self.__setUiEnabled(True)
 
-        if self.composerView:
-            self.composerView.composerViewHide.disconnect(self.__initComposer)
-        self.composerView = composerView
-        self.composerView.composerViewHide.connect(self.__initComposer)
-        # Default to twice the screen resolution
-        self.composerView.composition().setPrintResolution(2 * QApplication.desktop().logicalDpiX())
+        self.composition = composition
+        # Default to twice the screen dpi
+        self.composition.setPrintResolution(2 * QApplication.desktop().logicalDpiX())
         self.mapitem = maps[0]
         self.__initComposer()
 
@@ -567,11 +566,11 @@ class PrintTool(QgsMapTool):
         newwidth = 2 * border + mapwidth
         newheight = 2 * border + mapheight
 
-        for item in self.composerView.composition().items():
+        for item in self.composition.items():
             if item is not self.mapitem:
                 item.moveBy(borderdelta, borderdelta)
 
-        self.composerView.composition().setPaperSize(newwidth, newheight)
+        self.composition.setPaperSize(newwidth, newheight)
         self.dialogui.label_paperSize.setText(self.tr("Paper size: %.2f cm x %.2f cm") % (newwidth / 10., newheight / 10.))
 
         self.rect = extent.toRectF()
@@ -638,16 +637,15 @@ class PrintTool(QgsMapTool):
 
         # Ensure output filename has correct extension
         filename = os.path.splitext(filename)[0] + "." + self.dialogui.comboBox_fileformat.currentText().lower()
+        format = self.dialogui.comboBox_fileformat.currentText().lower()
 
         settings.setValue("/print/lastfile", filename)
 
         success = False
-        if filename[-3:].lower() == u"pdf":
-            success = self.composerView.composition().exportAsPDF(filename)
+        if format == u"pdf":
+            success = self.composition.printToPdf(filename)
         else:
-            image = self.composerView.composition().printPageAsRaster(self.composerView.composition().itemPageNumber(self.mapitem))
-            if not image.isNull():
-                success = image.save(filename)
+            success = self.composition.printToImage(filename, format)
         if not success:
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Print Failed"), self.tr("Failed to print the composition."))
 
@@ -657,8 +655,7 @@ class PrintTool(QgsMapTool):
         self.printing = False
 
     def __print(self):
-        composer = self.composerView.composerWindow()
-        composer.on_mActionPrint_triggered()
+        self.composition.print_()
 
     def __setUiEnabled(self, enabled):
         self.dialogui.lineEdit_title.setEnabled(enabled)
@@ -683,6 +680,4 @@ class PrintTool(QgsMapTool):
         self.dialogui.label_paperSize.setVisible(visible)
 
     def __advanced(self):
-        composer = self.composerView.composerWindow()
-        composer.showNormal()
-        composer.raise_()
+        self.iface.showComposer(self.composition)
