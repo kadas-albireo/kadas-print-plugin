@@ -647,7 +647,7 @@ class PrintTool(QgsMapTool):
         else:
             success = self.composition.printToImage(filename, format)
         if not success:
-            QMessageBox.warning(self.iface.mainWindow(), self.tr("Print Failed"), self.tr("Failed to print the composition."))
+            QMessageBox.warning(self.dialog, self.tr("Print Failed"), self.tr("Failed to print the composition."))
 
         self.dialog.setEnabled(True)
         self.dialogui.previewGraphic.setUpdatesEnabled(True)
