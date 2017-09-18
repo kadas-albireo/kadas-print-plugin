@@ -268,37 +268,37 @@
 <context>
     <name>PrintTool</name>
     <message>
-        <location filename="../PrintTool.py" line="40"/>
+        <location filename="../PrintTool.py" line="41"/>
         <source>Export</source>
         <translation>Exportér</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="41"/>
+        <location filename="../PrintTool.py" line="42"/>
         <source>Print</source>
         <translation>Imprimer</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="42"/>
+        <location filename="../PrintTool.py" line="43"/>
         <source>Advanced</source>
         <translation>Avancée</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="50"/>
+        <location filename="../PrintTool.py" line="51"/>
         <source>PDF Document (*.pdf);;</source>
         <translation>Document PDF (*.pdf);;</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="51"/>
+        <location filename="../PrintTool.py" line="52"/>
         <source>JPG Image (*.jpg);;</source>
         <translation>Image JPG (*.jpg);;</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="52"/>
+        <location filename="../PrintTool.py" line="53"/>
         <source>BMP Image (*.bmp);;</source>
         <translation>Image BMP (*.jpg);;</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="53"/>
+        <location filename="../PrintTool.py" line="54"/>
         <source>PNG Image (*.png);;</source>
         <translation>Image PNG (*.jpg);;</translation>
     </message>
@@ -328,12 +328,12 @@
         <translation>Sélectionnez les couches à afficher dans la légende:</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="510"/>
+        <location filename="../PrintTool.py" line="513"/>
         <source>Invalid composer</source>
         <translation>Composeur invalide</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="510"/>
+        <location filename="../PrintTool.py" line="513"/>
         <source>The composer must have exactly one map item.</source>
         <translation>Le composeur doit avoir exactement un élément de carte.</translation>
     </message>
@@ -348,14 +348,24 @@
         <translation>Imprimer composition</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="652"/>
+        <location filename="../PrintTool.py" line="651"/>
         <source>Print Failed</source>
         <translation>Impossible de imprimer</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="652"/>
+        <location filename="../PrintTool.py" line="651"/>
         <source>Failed to print the composition.</source>
         <translation>Impossible de imprimer la composition.</translation>
+    </message>
+    <message>
+        <location filename="../PrintTool.py" line="660"/>
+        <source>No Printers</source>
+        <translation>Aucune imprimante</translation>
+    </message>
+    <message>
+        <location filename="../PrintTool.py" line="660"/>
+        <source>No printers were found.</source>
+        <translation>Aucune imprimante n&apos;a été trouvée</translation>
     </message>
 </context>
 </TS>
