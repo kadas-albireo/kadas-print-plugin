@@ -9,6 +9,7 @@
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtPrintSupport import *
 from qgis.core import *
 from qgis.gui import *
 import os
@@ -655,7 +656,10 @@ class PrintTool(QgsMapTool):
         self.printing = False
 
     def __print(self):
-        self.composition.print_()
+        if not QPrinterInfo.availablePrinterNames():
+            QMessageBox.warning(self.dialog, self.tr("No Printers"), self.tr("No printers were found."))
+        else:
+            self.composition.print_()
 
     def __setUiEnabled(self, enabled):
         self.dialogui.lineEdit_title.setEnabled(enabled)
