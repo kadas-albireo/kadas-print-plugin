@@ -462,6 +462,8 @@ class PrintTool(QgsMapTool):
         self.mapitem = None
         self.dialogui.comboBox_composers.blockSignals(True)
         prev = self.dialogui.comboBox_composers.currentText()
+        if not prev and self.iface.printCompositions():
+            prev = self.iface.printCompositions()[0].title()
         self.dialogui.comboBox_composers.clear()
         items = []
         for composition in self.iface.printCompositions():
