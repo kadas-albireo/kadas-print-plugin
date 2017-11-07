@@ -61,7 +61,7 @@
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="131"/>
         <source>Title of cartouche</source>
-        <translation>Description de la cartouche</translation>
+        <translation>Description du cartouche</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="132"/>
@@ -71,7 +71,7 @@
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="133"/>
         <source>&quot;CODE NAME&quot;</source>
-        <translation>&quot;NOM DE DOUVERTURE&quot;</translation>
+        <translation>&quot;NOM DE COUVERTURE&quot;</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="134"/>
@@ -258,6 +258,29 @@
     </message>
 </context>
 <context>
+    <name>PrintLayoutManager</name>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="44"/>
+        <source>Print Layout Manager</source>
+        <translation>Gestionnaire de modèle d&apos;impression</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="45"/>
+        <source>Import</source>
+        <translation>Importer</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="46"/>
+        <source>Export</source>
+        <translation>Exporter</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="47"/>
+        <source>Remove</source>
+        <translation>Effacer</translation>
+    </message>
+</context>
+<context>
     <name>PrintPlugin</name>
     <message>
         <location filename="../PrintPlugin.py" line="52"/>
@@ -270,7 +293,7 @@
     <message>
         <location filename="../PrintTool.py" line="41"/>
         <source>Export</source>
-        <translation>Exportér</translation>
+        <translation>Exporter</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="42"/>
@@ -280,7 +303,7 @@
     <message>
         <location filename="../PrintTool.py" line="43"/>
         <source>Advanced</source>
-        <translation>Avancée</translation>
+        <translation>Avancé</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="51"/>
@@ -310,12 +333,12 @@
     <message>
         <location filename="../PrintTool.py" line="390"/>
         <source>Visible without layer legend</source>
-        <translation>Visible sans légende du couche</translation>
+        <translation>Visible sans légende de la couche</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="390"/>
         <source>Visible with layer legend</source>
-        <translation>Visible avec légende du couche</translation>
+        <translation>Visible avec légende de la couche</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="400"/>
@@ -328,42 +351,42 @@
         <translation>Sélectionnez les couches à afficher dans la légende:</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="513"/>
+        <location filename="../PrintTool.py" line="515"/>
         <source>Invalid composer</source>
         <translation>Composeur invalide</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="513"/>
+        <location filename="../PrintTool.py" line="515"/>
         <source>The composer must have exactly one map item.</source>
         <translation>Le composeur doit avoir exactement un élément de carte.</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="575"/>
+        <location filename="../PrintTool.py" line="577"/>
         <source>Paper size: %.2f cm x %.2f cm</source>
         <translation>Taille de papier: %.2f cm x %.2f cm</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="624"/>
+        <location filename="../PrintTool.py" line="626"/>
         <source>Print Composition</source>
         <translation>Imprimer composition</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="651"/>
+        <location filename="../PrintTool.py" line="653"/>
         <source>Print Failed</source>
         <translation>Impossible de imprimer</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="651"/>
+        <location filename="../PrintTool.py" line="653"/>
         <source>Failed to print the composition.</source>
         <translation>Impossible de imprimer la composition.</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="660"/>
+        <location filename="../PrintTool.py" line="662"/>
         <source>No Printers</source>
         <translation>Aucune imprimante</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="660"/>
+        <location filename="../PrintTool.py" line="662"/>
         <source>No printers were found.</source>
         <translation>Aucune imprimante n&apos;a été trouvée</translation>
     </message>

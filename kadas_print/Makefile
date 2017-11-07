@@ -21,7 +21,7 @@ PY_FILES = \
 	__init__.py \
 	PrintPlugin.py PrintTool.py
 
-UI_FILES = ui/printdialog.ui ui/cartouchedialog.ui
+UI_FILES = ui/printdialog.ui ui/cartouchedialog.ui ui/printlayoutmanager.ui
 
 COMPILED_UI_FILES = ui/ui_printdialog.py ui/ui_cartouchedialog.py
 

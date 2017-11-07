@@ -258,6 +258,29 @@
     </message>
 </context>
 <context>
+    <name>PrintLayoutManager</name>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="44"/>
+        <source>Print Layout Manager</source>
+        <translation>Druckzusammenstellungen verwalten</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="45"/>
+        <source>Import</source>
+        <translation>Importieren</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="46"/>
+        <source>Export</source>
+        <translation>Exportieren</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="47"/>
+        <source>Remove</source>
+        <translation>Entfernen</translation>
+    </message>
+</context>
+<context>
     <name>PrintPlugin</name>
     <message>
         <location filename="../PrintPlugin.py" line="52"/>
@@ -328,42 +351,42 @@
         <translation>Ebenen auswählen, die in der Legende erscheinen sollen:</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="513"/>
+        <location filename="../PrintTool.py" line="515"/>
         <source>Invalid composer</source>
         <translation>Ungültige Druckzusammenstellung</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="513"/>
+        <location filename="../PrintTool.py" line="515"/>
         <source>The composer must have exactly one map item.</source>
         <translation>Die Zusammenstellung muss genau ein Kartenelement haben.</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="575"/>
+        <location filename="../PrintTool.py" line="577"/>
         <source>Paper size: %.2f cm x %.2f cm</source>
         <translation>Papierformat: %.2f cm x %.2f cm</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="624"/>
+        <location filename="../PrintTool.py" line="626"/>
         <source>Print Composition</source>
         <translation>Zusammenstellung drucken</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="651"/>
+        <location filename="../PrintTool.py" line="653"/>
         <source>Print Failed</source>
         <translation>Druck gescheitert</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="651"/>
+        <location filename="../PrintTool.py" line="653"/>
         <source>Failed to print the composition.</source>
         <translation>Die Zusammenstellung konnte nicht gedruckt werden.</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="660"/>
+        <location filename="../PrintTool.py" line="662"/>
         <source>No Printers</source>
         <translation>Keine Drucker</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="660"/>
+        <location filename="../PrintTool.py" line="662"/>
         <source>No printers were found.</source>
         <translation>Keine Drucker wurden gefunden.</translation>
     </message>

@@ -258,6 +258,29 @@
     </message>
 </context>
 <context>
+    <name>PrintLayoutManager</name>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="44"/>
+        <source>Print Layout Manager</source>
+        <translation>Gestore composizioni</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="45"/>
+        <source>Import</source>
+        <translation>Importa</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="46"/>
+        <source>Export</source>
+        <translation>Esporta</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_printlayoutmanager.py" line="47"/>
+        <source>Remove</source>
+        <translation>Rimuovi</translation>
+    </message>
+</context>
+<context>
     <name>PrintPlugin</name>
     <message>
         <location filename="../PrintPlugin.py" line="52"/>
@@ -328,42 +351,42 @@
         <translation>Selezionare i layer da mostrare nella legenda:</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="513"/>
+        <location filename="../PrintTool.py" line="515"/>
         <source>Invalid composer</source>
         <translation>Composizione invalida</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="513"/>
+        <location filename="../PrintTool.py" line="515"/>
         <source>The composer must have exactly one map item.</source>
         <translation>La composizione deve contenere esattamente una mappa.</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="575"/>
+        <location filename="../PrintTool.py" line="577"/>
         <source>Paper size: %.2f cm x %.2f cm</source>
         <translation>Dimensioni:%.2f cm x %.2f cm</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="624"/>
+        <location filename="../PrintTool.py" line="626"/>
         <source>Print Composition</source>
         <translation>Stampa composizione</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="651"/>
+        <location filename="../PrintTool.py" line="653"/>
         <source>Print Failed</source>
         <translation>Stampa non riuscita</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="651"/>
+        <location filename="../PrintTool.py" line="653"/>
         <source>Failed to print the composition.</source>
         <translation>La stampa della composizione non è riuscita.</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="660"/>
+        <location filename="../PrintTool.py" line="662"/>
         <source>No Printers</source>
         <translation>Nessuna stampante</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="660"/>
+        <location filename="../PrintTool.py" line="662"/>
         <source>No printers were found.</source>
         <translation>Nessuna stampante è stata rilevata</translation>
     </message>
