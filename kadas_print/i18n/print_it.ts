@@ -262,7 +262,7 @@
     <message>
         <location filename="../ui/ui_printlayoutmanager.py" line="44"/>
         <source>Print Layout Manager</source>
-        <translation>Gestore composizioni</translation>
+        <translation>Gestore modelli</translation>
     </message>
     <message>
         <location filename="../ui/ui_printlayoutmanager.py" line="45"/>
