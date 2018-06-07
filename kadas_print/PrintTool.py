@@ -328,10 +328,10 @@ class PrintTool(QgsMapTool):
                     abs(p1.x() - p2.x()),
                     abs(p1.y() - p2.y())
                 )
-                self.dialogui.lineedit_xmin.setText(str(round(self.rect.left())))
-                self.dialogui.lineedit_xmax.setText(str(round(self.rect.right())))
-                self.dialogui.lineedit_ymin.setText(str(round(self.rect.top())))
-                self.dialogui.lineedit_ymax.setText(str(round(self.rect.bottom())))
+            self.dialogui.lineedit_xmin.setText(str(round(self.rect.left())))
+            self.dialogui.lineedit_xmax.setText(str(round(self.rect.right())))
+            self.dialogui.lineedit_ymin.setText(str(round(self.rect.top())))
+            self.dialogui.lineedit_ymax.setText(str(round(self.rect.bottom())))
             self.rubberband.setToCanvasRectangle(self.__canvasRect(self.rect))
 
     def canvasReleaseEvent(self, e):
