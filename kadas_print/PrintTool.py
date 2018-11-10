@@ -222,7 +222,7 @@ class PrintTool(QgsMapTool):
             self.iface.mapCanvas().unsetMapTool(self)
 
     def canvasPressEvent(self, e):
-        if not self.rubberband:
+        if not self.rubberband or not self.rect:
             return
         r = self.__canvasRect(self.rect)
         if e.button() == Qt.LeftButton:
