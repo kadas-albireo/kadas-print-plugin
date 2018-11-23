@@ -36,6 +36,7 @@ class PrintTool(QgsMapTool):
         self.mapitem = None
         self.printing = False
         self.composition = None
+        self.rect = None
 
         self.dialog = QDialog(self.iface.mainWindow())
         self.dialogui = Ui_PrintDialog()
