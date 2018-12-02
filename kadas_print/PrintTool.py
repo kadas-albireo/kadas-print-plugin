@@ -261,6 +261,8 @@ class PrintTool(QgsMapTool):
                 self.resizeMoveOffset = QPointF(p.x() - self.rect.x(), p.y() - self.rect.y())
 
     def canvasMoveEvent(self, e):
+        if not self.rect:
+            return
         if not self.resizeMoveOffset:
             # Determine cursor
             r = self.__canvasRect(self.rect)
