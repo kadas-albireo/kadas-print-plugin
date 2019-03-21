@@ -129,6 +129,7 @@ class PrintTool(QgsMapTool):
             item = self.composition.getComposerItemById(id) if self.composition else None
             if item:
                 item.__class__ = classtype
+                # This is not a debug leftover, but ensures that the object gets the attributes...
                 dir(item)
             return item
         except:
