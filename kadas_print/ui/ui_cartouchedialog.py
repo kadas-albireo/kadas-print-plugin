@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/cartouchedialog.ui'
+# Form implementation generated from reading ui file 'cartouchedialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_CartoucheDialog(object):
     def setupUi(self, CartoucheDialog):
@@ -133,4 +135,3 @@ class Ui_CartoucheDialog(object):
         self.codenameLE.setPlaceholderText(_translate("CartoucheDialog", "\"CODE NAME\""))
         self.troopstitleLE.setPlaceholderText(_translate("CartoucheDialog", "Unit"))
         self.scaletitleLE.setPlaceholderText(_translate("CartoucheDialog", "Scale information"))
-

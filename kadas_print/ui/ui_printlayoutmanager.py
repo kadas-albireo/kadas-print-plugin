@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'printlayoutmanager.ui'
 #
-# Created by: PyQt5 UI code generator 5.8.2
+# Created by: PyQt5 UI code generator 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_PrintLayoutManager(object):
     def setupUi(self, PrintLayoutManager):
@@ -45,4 +47,3 @@ class Ui_PrintLayoutManager(object):
         self.pushButtonImport.setText(_translate("PrintLayoutManager", "Import"))
         self.pushButtonExport.setText(_translate("PrintLayoutManager", "Export"))
         self.pushButtonRemove.setText(_translate("PrintLayoutManager", "Remove"))
-
