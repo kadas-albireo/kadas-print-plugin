@@ -7,17 +7,18 @@
 #
 #    copyright            : (C) 2015 by Sourcepole AG
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtPrintSupport import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
+from qgis.PyQt.QtPrintSupport import *
 from qgis.core import *
 from qgis.gui import *
 import os
 import math
 
-from CartoucheDialog import CartoucheDialog
-from PrintLayoutManager import PrintLayoutManager
-from ui.ui_printdialog import Ui_PrintDialog
+from .CartoucheDialog import CartoucheDialog
+from .PrintLayoutManager import PrintLayoutManager
+from .ui.ui_printdialog import Ui_PrintDialog
 
 
 class PrintTool(QgsMapTool):
@@ -26,6 +27,8 @@ class PrintTool(QgsMapTool):
         QgsMapTool.__init__(self, iface.mapCanvas())
 
         self.iface = iface
+        self.layoutManager = QgsProject.instance().layoutManager()
+        self.printer = QPrinter()
         self.rubberband = None
         self.oldrubberband = None
         self.resizeTol = 10
@@ -35,26 +38,32 @@ class PrintTool(QgsMapTool):
         self.fixedSizeMode = True
         self.mapitem = None
         self.printing = False
-        self.composition = None
+        self.printLayout = None
         self.rect = None
 
         self.dialog = QDialog(self.iface.mainWindow())
         self.dialogui = Ui_PrintDialog()
         self.dialogui.setupUi(self.dialog)
-        self.exportButton = self.dialogui.buttonBox.addButton(self.tr("Export"), QDialogButtonBox.ActionRole)
-        self.printButton = self.dialogui.buttonBox.addButton(self.tr("Print"), QDialogButtonBox.ActionRole)
-        self.advancedButton = self.dialogui.buttonBox.addButton(self.tr("Advanced"), QDialogButtonBox.HelpRole)
+        self.exportButton = self.dialogui.buttonBox.addButton(
+            self.tr("Export"), QDialogButtonBox.ActionRole)
+        self.printButton = self.dialogui.buttonBox.addButton(
+            self.tr("Print"), QDialogButtonBox.ActionRole)
+        self.advancedButton = self.dialogui.buttonBox.addButton(
+            self.tr("Advanced"), QDialogButtonBox.HelpRole)
 
-        proxy = QSortFilterProxyModel(self.dialogui.comboBox_composers)
-        proxy.setSourceModel(self.dialogui.comboBox_composers.model())
-        self.dialogui.comboBox_composers.model().setParent(proxy)
-        self.dialogui.comboBox_composers.setModel(proxy)
+        proxy = QSortFilterProxyModel(self.dialogui.comboBox_printlayouts)
+        proxy.setSourceModel(self.dialogui.comboBox_printlayouts.model())
+        self.dialogui.comboBox_printlayouts.model().setParent(proxy)
+        self.dialogui.comboBox_printlayouts.setModel(proxy)
 
-
-        self.dialogui.comboBox_fileformat.addItem("PDF", self.tr("PDF Document (*.pdf);;"))
-        self.dialogui.comboBox_fileformat.addItem("JPG", self.tr("JPG Image (*.jpg);;"))
-        self.dialogui.comboBox_fileformat.addItem("BMP", self.tr("BMP Image (*.bmp);;"))
-        self.dialogui.comboBox_fileformat.addItem("PNG", self.tr("PNG Image (*.png);;"))
+        self.dialogui.comboBox_fileformat.addItem(
+            "PDF", self.tr("PDF Document (*.pdf);;"))
+        self.dialogui.comboBox_fileformat.addItem(
+            "JPG", self.tr("JPG Image (*.jpg);;"))
+        self.dialogui.comboBox_fileformat.addItem(
+            "BMP", self.tr("BMP Image (*.bmp);;"))
+        self.dialogui.comboBox_fileformat.addItem(
+            "PNG", self.tr("PNG Image (*.png);;"))
 
         self.dialogui.comboBox_crs.addItem("LV95", "EPSG:2056,0")
         self.dialogui.comboBox_crs.addItem("LV03", "EPSG:21781,0")
@@ -73,128 +82,156 @@ class PrintTool(QgsMapTool):
 
         self.dialogui.previewGraphic.resizeEvent = self.__resizePreview
 
-        self.iface.compositionAdded.connect(lambda view: self.__reloadComposers())
-        self.iface.compositionWillBeRemoved.connect(self.__reloadComposers)
-        self.dialogui.comboBox_composers.currentIndexChanged.connect(self.__selectComposer)
-        self.dialogui.toolButton_layoutManager.clicked.connect(self.__manageLayouts)
-        self.dialogui.lineEdit_title.textChanged.connect(self.__titleChanged)
-        self.dialogui.comboBox_scale.scaleChanged.connect(self.__changeScale)
-        self.dialogui.spinBox_border.valueChanged.connect(self.__generateComposer)
-        self.dialogui.lineedit_xmin.editingFinished.connect(self.__generateComposer)
-        self.dialogui.lineedit_xmax.editingFinished.connect(self.__generateComposer)
-        self.dialogui.lineedit_ymin.editingFinished.connect(self.__generateComposer)
-        self.dialogui.lineedit_ymax.editingFinished.connect(self.__generateComposer)
-        self.dialogui.button_mapCartouche.clicked.connect(self.__showCartoucheDialog)
-        self.dialogui.comboBox_crs.currentIndexChanged.connect(self.__setupGrid)
-        self.dialogui.checkBox_gridAnnotations.toggled.connect(self.__toggleGridAnnotations)
+        QgsProject.instance().layoutManager().layoutAdded.connect(
+            lambda view: self.__reloadPrintLayouts())
+        QgsProject.instance().layoutManager().layoutRemoved.connect(
+            self.__reloadPrintLayouts)
+        self.dialogui.comboBox_printlayouts.currentIndexChanged.connect(
+            self.__selectPrintLayout)
+        self.dialogui.toolButton_layoutManager.clicked.connect(
+            self.__manageLayouts)
+        self.dialogui.lineEdit_title.textChanged.connect(
+            self.__titleChanged)
+        self.dialogui.comboBox_scale.scaleChanged.connect(
+            self.__changeScale)
+        self.dialogui.spinBox_border.valueChanged.connect(
+            self.__generatePrintLayout)
+        self.dialogui.lineedit_xmin.editingFinished.connect(
+            self.__generatePrintLayout)
+        self.dialogui.lineedit_xmax.editingFinished.connect(
+            self.__generatePrintLayout)
+        self.dialogui.lineedit_ymin.editingFinished.connect(
+            self.__generatePrintLayout)
+        self.dialogui.lineedit_ymax.editingFinished.connect(
+            self.__generatePrintLayout)
+        self.dialogui.button_mapCartouche.clicked.connect(
+            self.__showCartoucheDialog)
+        self.dialogui.comboBox_crs.currentIndexChanged.connect(
+            self.__setupGrid)
+        self.dialogui.checkBox_gridAnnotations.toggled.connect(
+            self.__toggleGridAnnotations)
         self.dialogui.checkBox_legend.toggled.connect(self.__toggleLegend)
-        self.dialogui.button_configureLegend.clicked.connect(lambda: self.__configureLegend())
+        self.dialogui.button_configureLegend.clicked.connect(
+            lambda: self.__configureLegend())
         self.dialogui.checkBox_scalebar.toggled.connect(self.__toggleScalebar)
-        self.dialogui.checkBox_mapCartouche.toggled.connect(self.__toggleMapCartouche)
-        self.dialogui.spinBox_intervalx.valueChanged.connect(self.__intervalXChanged)
-        self.dialogui.spinBox_intervaly.valueChanged.connect(self.__intervalYChanged)
+        self.dialogui.checkBox_mapCartouche.toggled.connect(
+            self.__toggleMapCartouche)
+        self.dialogui.spinBox_intervalx.valueChanged.connect(
+            self.__intervalXChanged)
+        self.dialogui.spinBox_intervaly.valueChanged.connect(
+            self.__intervalYChanged)
         self.dialogui.groupBox_grid.setChecked(False)
         self.exportButton.clicked.connect(self.__export)
         self.printButton.clicked.connect(self.__print)
-        self.advancedButton.clicked.connect(self.__advanced)
+        # self.advancedButton.clicked.connect(self.__advanced)
         self.dialog.finished.connect(lambda: self.setToolEnabled(False))
         self.dialogui.groupBox_grid.toggled.connect(self.__setupGrid)
         self.iface.mapCanvas().mapCanvasRefreshed.connect(self.__updateMap)
-        self.iface.mapCanvas().mapUnitsChanged.connect(self.__mapUnitsChanged)
+        self.iface.mapCanvas().destinationCrsChanged.connect(
+            self.__mapUnitsChanged)
 
         self.__setUiEnabled(False)
 
     def __resizePreview(self, ev=None):
         try:
-            page = self.composition.pages()[0]
+            page = self.printLayout.pageCollection()[0]
             self.dialogui.previewGraphic.fitInView(page, Qt.KeepAspectRatio)
         except:
             pass
 
     def __updateMap(self):
         if self.mapitem and not self.printing:
-            self.mapitem.cache()
-            self.mapitem.updateItem()
+            self.mapitem.recreateCachedImageInBackground()
+            self.mapitem.update()
 
     def __mapUnitsChanged(self):
-        if not self.fixedSizeMode and self.iface.mapCanvas().mapSettings().mapUnits() != QGis.Meters:
+        if not self.fixedSizeMode and \
+                self.iface.mapCanvas().mapSettings().mapUnits() \
+                != QgsUnitTypes.DistanceMeters:
             self.__setUiEnabled(False)
             self.dialogui.label_unitWarning.setVisible(True)
         elif self.dialogui.label_unitWarning.isVisible():
             self.__setUiEnabled(True)
-            self.__initComposer()
+            self.__initPrintLayout()
 
-    def __composerItem(self, id, classtype):
+    def __layoutItem(self, id, classtype):
         try:
-            item = self.composition.getComposerItemById(id) if self.composition else None
+            item = self.printLayout.itemById(id) if self.printLayout else None
             if item:
                 item.__class__ = classtype
-                # This is not a debug leftover, but ensures that the object gets the attributes...
+                # This is not a debug leftover, but ensures that the object
+                # gets the attributes...
                 dir(item)
             return item
         except:
             return None
 
-    def __initComposer(self):
+    def __initPrintLayout(self):
         self.grid = self.mapitem.grid()
-        self.cartouchedialog = CartoucheDialog(self.composition, self.dialog)
-
-        self.mapitem.setPreviewMode(1)
+        self.cartouchedialog = CartoucheDialog(self.printLayout, self.dialog)
         if not self.fixedSizeMode:
-            # Only update extent if it does not intersect with full extent of map
+            # Only update extent if it does not intersect
+            # with full extent of map
             extent = self.__getCustomExtent()
-            if not extent or not self.iface.mapCanvas().fullExtent().contains(extent):
+            if not extent or not self.iface.mapCanvas().fullExtent().contains(
+                    extent):
                 extent = self.iface.mapCanvas().extent()
-                self.dialogui.lineedit_xmin.setText(str(round(extent.xMinimum() + 0.125 * extent.width())))
-                self.dialogui.lineedit_xmax.setText(str(round(extent.xMaximum() - 0.125 * extent.width())))
-                self.dialogui.lineedit_ymin.setText(str(round(extent.yMinimum() + 0.125 * extent.height())))
-                self.dialogui.lineedit_ymax.setText(str(round(extent.yMaximum() - 0.125 * extent.height())))
-            self.__generateComposer()
+                self.dialogui.lineedit_xmin.setText(
+                    str(round(extent.xMinimum() + 0.125 * extent.width())))
+                self.dialogui.lineedit_xmax.setText(
+                    str(round(extent.xMaximum() - 0.125 * extent.width())))
+                self.dialogui.lineedit_ymin.setText(
+                    str(round(extent.yMinimum() + 0.125 * extent.height())))
+                self.dialogui.lineedit_ymax.setText(
+                    str(round(extent.yMaximum() - 0.125 * extent.height())))
+            self.__generatePrintLayout()
         else:
             extent = self.iface.mapCanvas().extent()
-            extentheight = self.mapitem.rect().height() / self.mapitem.rect().width() * extent.width()
+            extentheight = self.mapitem.extent().height() / self.mapitem.extent().width() * extent.width()
             center = extent.center().y()
             extent.setYMinimum(center - extentheight / 2.)
             extent.setYMaximum(center + extentheight / 2.)
-            self.mapitem.setNewExtent(extent)
+            self.mapitem.setExtent(extent)
         wmtsScales = []
-        refRes = 0.0254 / self.composition.printResolution()
-        try:
-            resolutions = self.iface.mapCanvas().wmtsResolutions()
-        except:
-            resolutions = []
-        minDist = -1
-        bestScale = 1. / self.mapitem.scale()
-        if resolutions:
-            minDist = abs(1. / self.mapitem.scale() - refRes / resolutions[0])
-        for resolution in resolutions:
-            scale = refRes / resolution
-            if 1. / self.mapitem.scale() < scale:
-                bestScale = scale
-            wmtsScales.append(QgsScaleComboBox.toString(scale))
+        bestScale = self.mapitem.scale()
+        # TODO: METHOD wmtsResolutions DOES NOT EXIST ASK SANDRO
+        # refRes = 0.0254 / self.printLayout.renderContext().dpi()
+        # try:
+        #     resolutions = self.iface.mapCanvas().wmtsResolutions()
+        # except:
+        #     resolutions = []
+        # minDist = -1
+        # bestScale = 1. / self.mapitem.scale()
+        # if resolutions:
+        #     minDist = abs(1. / self.mapitem.scale() - refRes / resolutions[0])
+        # for resolution in resolutions:
+        #     scale = refRes / resolution
+        #     if 1. / self.mapitem.scale() < scale:
+        #         bestScale = scale
+        #     wmtsScales.append(QgsScaleComboBox.toString(scale))
         self.dialogui.comboBox_scale.updateScales(wmtsScales)
         self.dialogui.comboBox_scale.blockSignals(True)
         self.dialogui.comboBox_scale.setScale(bestScale)
         self.dialogui.comboBox_scale.blockSignals(False)
-        self.mapitem.cache()
-        self.mapitem.updateItem()
-        self.dialogui.previewGraphic.setScene(self.composition)
+        self.mapitem.recreateCachedImageInBackground()
+        self.mapitem.update()
+        self.dialogui.previewGraphic.setScene(self.printLayout)
         self.__resizePreview()
         self.__updateView()
         self.__changeScale()
 
-        titleItem = self.__composerItem("title", QgsComposerLabel)
+        titleItem = self.__layoutItem("title", QgsLayoutItemLabel)
         if not titleItem:
             self.dialogui.lineEdit_title.setEnabled(False)
         else:
             self.dialogui.lineEdit_title.setText(titleItem.text())
             titleItem.setVisible(not not titleItem.text())
-        legendItem = self.__composerItem("legend", QgsComposerLegend)
+        legendItem = self.__layoutItem("legend", QgsLayoutItemLegend)
         if not legendItem:
             self.dialogui.checkBox_legend.setEnabled(False)
         else:
             self.dialogui.checkBox_legend.setChecked(legendItem.isVisible())
-        scaleBarItem = self.__composerItem("scalebar", QgsComposerScaleBar)
+        scaleBarItem = self.__layoutItem("scalebar", QgsLayoutItemScaleBar)
         if not scaleBarItem:
             self.dialogui.checkBox_scalebar.setEnabled(False)
         else:
@@ -203,22 +240,25 @@ class PrintTool(QgsMapTool):
             self.dialogui.groupBox_grid.setEnabled(False)
         else:
             self.__setupGrid()
-        cartoucheItem = self.__composerItem("mapcartouche", QgsComposerItemGroup)
+        cartoucheItem = self.__layoutItem(
+            "mapcartouche", QgsLayoutItemGroup)
         if not cartoucheItem:
             self.dialogui.checkBox_mapCartouche.setEnabled(False)
         else:
-            self.dialogui.checkBox_mapCartouche.setChecked(cartoucheItem.isVisible())
-        self.dialogui.groupBox_grid.setChecked(self.mapitem.gridEnabled())
+            self.dialogui.checkBox_mapCartouche.setChecked(
+                cartoucheItem.isVisible())
+        self.dialogui.groupBox_grid.setChecked(
+            self.mapitem.grid().enabled())
 
     def setToolEnabled(self, enabled):
         if enabled:
             self.dialog.show()
-            self.__reloadComposers()
+            self.__reloadPrintLayouts()
             self.__configureLegend(False)
             self.iface.mapCanvas().setMapTool(self)
         else:
             self.mapitem = None
-            self.composition = None
+            self.printLayout = None
             self.dialog.hide()
             self.__clearRubberBand()
             self.iface.mapCanvas().unsetMapTool(self)
@@ -234,32 +274,40 @@ class PrintTool(QgsMapTool):
                 p1 = r.topLeft()
                 p2 = r.bottomRight()
                 mup = self.iface.mapCanvas().mapSettings().mapUnitsPerPixel()
-                self.resizePoints = [self.rect.topLeft(), self.rect.bottomRight()]
+                self.resizePoints = [self.rect.topLeft(),
+                                     self.rect.bottomRight()]
                 self.resizeHandlers = []
                 self.resizeMoveOffset = QPointF(0, 0)
 
                 if abs(p1.x() - e.x()) < self.resizeTol:
-                    self.resizeHandlers.append(lambda p: self.resizePoints[0].setX(p.x()))
+                    self.resizeHandlers.append(
+                        lambda p: self.resizePoints[0].setX(p.x()))
                     self.resizeMoveOffset.setX((e.x() - p1.x()) * mup)
                 elif abs(p2.x() - e.x()) < self.resizeTol:
-                    self.resizeHandlers.append(lambda p: self.resizePoints[1].setX(p.x()))
+                    self.resizeHandlers.append(
+                        lambda p: self.resizePoints[1].setX(p.x()))
                     self.resizeMoveOffset.setX((e.x() - p2.x()) * mup)
                 if abs(p1.y() - e.y()) < self.resizeTol:
-                    self.resizeHandlers.append(lambda p: self.resizePoints[0].setY(p.y()))
+                    self.resizeHandlers.append(
+                        lambda p: self.resizePoints[0].setY(p.y()))
                     self.resizeMoveOffset.setY(-(e.y() - p1.y()) * mup)
                 elif abs(p2.y() - e.y()) < self.resizeTol:
-                    self.resizeHandlers.append(lambda p: self.resizePoints[1].setY(p.y()))
+                    self.resizeHandlers.append(
+                        lambda p: self.resizePoints[1].setY(p.y()))
                     self.resizeMoveOffset.setY(-(e.y() - p2.y()) * mup)
 
             # Check whether to move
             if not self.resizeHandlers and r.contains(e.pos()):
                 self.oldrect = QRectF(self.rect)
-                self.oldrubberband = QgsRubberBand(self.iface.mapCanvas(), QGis.Polygon)
-                self.oldrubberband.setToCanvasRectangle(self.__canvasRect(self.oldrect))
+                self.oldrubberband = QgsRubberBand(
+                    self.iface.mapCanvas(), QgsWkbTypes.PolygonGeometry)
+                self.oldrubberband.setToCanvasRectangle(
+                    self.__canvasRect(self.oldrect))
                 self.oldrubberband.setColor(QColor(127, 127, 255, 31))
                 mtp = self.iface.mapCanvas().mapSettings().mapToPixel()
                 p = mtp.toMapCoordinates(e.pos())
-                self.resizeMoveOffset = QPointF(p.x() - self.rect.x(), p.y() - self.rect.y())
+                self.resizeMoveOffset = QPointF(
+                    p.x() - self.rect.x(), p.y() - self.rect.y())
 
     def canvasMoveEvent(self, e):
         if not self.rect:
@@ -347,18 +395,19 @@ class PrintTool(QgsMapTool):
             self.resizeHandlers = []
             self.resizePoints = []
             self.resizeMoveOffset = None
-            self.mapitem.setNewExtent(QgsRectangle(self.rect))
+            self.mapitem.setExtent(QgsRectangle(self.rect))
             if not self.fixedSizeMode:
-                self.__generateComposer()
+                self.__generatePrintLayout()
 
     def __setupGrid(self):
         if not self.mapitem:
             return
         if not self.dialogui.groupBox_grid.isChecked():
-            self.mapitem.setGridEnabled(False)
+            self.mapitem.grid().setEnabled(False)
         else:
-            crs, format = self.dialogui.comboBox_crs.itemData(self.dialogui.comboBox_crs.currentIndex()).split(",")
-            self.mapitem.setGridEnabled(True)
+            crs, format = self.dialogui.comboBox_crs.itemData(
+                self.dialogui.comboBox_crs.currentIndex()).split(",")
+            self.mapitem.grid().setEnabled(True)
             self.grid.setCrs(QgsCoordinateReferenceSystem(crs))
             try:
                 if format == '0':
@@ -381,10 +430,15 @@ class PrintTool(QgsMapTool):
                 # Ignore missing setGridCrsType method
                 pass
 
-            self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Top)
-            self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Right)
-            self.grid.setAnnotationDisplay(QgsComposerMapGrid.LongitudeOnly, QgsComposerMapGrid.Bottom)
-            self.grid.setAnnotationDisplay(QgsComposerMapGrid.LatitudeOnly, QgsComposerMapGrid.Left)
+            self.grid.setAnnotationDisplay(
+                QgsLayoutItemMapGrid.LongitudeOnly, QgsLayoutItemMapGrid.Top)
+            self.grid.setAnnotationDisplay(
+                QgsLayoutItemMapGrid.LatitudeOnly, QgsLayoutItemMapGrid.Right)
+            self.grid.setAnnotationDisplay(
+                QgsLayoutItemMapGrid.LongitudeOnly,
+                QgsLayoutItemMapGrid.Bottom)
+            self.grid.setAnnotationDisplay(
+                QgsLayoutItemMapGrid.LatitudeOnly, QgsLayoutItemMapGrid.Left)
             if crs != "EPSG:4326":
                 # self.grid.setAnnotationDisplay(QgsComposerMapGrid.HideAll, QgsComposerMapGrid.Top)
                 # self.grid.setAnnotationDisplay(QgsComposerMapGrid.HideAll, QgsComposerMapGrid.Right)
@@ -398,10 +452,12 @@ class PrintTool(QgsMapTool):
             if showInterval:
                 # Get interval from composer
                 self.dialogui.spinBox_intervalx.blockSignals(True)
-                self.dialogui.spinBox_intervalx.setValue(self.mapitem.gridIntervalX())
+                self.dialogui.spinBox_intervalx.setValue(
+                    self.mapitem.grid().intervalX())
                 self.dialogui.spinBox_intervalx.blockSignals(False)
                 self.dialogui.spinBox_intervaly.blockSignals(True)
-                self.dialogui.spinBox_intervaly.setValue(self.mapitem.gridIntervalY())
+                self.dialogui.spinBox_intervaly.setValue(
+                    self.mapitem.grid().intervalY())
                 self.dialogui.spinBox_intervaly.blockSignals(False)
 
         self.__updateView()
@@ -411,36 +467,36 @@ class PrintTool(QgsMapTool):
         self.cartouchedialog.storeInProject()
 
     def __intervalXChanged(self, value):
-        self.mapitem.setGridIntervalX(value)
+        self.mapitem.grid().setIntervalX(value)
         self.__updateView()
 
     def __intervalYChanged(self, value):
-        self.mapitem.setGridIntervalY(value)
+        self.mapitem.grid().setIntervalY(value)
         self.__updateView()
 
     def __titleChanged(self, arg):
-        titleItem = self.__composerItem("title", QgsComposerLabel)
+        titleItem = self.__layoutItem("title", QgsLayoutItemLabel)
         if titleItem:
             titleItem.setText(unicode(self.dialogui.lineEdit_title.text()))
             titleItem.setVisible(not not titleItem.text())
             self.__updateView()
 
     def __toggleGridAnnotations(self, active):
-        self.mapitem.setShowGridAnnotation(active)
+        self.mapitem.grid().setAnnotationEnabled(active)
         self.__updateView()
 
     def __toggleLegend(self, active):
-        legendItem = self.__composerItem("legend", QgsComposerLegend)
+        legendItem = self.__layoutItem("legend", QgsLayoutItemLegend)
         self.dialogui.button_configureLegend.setEnabled(active)
         if legendItem:
             legendItem.setVisible(active)
             self.__updateView()
 
-    def __configureLegend(self, execDialog = True):
-        legendItem = self.__composerItem("legend", QgsComposerLegend)
+    def __configureLegend(self, execDialog=True):
+        legendItem = self.__layoutItem("legend", QgsLayoutItemLegend)
         if not legendItem:
             return
-        model = legendItem.modelV2()
+        model = legendItem.model()
 
         # Get previously displayed layers
         prevLayers = {}
@@ -453,28 +509,34 @@ class PrintTool(QgsMapTool):
         layersList.horizontalHeader().hide()
         layersList.horizontalHeader().setStretchLastSection(True)
         layersList.verticalHeader().hide()
-        layerReg = QgsMapLayerRegistry.instance()
+        qgsProject = QgsProject.instance()
         for layerNode in QgsProject.instance().layerTreeRoot().findLayers():
             row = layersList.rowCount()
             layersList.insertRow(row)
-            layer = layerReg.mapLayer(layerNode.layerId())
+            layer = qgsProject.mapLayer(layerNode.layerId())
             item = QTableWidgetItem(layer.name())
             item.setData(Qt.UserRole, layerNode.layerId())
             layersList.setItem(row, 0, item)
             combo = QComboBox()
-            combo.addItems([self.tr("Hidden"), self.tr("Visible without layer legend"), self.tr("Visible with layer legend")])
+            combo.addItems([
+                self.tr("Hidden"),
+                self.tr("Visible without layer legend"),
+                self.tr("Visible with layer legend")])
             if layerNode.layerId() in prevLayers:
-                combo.setCurrentIndex(2 if prevLayers[layerNode.layerId()] == True else 1)
+                combo.setCurrentIndex(
+                    2 if prevLayers[layerNode.layerId()] is True else 1)
             else:
                 combo.setCurrentIndex(0)
             layersList.setCellWidget(row, 1, combo)
         legendDialog = QDialog(self.dialog)
         if execDialog:
             legendDialog.resize(320, 240)
-            bbox = QDialogButtonBox(QDialogButtonBox.Ok|QDialogButtonBox.Cancel)
+            bbox = QDialogButtonBox(
+                QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
             legendDialog.setWindowTitle(self.tr("Configure legend"))
             legendDialog.setLayout(QVBoxLayout())
-            legendDialog.layout().addWidget(QLabel(self.tr("Select layers to display in legend:")))
+            legendDialog.layout().addWidget(QLabel(
+                self.tr("Select layers to display in legend:")))
             legendDialog.layout().addWidget(layersList)
             legendDialog.layout().addWidget(bbox)
             bbox.accepted.connect(legendDialog.accept)
@@ -499,105 +561,103 @@ class PrintTool(QgsMapTool):
                 elif layerNode.layerId() in removeLegends:
                     index = model.node2index(layerNode)
                     if model.rowCount(index) > 0:
-                        layerNode.setCustomProperty("legend/node-order", "empty")
+                        layerNode.setCustomProperty(
+                            "legend/node-order", "empty")
                         model.refreshLayerLegend(layerNode)
             legendItem.adjustBoxSize()
-            legendItem.update()
+            legendItem.updateLegend()
 
     def __toggleScalebar(self, active):
-        scaleBarItem = self.__composerItem("scalebar", QgsComposerScaleBar)
+        scaleBarItem = self.__layoutItem("scalebar", QgsLayoutItemScaleBar)
         if scaleBarItem:
             scaleBarItem.setVisible(active)
             self.__updateView()
 
     def __toggleMapCartouche(self, active):
         self.dialogui.button_mapCartouche.setEnabled(active)
-        cartoucheItem = self.__composerItem("mapcartouche", QgsComposerItemGroup)
+        cartoucheItem = self.__layoutItem("mapcartouche", QgsLayoutItemGroup)
         if cartoucheItem:
             cartoucheItem.setVisibility(active)
         self.__updateView()
 
     def __changeScale(self):
         if self.fixedSizeMode:
-            self.mapitem.setNewScale(1. / self.dialogui.comboBox_scale.scale())
+            self.mapitem.setScale(self.dialogui.comboBox_scale.scale())
             self.__createRubberBand()
         else:
-            self.__generateComposer()
+            self.__generatePrintLayout()
 
     def __updateView(self):
-        self.composition.update()
+        self.printLayout.update()
         self.dialogui.previewGraphic.update()
 
-    def __reloadComposers(self, removedComposition=None):
+    def __reloadPrintLayouts(self, removedLayout=None):
         # Only reload if dialog is visible
         if not self.dialog.isVisible():
             return
 
         self.cartouchedialog = None
         self.mapitem = None
-        self.dialogui.comboBox_composers.blockSignals(True)
-        prev = self.dialogui.comboBox_composers.currentText()
-        if not prev and self.iface.printCompositions():
-            prev = self.iface.printCompositions()[0].title()
-        self.dialogui.comboBox_composers.clear()
+        self.dialogui.comboBox_printlayouts.blockSignals(True)
+        prev = self.dialogui.comboBox_printlayouts.currentText()
+        if not prev and self.layoutManager.printLayouts():
+            prev = self.layoutManager.printLayouts()[0].name()
+        self.dialogui.comboBox_printlayouts.clear()
         items = []
-        for composition in self.iface.printCompositions():
-            if composition != removedComposition:
-                cur = composition.title()
-                items.append((cur, composition))
+        for layout in self.layoutManager.printLayouts():
+            if layout != removedLayout:
+                cur = layout.name()
+                items.append((cur, layout))
         items.sort(key=lambda x: x[0])
         for item in items:
-            self.dialogui.comboBox_composers.addItem(item[0], item[1])
+            self.dialogui.comboBox_printlayouts.addItem(item[0], item[1])
         # Ensure that changed signal is emitted
-        self.dialogui.comboBox_composers.setCurrentIndex(-1)
-        self.dialogui.comboBox_composers.blockSignals(False)
-        if self.dialogui.comboBox_composers.count() > 0:
+        self.dialogui.comboBox_printlayouts.setCurrentIndex(-1)
+        self.dialogui.comboBox_printlayouts.blockSignals(False)
+        if self.dialogui.comboBox_printlayouts.count() > 0:
             self.__setUiEnabled(True)
-            active = self.dialogui.comboBox_composers.findText(prev)
+            active = self.dialogui.comboBox_printlayouts.findText(prev)
             if active == -1:
-              active = 0
-            self.dialogui.comboBox_composers.setCurrentIndex(active)
+                active = 0
+            self.dialogui.comboBox_printlayouts.setCurrentIndex(active)
         else:
             self.__setUiEnabled(False)
 
-    def __selectComposer(self):
+    def __selectPrintLayout(self):
         self.__clearRubberBand()
         self.mapitem = None
         self.dialogui.previewGraphic.setScene(None)
         try:
-            activeIndex = self.dialogui.comboBox_composers.currentIndex()
-            composition = self.dialogui.comboBox_composers.itemData(activeIndex)
-            composition.__class__ = QgsComposition
-            self.fixedSizeMode = composition.title() != "Custom"
+            activeIndex = self.dialogui.comboBox_printlayouts.currentIndex()
+            layout = self.dialogui.comboBox_printlayouts.itemData(activeIndex)
+            layout.__class__ = QgsPrintLayout
+            self.fixedSizeMode = layout.name() != "Custom"
         except Exception as e:
             self.__setUiEnabled(False)
             return
 
-        if not self.fixedSizeMode and self.iface.mapCanvas().mapSettings().mapUnits() != QGis.Meters:
+        if not self.fixedSizeMode and self.iface.mapCanvas().mapSettings().mapUnits() != QgsUnitTypes.DistanceMeters:
             self.__setUiEnabled(False)
             self.dialogui.label_unitWarning.setVisible(True)
             return
 
-        try:
-            maps = composition.composerMapItems()
-        except:
-            # composerMapItems is not available with PyQt4 < 4.8.4
-            maps = []
-            for item in composition.items():
-                if isinstance(item, QgsComposerMap):
-                    maps.append(item)
-        if len(maps) != 1:
-            QMessageBox.warning(self.iface.mainWindow(), self.tr("Invalid composer"), self.tr("The composer must have exactly one map item."))
+        referenceMap = layout.referenceMap()
+
+        if not referenceMap:
+            QMessageBox.warning(
+                self.iface.mainWindow(),
+                self.tr("Invalid layout"),
+                self.tr("The layout must have exactly one map item."))
             self.__setUiEnabled(False)
             return
 
         self.__setUiEnabled(True)
 
-        self.composition = composition
+        self.printLayout = layout
         # Default to twice the screen dpi
-        self.composition.setPrintResolution(2 * QApplication.desktop().logicalDpiX())
-        self.mapitem = maps[0]
-        self.__initComposer()
+        self.printLayout.renderContext().setDpi(2 * QApplication.desktop().logicalDpiX())
+        self.mapitem = referenceMap
+        self.__initPrintLayout()
 
     def __manageLayouts(self):
         PrintLayoutManager(self.iface, self.dialog).exec_()
@@ -624,8 +684,8 @@ class PrintTool(QgsMapTool):
 
         return QgsRectangle(xmin, ymin, xmax, ymax)
 
-    def __generateComposer(self):
-        scale = 1. / self.dialogui.comboBox_scale.scale()
+    def __generatePrintLayout(self):
+        scale = self.dialogui.comboBox_scale.scale()
         extent = self.__getCustomExtent()
         if not extent:
             return
@@ -635,21 +695,27 @@ class PrintTool(QgsMapTool):
         mapwidth = ((extent.xMaximum() - extent.xMinimum()) / scale * 1000.0)
         mapheight = ((extent.yMaximum() - extent.yMinimum()) / scale * 1000.0)
 
-        self.mapitem.setSceneRect( QRectF(border, border, mapwidth, mapheight ) )
-        self.mapitem.setPos(border, border)
-        self.mapitem.setNewExtent(extent)
-        self.mapitem.setNewScale(scale)
+        self.mapitem.attemptSetSceneRect(QRectF(border, border, mapwidth, mapheight))
+        # self.mapitem.setPos(border, border)
+        self.mapitem.attemptMoveBy(border, border)
+        self.mapitem.setExtent(extent)
+        self.mapitem.setScale(scale)
         self.mapitem.updateItem()
 
         newwidth = 2 * border + mapwidth
         newheight = 2 * border + mapheight
 
-        for item in self.composition.items():
+        for item in self.printLayout.items():
             if item is not self.mapitem:
-                item.moveBy(borderdelta, borderdelta)
+                item.attemptMoveBy(borderdelta, borderdelta)
 
-        self.composition.setPaperSize(newwidth, newheight)
-        self.dialogui.label_paperSize.setText(self.tr("Paper size: %.2f cm x %.2f cm") % (newwidth / 10., newheight / 10.))
+        pageCollection = self.printLayout.pageCollection()
+        page = pageCollection.page(0)
+        page.setPageSize(QgsLayoutSize(newwidth, newheight))
+
+        self.dialogui.label_paperSize.setText(
+            self.tr("Paper size: %.2f cm x %.2f cm") % (
+                newwidth / 10., newheight / 10.))
 
         self.rect = extent.toRectF()
         self.__createRubberBand()
@@ -660,10 +726,14 @@ class PrintTool(QgsMapTool):
         self.__clearRubberBand()
         extent = self.mapitem.extent()
         center = extent.center()
-        corner = QPointF(center.x() - 0.5 * extent.width(), center.y() - 0.5 * extent.height())
-        self.rect = QRectF(corner.x(), corner.y(), extent.width(), extent.height())
+        corner = QPointF(
+            center.x() - 0.5 * extent.width(),
+            center.y() - 0.5 * extent.height())
+        self.rect = QRectF(
+            corner.x(), corner.y(), extent.width(), extent.height())
 
-        self.rubberband = QgsRubberBand(self.iface.mapCanvas(), QGis.Polygon)
+        self.rubberband = QgsRubberBand(
+            self.iface.mapCanvas(), QgsWkbTypes.PolygonGeometry)
         self.rubberband.setToCanvasRectangle(self.__canvasRect(self.rect))
         self.rubberband.setColor(QColor(127, 127, 255, 127))
 
@@ -677,16 +747,18 @@ class PrintTool(QgsMapTool):
 
     def __canvasRect(self, rect):
         mtp = self.iface.mapCanvas().mapSettings().mapToPixel()
-        p1 = mtp.transform(QgsPoint(rect.left(), rect.top()))
-        p2 = mtp.transform(QgsPoint(rect.right(), rect.bottom()))
+        p1 = mtp.transform(QgsPointXY(rect.left(), rect.top()))
+        p2 = mtp.transform(QgsPointXY(rect.right(), rect.bottom()))
         try:
-            return QRect(int(p1.x()), int(p1.y()), int(p2.x() - p1.x()), int(p2.y() - p1.y()))
+            return QRect(int(p1.x()), int(p1.y()),
+                         int(p2.x() - p1.x()), int(p2.y() - p1.y()))
         except:
             return QRect(0, 0, 0, 0)
 
     def __export(self):
         settings = QSettings()
-        format = self.dialogui.comboBox_fileformat.itemData(self.dialogui.comboBox_fileformat.currentIndex())
+        format = self.dialogui.comboBox_fileformat.itemData(
+            self.dialogui.comboBox_fileformat.currentIndex())
 
         # Ensure output filename has correct extension
         filename = settings.value("/print/lastfile", "")
@@ -697,48 +769,70 @@ class PrintTool(QgsMapTool):
 
         filename = QFileDialog.getSaveFileName(
             self.iface.mainWindow(),
-            self.tr("Print Composition"),
+            self.tr("Print Layout"),
             filename,
-            format
-        )
-        if type(filename) == tuple: filename = filename[0]
+            format)
+
+        if type(filename) == tuple:
+            filename = filename[0]
         if not filename:
             return
 
         self.printing = True
-        QApplication.setOverrideCursor(Qt.WaitCursor)
         self.dialogui.previewGraphic.setUpdatesEnabled(False)
         self.dialog.setEnabled(False)
 
         # Ensure output filename has correct extension
-        filename = os.path.splitext(filename)[0] + "." + self.dialogui.comboBox_fileformat.currentText().lower()
-        format = self.dialogui.comboBox_fileformat.currentText().lower()
+        filename = os.path.splitext(filename)[
+            0] + "." + self.dialogui.comboBox_fileformat.currentText().lower()
 
         settings.setValue("/print/lastfile", filename)
 
         success = False
-        if format == u"pdf":
-            success = self.composition.printToPdf(filename)
+        exporter = QgsLayoutExporter(self.printLayout)
+        if filename[-3:].lower() == u"pdf":
+            success = exporter.exportToPdf(
+                filename, QgsLayoutExporter.PdfExportSettings())
         else:
-            success = self.composition.printToImage(filename, format)
-        if not success:
-            QMessageBox.warning(self.dialog, self.tr("Print Failed"), self.tr("Failed to print the composition."))
+            success = exporter.exportToImage(
+                filename, QgsLayoutExporter.ImageExportSettings())
+        if success != QgsLayoutExporter.Success:
+            self.iface.messageBar().clearWidgets()
+            QMessageBox.warning(
+                self.iface.mainWindow(),
+                self.tr("Print Failed"),
+                self.tr("Failed to print the layout."))
 
         self.dialog.setEnabled(True)
         self.dialogui.previewGraphic.setUpdatesEnabled(True)
-        QApplication.restoreOverrideCursor()
         self.printing = False
 
     def __print(self):
         if not QPrinterInfo.availablePrinterNames():
-            QMessageBox.warning(self.dialog, self.tr("No Printers"), self.tr("No printers were found."))
+            QMessageBox.warning(
+                self.dialog,
+                self.tr("No Printers"),
+                self.tr("No printers were found."))
         else:
-            self.composition.print_()
+            exporter = QgsLayoutExporter(self.printLayout)
+            printdialog = QPrintDialog(self.printer)
+
+            if printdialog.exec_() != QDialog.Accepted:
+                return
+
+            success = exporter.print(
+                self.printer, QgsLayoutExporter.PrintExportSettings())
+            if success != 0:
+                QMessageBox.warning(
+                    self.iface.mainWindow(),
+                    self.tr("Print Failed"),
+                    self.tr("Failed to print the layout."))
 
     def __setUiEnabled(self, enabled):
         self.dialogui.lineEdit_title.setEnabled(enabled)
         self.dialogui.comboBox_scale.setEnabled(enabled)
-        self.dialogui.button_mapCartouche.setEnabled(self.dialogui.checkBox_mapCartouche.isChecked())
+        self.dialogui.button_mapCartouche.setEnabled(
+            self.dialogui.checkBox_mapCartouche.isChecked())
         self.dialogui.checkBox_legend.setEnabled(enabled)
         self.dialogui.checkBox_scalebar.setEnabled(enabled)
         self.dialogui.groupBox_grid.setEnabled(enabled)
@@ -757,5 +851,5 @@ class PrintTool(QgsMapTool):
         self.dialogui.spinBox_border.setVisible(visible)
         self.dialogui.label_paperSize.setVisible(visible)
 
-    def __advanced(self):
-        self.iface.showComposer(self.composition)
+    # def __advanced(self):
+    #     self.iface.showComposer(self.printLayout)
