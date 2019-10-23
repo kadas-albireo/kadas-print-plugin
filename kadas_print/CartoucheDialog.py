@@ -88,7 +88,6 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.documenttitleLE.setText(unicode(self.__getPrintLayoutItemText("documenttitle")))
         self.exercisedateLE.setDate(QDate.currentDate())
 
-
     def updatePrintLayout(self, x=None):
         self.__setPrintLayoutItemText("classification1", unicode(self.classification2.currentText()))
         self.__setPrintLayoutItemText("troopstitle", unicode(self.troopstitleLE.text()))
@@ -113,24 +112,20 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
             self.__setPrintLayoutItemText("exercisetitle", "")
             self.__setPrintLayoutItemText("documenttitle", "")
 
-        self.scene.update()
-        self.mapcartoucheView.update()
-
     def __setPrintLayoutItemText(self, itemid, text):
+        # redraw item everytime the text changes
+        # only calling the update of QGraphicScene in the updatePrintLayout()
+        # does not update the items
         item = self.scene.itemById(itemid)
         if item:
-            item.__class__ = QgsLayoutItemLabel
-            dir(item)
             item.setText(text)
+            item.redraw()
 
     def __getPrintLayoutItemText(self, itemid):
         item = self.scene.itemById(itemid)
         if item:
-            item.__class__ = QgsLayoutItemLabel
-            dir(item)
             return item.text()
         return ""
-
 
     def __addTextElement(self, parent, element, text):
         el = parent.ownerDocument().createElement(element)

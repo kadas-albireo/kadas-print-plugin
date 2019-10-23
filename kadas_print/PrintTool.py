@@ -464,6 +464,9 @@ class PrintTool(QgsMapTool):
 
     def __showCartoucheDialog(self):
         self.cartouchedialog.exec_()
+        cartoucheItem = self.__layoutItem("mapcartouche", QgsLayoutItemGroup)
+        for item in cartoucheItem.items():
+            item.redraw()
         self.cartouchedialog.storeInProject()
 
     def __intervalXChanged(self, value):
