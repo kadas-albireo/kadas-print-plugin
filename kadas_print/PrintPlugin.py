@@ -39,18 +39,16 @@ class PrintPlugin(QObject):
                 self.translator.load(localePath)
                 QCoreApplication.installTranslator(self.translator)
 
-        self.tool = PrintTool(self.iface)
         self.toolAction = None
 
     def initGui(self):
         try:
-            printAction = self.iface.findAction("mActionPrint")
+            self.printAction = self.iface.findAction("mActionPrint")
         except:
-            printAction = None
-        if printAction:
-            printAction.setCheckable(True)
-            printAction.triggered.connect(self.__toggleTool)
-            self.tool.setAction(printAction)
+            self.printAction = None
+        if self.printAction:
+            self.printAction.setCheckable(True)
+            self.printAction.triggered.connect(self.__toggleTool)
         else:
             self.toolButton = QToolButton(self.iface.mapNavToolToolBar())
             self.toolButton.setIcon(QIcon(":/plugins/print/icons/icon.png"))
@@ -60,7 +58,6 @@ class PrintPlugin(QObject):
             self.toolButton.setObjectName("vbsprintaction")
             self.toolAction = self.iface.pluginToolBar().addWidget(
                 self.toolButton)
-            self.tool.setButton(self.toolButton)
             self.toolButton.toggled.connect(self.__toggleTool)
 
     def unload(self):
@@ -69,5 +66,15 @@ class PrintPlugin(QObject):
         if self.toolAction:
             self.iface.pluginToolBar().removeAction(self.toolAction)
 
+    def __createMapTool(self):
+        self.tool = PrintTool(self.iface)
+
+        if self.printAction:
+            self.tool.setAction(self.printAction)
+        else:
+            self.tool.setButton(self.toolButton)
+
     def __toggleTool(self, active):
+        if active:
+            self.__createMapTool()
         self.tool.setToolEnabled(active)
