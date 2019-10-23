@@ -193,22 +193,17 @@ class PrintTool(QgsMapTool):
             extent.setYMaximum(center + extentheight / 2.)
             self.mapitem.setExtent(extent)
         wmtsScales = []
+        refRes = 0.0254 / self.printLayout.renderContext().dpi()
+        resolutions = self.iface.mapCanvas().zoomResolutions()
+        minDist = -1
         bestScale = self.mapitem.scale()
-        # TODO: METHOD wmtsResolutions DOES NOT EXIST ASK SANDRO
-        # refRes = 0.0254 / self.printLayout.renderContext().dpi()
-        # try:
-        #     resolutions = self.iface.mapCanvas().wmtsResolutions()
-        # except:
-        #     resolutions = []
-        # minDist = -1
-        # bestScale = 1. / self.mapitem.scale()
-        # if resolutions:
-        #     minDist = abs(1. / self.mapitem.scale() - refRes / resolutions[0])
-        # for resolution in resolutions:
-        #     scale = refRes / resolution
-        #     if 1. / self.mapitem.scale() < scale:
-        #         bestScale = scale
-        #     wmtsScales.append(QgsScaleComboBox.toString(scale))
+        if resolutions:
+            minDist = abs(self.mapitem.scale() - refRes / resolutions[0])
+        for resolution in resolutions:
+            scale = refRes / resolution
+            if self.mapitem.scale() < scale:
+                bestScale = scale
+            wmtsScales.append(QgsScaleComboBox.toString(scale))
         self.dialogui.comboBox_scale.updateScales(wmtsScales)
         self.dialogui.comboBox_scale.blockSignals(True)
         self.dialogui.comboBox_scale.setScale(bestScale)
