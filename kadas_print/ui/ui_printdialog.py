@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/printdialog.ui'
+# Form implementation generated from reading ui file 'printdialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_PrintDialog(object):
     def setupUi(self, PrintDialog):
@@ -22,20 +24,20 @@ class Ui_PrintDialog(object):
         self.label_extent = QtWidgets.QLabel(PrintDialog)
         self.label_extent.setObjectName("label_extent")
         self.gridLayout.addWidget(self.label_extent, 4, 0, 1, 1)
-        self.label_composers = QtWidgets.QLabel(PrintDialog)
-        self.label_composers.setObjectName("label_composers")
-        self.gridLayout.addWidget(self.label_composers, 1, 0, 1, 1)
+        self.label_printlayouts = QtWidgets.QLabel(PrintDialog)
+        self.label_printlayouts.setObjectName("label_printlayouts")
+        self.gridLayout.addWidget(self.label_printlayouts, 1, 0, 1, 1)
         self.label_title = QtWidgets.QLabel(PrintDialog)
         self.label_title.setObjectName("label_title")
         self.gridLayout.addWidget(self.label_title, 2, 0, 1, 1)
-        self.comboBox_composers = QtWidgets.QComboBox(PrintDialog)
+        self.comboBox_printlayouts = QtWidgets.QComboBox(PrintDialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBox_composers.sizePolicy().hasHeightForWidth())
-        self.comboBox_composers.setSizePolicy(sizePolicy)
-        self.comboBox_composers.setObjectName("comboBox_composers")
-        self.gridLayout.addWidget(self.comboBox_composers, 1, 1, 1, 1)
+        sizePolicy.setHeightForWidth(self.comboBox_printlayouts.sizePolicy().hasHeightForWidth())
+        self.comboBox_printlayouts.setSizePolicy(sizePolicy)
+        self.comboBox_printlayouts.setObjectName("comboBox_printlayouts")
+        self.gridLayout.addWidget(self.comboBox_printlayouts, 1, 1, 1, 1)
         self.checkBox_scalebar = QtWidgets.QCheckBox(PrintDialog)
         self.checkBox_scalebar.setObjectName("checkBox_scalebar")
         self.gridLayout.addWidget(self.checkBox_scalebar, 9, 0, 1, 1)
@@ -67,7 +69,7 @@ class Ui_PrintDialog(object):
         self.lineEdit_title.setSizePolicy(sizePolicy)
         self.lineEdit_title.setObjectName("lineEdit_title")
         self.gridLayout.addWidget(self.lineEdit_title, 2, 1, 1, 2)
-        self.comboBox_scale = QgsScaleComboBox(PrintDialog)
+        self.comboBox_scale = gui.QgsScaleComboBox(PrintDialog)
         self.comboBox_scale.setEditable(True)
         self.comboBox_scale.setObjectName("comboBox_scale")
         self.gridLayout.addWidget(self.comboBox_scale, 3, 1, 1, 2)
@@ -244,7 +246,7 @@ class Ui_PrintDialog(object):
         self.buttonBox.accepted.connect(PrintDialog.accept)
         self.buttonBox.rejected.connect(PrintDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(PrintDialog)
-        PrintDialog.setTabOrder(self.comboBox_composers, self.lineEdit_title)
+        PrintDialog.setTabOrder(self.comboBox_printlayouts, self.lineEdit_title)
         PrintDialog.setTabOrder(self.lineEdit_title, self.comboBox_scale)
         PrintDialog.setTabOrder(self.comboBox_scale, self.lineedit_xmin)
         PrintDialog.setTabOrder(self.lineedit_xmin, self.lineedit_xmax)
@@ -270,7 +272,7 @@ class Ui_PrintDialog(object):
         PrintDialog.setWindowTitle(_translate("PrintDialog", "Print"))
         self.label_border.setText(_translate("PrintDialog", "Border:"))
         self.label_extent.setText(_translate("PrintDialog", "Extent:"))
-        self.label_composers.setText(_translate("PrintDialog", "Layout:"))
+        self.label_printlayouts.setText(_translate("PrintDialog", "Layout:"))
         self.label_title.setText(_translate("PrintDialog", "Title:"))
         self.checkBox_scalebar.setText(_translate("PrintDialog", "Scalebar"))
         self.checkBox_legend.setText(_translate("PrintDialog", "Legend"))
@@ -291,5 +293,4 @@ class Ui_PrintDialog(object):
         self.label_intervaly.setText(_translate("PrintDialog", "Interval Y:"))
         self.button_mapCartouche.setText(_translate("PrintDialog", "Edit map cartouche"))
         self.button_configureLegend.setText(_translate("PrintDialog", "Configure"))
-
-from qgis.gui import QgsScaleComboBox
+from qgis import gui

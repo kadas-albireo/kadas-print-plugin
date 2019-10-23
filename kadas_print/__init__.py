@@ -10,5 +10,5 @@
 
 
 def classFactory(iface):
-    from PrintPlugin import PrintPlugin
+    from .PrintPlugin import PrintPlugin
     return PrintPlugin(iface)

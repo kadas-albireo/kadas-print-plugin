@@ -7,16 +7,18 @@
 #
 #    copyright            : (C) 2015 by Sourcepole AG
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtXml import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
+from qgis.PyQt.QtXml import *
 from qgis.core import *
 from qgis.gui import *
 
-from ui.ui_cartouchedialog import Ui_CartoucheDialog
+from .ui.ui_cartouchedialog import Ui_CartoucheDialog
+
 
 class CartoucheDialog(QDialog, Ui_CartoucheDialog):
-    def __init__(self, scene, parent = None):
+    def __init__(self, scene, parent=None):
         QDialog.__init__(self, parent)
         self.setupUi(self)
         self.scene = scene
@@ -32,24 +34,24 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.classification2.addItem(self.tr("SECRET"), "Secret")
         self.classification2.setCurrentIndex(-1)
 
-        self.exercisedateLE.dateChanged.connect(self.updateComposition)
-        self.classification1.currentIndexChanged.connect(self.updateComposition)
+        self.exercisedateLE.dateChanged.connect(self.updatePrintLayout)
+        self.classification1.currentIndexChanged.connect(self.updatePrintLayout)
         self.classification1.lineEdit().setPlaceholderText(self.tr("CLASSIFICATION"))
-        self.classification2.currentIndexChanged.connect(self.updateComposition)
+        self.classification2.currentIndexChanged.connect(self.updatePrintLayout)
         self.classification2.lineEdit().setPlaceholderText(self.tr("CLASSIFICATION"))
-        self.classification1.lineEdit().textEdited.connect(self.updateComposition)
-        self.classification2.lineEdit().textEdited.connect(self.updateComposition)
-        self.exerciseorganisationLE.textEdited.connect(self.updateComposition)
-        self.coursetitleLE.textEdited.connect(self.updateComposition)
-        self.troopstitleLE.textEdited.connect(self.updateComposition)
-        self.codenameLE.textEdited.connect(self.updateComposition)
-        self.cartouchecircumscriptionLE.textEdited.connect(self.updateComposition)
-        self.supplementtitleLE.textEdited.connect(self.updateComposition)
-        self.scaletitleLE.textEdited.connect(self.updateComposition)
-        self.exercisetitleLE.textEdited.connect(self.updateComposition)
-        self.documenttitleLE.textEdited.connect(self.updateComposition)
-        self.placedateLE.textEdited.connect(self.updateComposition)
-        self.exerciseGroupBox.toggled.connect(self.updateComposition)
+        self.classification1.lineEdit().textEdited.connect(self.updatePrintLayout)
+        self.classification2.lineEdit().textEdited.connect(self.updatePrintLayout)
+        self.exerciseorganisationLE.textEdited.connect(self.updatePrintLayout)
+        self.coursetitleLE.textEdited.connect(self.updatePrintLayout)
+        self.troopstitleLE.textEdited.connect(self.updatePrintLayout)
+        self.codenameLE.textEdited.connect(self.updatePrintLayout)
+        self.cartouchecircumscriptionLE.textEdited.connect(self.updatePrintLayout)
+        self.supplementtitleLE.textEdited.connect(self.updatePrintLayout)
+        self.scaletitleLE.textEdited.connect(self.updatePrintLayout)
+        self.exercisetitleLE.textEdited.connect(self.updatePrintLayout)
+        self.documenttitleLE.textEdited.connect(self.updatePrintLayout)
+        self.placedateLE.textEdited.connect(self.updatePrintLayout)
+        self.exerciseGroupBox.toggled.connect(self.updatePrintLayout)
 
         self.mapcartoucheView.setScene(self.scene)
         self.mapcartoucheView.resizeEvent = self.__resizeEvent
@@ -66,7 +68,7 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
             self.__deserializeCartouche(xmlstr)
 
     def __resizeEvent(self, ev):
-        cartouche = self.scene.getComposerItemById("mapcartouche")
+        cartouche = self.scene.itemById("mapcartouche")
         if cartouche:
             self.mapcartoucheView.fitInView(cartouche, Qt.KeepAspectRatio)
 
@@ -74,61 +76,56 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         QgsProject.instance().writeEntry("VBS-Print", "cartouche", self.__serializeCartouche())
 
     def updateUi(self):
-        self.codenameLE.setText(unicode(self.__getComposerItemText("codename")))
-        self.troopstitleLE.setText(unicode(self.__getComposerItemText("troopstitle")))
-        self.supplementtitleLE.setText(unicode(self.__getComposerItemText("supplementtitle")))
-        self.cartouchecircumscriptionLE.setText(unicode(self.__getComposerItemText("cartouchecircumscription")))
-        self.scaletitleLE.setText(unicode(self.__getComposerItemText("scaletitle")))
-        self.placedateLE.setText(unicode(self.__getComposerItemText("placedate")))
-        self.exerciseorganisationLE.setText(unicode(self.__getComposerItemText("exerciseorganisation")))
-        self.coursetitleLE.setText(unicode(self.__getComposerItemText("coursetitle")))
-        self.exercisetitleLE.setText(unicode(self.__getComposerItemText("exercisetitle")))
-        self.documenttitleLE.setText(unicode(self.__getComposerItemText("documenttitle")))
+        self.codenameLE.setText(unicode(self.__getPrintLayoutItemText("codename")))
+        self.troopstitleLE.setText(unicode(self.__getPrintLayoutItemText("troopstitle")))
+        self.supplementtitleLE.setText(unicode(self.__getPrintLayoutItemText("supplementtitle")))
+        self.cartouchecircumscriptionLE.setText(unicode(self.__getPrintLayoutItemText("cartouchecircumscription")))
+        self.scaletitleLE.setText(unicode(self.__getPrintLayoutItemText("scaletitle")))
+        self.placedateLE.setText(unicode(self.__getPrintLayoutItemText("placedate")))
+        self.exerciseorganisationLE.setText(unicode(self.__getPrintLayoutItemText("exerciseorganisation")))
+        self.coursetitleLE.setText(unicode(self.__getPrintLayoutItemText("coursetitle")))
+        self.exercisetitleLE.setText(unicode(self.__getPrintLayoutItemText("exercisetitle")))
+        self.documenttitleLE.setText(unicode(self.__getPrintLayoutItemText("documenttitle")))
         self.exercisedateLE.setDate(QDate.currentDate())
 
-
-    def updateComposition(self, x=None):
-        self.__setComposerItemText("classification1", unicode(self.classification2.currentText()))
-        self.__setComposerItemText("troopstitle", unicode(self.troopstitleLE.text()))
-        self.__setComposerItemText("codename", unicode(self.codenameLE.text()))
-        self.__setComposerItemText("cartouchecircumscription", unicode(self.cartouchecircumscriptionLE.text()))
-        self.__setComposerItemText("supplementtitle", unicode(self.supplementtitleLE.text()))
-        self.__setComposerItemText("scaletitle", unicode(self.scaletitleLE.text()))
-        self.__setComposerItemText("placedate", unicode(self.placedateLE.text()))
+    def updatePrintLayout(self, x=None):
+        self.__setPrintLayoutItemText("classification1", unicode(self.classification2.currentText()))
+        self.__setPrintLayoutItemText("troopstitle", unicode(self.troopstitleLE.text()))
+        self.__setPrintLayoutItemText("codename", unicode(self.codenameLE.text()))
+        self.__setPrintLayoutItemText("cartouchecircumscription", unicode(self.cartouchecircumscriptionLE.text()))
+        self.__setPrintLayoutItemText("supplementtitle", unicode(self.supplementtitleLE.text()))
+        self.__setPrintLayoutItemText("scaletitle", unicode(self.scaletitleLE.text()))
+        self.__setPrintLayoutItemText("placedate", unicode(self.placedateLE.text()))
 
         if self.exerciseGroupBox.isChecked():
-            self.__setComposerItemText("exercisedate", unicode(self.exercisedateLE.text()))
-            self.__setComposerItemText("classification2", unicode(self.classification1.currentText()))
-            self.__setComposerItemText("exerciseorganisation", unicode(self.exerciseorganisationLE.text()))
-            self.__setComposerItemText("coursetitle", unicode(self.coursetitleLE.text()))
-            self.__setComposerItemText("exercisetitle", unicode(self.exercisetitleLE.text()))
-            self.__setComposerItemText("documenttitle", unicode(self.documenttitleLE.text()))
+            self.__setPrintLayoutItemText("exercisedate", unicode(self.exercisedateLE.text()))
+            self.__setPrintLayoutItemText("classification2", unicode(self.classification1.currentText()))
+            self.__setPrintLayoutItemText("exerciseorganisation", unicode(self.exerciseorganisationLE.text()))
+            self.__setPrintLayoutItemText("coursetitle", unicode(self.coursetitleLE.text()))
+            self.__setPrintLayoutItemText("exercisetitle", unicode(self.exercisetitleLE.text()))
+            self.__setPrintLayoutItemText("documenttitle", unicode(self.documenttitleLE.text()))
         else:
-            self.__setComposerItemText("exercisedate", "")
-            self.__setComposerItemText("classification2", "")
-            self.__setComposerItemText("exerciseorganisation", "")
-            self.__setComposerItemText("coursetitle", "")
-            self.__setComposerItemText("exercisetitle", "")
-            self.__setComposerItemText("documenttitle", "")
+            self.__setPrintLayoutItemText("exercisedate", "")
+            self.__setPrintLayoutItemText("classification2", "")
+            self.__setPrintLayoutItemText("exerciseorganisation", "")
+            self.__setPrintLayoutItemText("coursetitle", "")
+            self.__setPrintLayoutItemText("exercisetitle", "")
+            self.__setPrintLayoutItemText("documenttitle", "")
 
-        self.scene.update()
-        self.mapcartoucheView.update()
-
-    def __setComposerItemText(self, itemid, text):
-        item = self.scene.getComposerItemById(itemid)
+    def __setPrintLayoutItemText(self, itemid, text):
+        # redraw item everytime the text changes
+        # only calling the update of QGraphicScene in the updatePrintLayout()
+        # does not update the items
+        item = self.scene.itemById(itemid)
         if item:
-            item.__class__ = QgsComposerLabel
-            dir(item)
             item.setText(text)
+            item.redraw()
 
-    def __getComposerItemText(self, itemid):
-        item = self.scene.getComposerItemById(itemid)
+    def __getPrintLayoutItemText(self, itemid):
+        item = self.scene.itemById(itemid)
         if item:
-            item.__class__ = QgsComposerLabel
-            dir(item)
             return item.text()
         return ""
-
 
     def __addTextElement(self, parent, element, text):
         el = parent.ownerDocument().createElement(element)
@@ -242,4 +239,4 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         if not self.__deserializeCartouche(xmlstr):
             QMessageBox.critical(self, self.tr("Import failed"), self.tr("The file does not appear to contain valid cartouche data."))
         else:
-            self.updateComposition()
+            self.updatePrintLayout()

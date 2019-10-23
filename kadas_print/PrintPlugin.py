@@ -8,43 +8,47 @@
 #    copyright            : (C) 2014-2015 by Sandro Mani / Sourcepole AG
 #    email                : smani@sourcepole.ch
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
 from qgis.core import *
 from qgis.gui import *
+from kadas.kadasgui import *
 import os
 
-from PrintTool import PrintTool
-import resources_rc
+from .PrintTool import PrintTool
+from . import resources_rc
 
 
 class PrintPlugin(QObject):
     def __init__(self, iface):
         QObject.__init__(self)
-        self.iface = iface
+        # Save reference to the QGIS interface and Kadas interface
+        self.iface = KadasPluginInterface.cast(iface)
+
         self.pluginDir = os.path.dirname(__file__)
 
         # Localize
-        locale = QSettings().value("locale/userLocale")[0:2]
-        localePath = os.path.join(self.pluginDir, 'i18n', 'print_{}.qm'.format(locale))
+        if QSettings().value("locale/userLocale"):
+            locale = QSettings().value("locale/userLocale")[0:2]
+            localePath = os.path.join(
+                self.pluginDir, 'i18n', 'print_{}.qm'.format(locale))
 
-        if os.path.exists(localePath):
-            self.translator = QTranslator()
-            self.translator.load(localePath)
-            QCoreApplication.installTranslator(self.translator)
+            if os.path.exists(localePath):
+                self.translator = QTranslator()
+                self.translator.load(localePath)
+                QCoreApplication.installTranslator(self.translator)
 
-        self.tool = PrintTool(self.iface)
         self.toolAction = None
 
     def initGui(self):
         try:
-            printAction = self.iface.findAction("mActionPrint")
+            self.printAction = self.iface.findAction("mActionPrint")
         except:
-            printAction = None
-        if printAction:
-            printAction.setCheckable(True)
-            printAction.triggered.connect(self.__toggleTool)
-            self.tool.setAction(printAction)
+            self.printAction = None
+        if self.printAction:
+            self.printAction.setCheckable(True)
+            self.printAction.triggered.connect(self.__toggleTool)
         else:
             self.toolButton = QToolButton(self.iface.mapNavToolToolBar())
             self.toolButton.setIcon(QIcon(":/plugins/print/icons/icon.png"))
@@ -52,8 +56,8 @@ class PrintPlugin(QObject):
             self.toolButton.setToolTip(self.tr(" Print"))
             self.toolButton.setCheckable(True)
             self.toolButton.setObjectName("vbsprintaction")
-            self.toolAction = self.iface.pluginToolBar().addWidget(self.toolButton)
-            self.tool.setButton(self.toolButton)
+            self.toolAction = self.iface.pluginToolBar().addWidget(
+                self.toolButton)
             self.toolButton.toggled.connect(self.__toggleTool)
 
     def unload(self):
@@ -62,5 +66,15 @@ class PrintPlugin(QObject):
         if self.toolAction:
             self.iface.pluginToolBar().removeAction(self.toolAction)
 
+    def __createMapTool(self):
+        self.tool = PrintTool(self.iface)
+
+        if self.printAction:
+            self.tool.setAction(self.printAction)
+        else:
+            self.tool.setButton(self.toolButton)
+
     def __toggleTool(self, active):
+        if active:
+            self.__createMapTool()
         self.tool.setToolEnabled(active)
