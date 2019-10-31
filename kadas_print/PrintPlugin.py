@@ -61,8 +61,6 @@ class PrintPlugin(QObject):
             self.toolButton.toggled.connect(self.__toggleTool)
 
     def unload(self):
-        self.tool.setToolEnabled(False)
-        self.tool = None
         if self.toolAction:
             self.iface.pluginToolBar().removeAction(self.toolAction)
 
