@@ -196,8 +196,8 @@ class PrintTool(QgsMapTool):
         if resolutions:
             minDist = abs(self.mapitem.scale() - refRes / resolutions[0])
         for resolution in resolutions:
-            scale = refRes / resolution
-            if self.mapitem.scale() < scale:
+            scale = resolution / refRes
+            if self.mapitem.scale() > scale:
                 bestScale = scale
             wmtsScales.append(QgsScaleComboBox.toString(scale))
         self.dialogui.comboBox_scale.updateScales(wmtsScales)
