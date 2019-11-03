@@ -690,22 +690,21 @@ class PrintTool(QgsMapTool):
         mapheight = ((extent.yMaximum() - extent.yMinimum()) / scale * 1000.0)
 
         self.mapitem.attemptSetSceneRect(QRectF(border, border, mapwidth, mapheight))
-        # self.mapitem.setPos(border, border)
-        self.mapitem.attemptMoveBy(border, border)
+        self.mapitem.attemptMove(QgsLayoutPoint(border, border), False, False, 0)
+        self.mapitem.attemptResize(QgsLayoutSize(mapwidth, mapheight))
         self.mapitem.setExtent(extent)
         self.mapitem.setScale(scale)
-        self.mapitem.updateItem()
+        self.mapitem.redraw()
 
         newwidth = 2 * border + mapwidth
         newheight = 2 * border + mapheight
 
-        for item in self.printLayout.items():
-            if item is not self.mapitem:
-                item.attemptMoveBy(borderdelta, borderdelta)
-
         pageCollection = self.printLayout.pageCollection()
+        pageCollection.beginPageSizeChange()
         page = pageCollection.page(0)
         page.setPageSize(QgsLayoutSize(newwidth, newheight))
+        pageCollection.reflow()
+        pageCollection.endPageSizeChange()
 
         self.dialogui.label_paperSize.setText(
             self.tr("Paper size: %.2f cm x %.2f cm") % (
