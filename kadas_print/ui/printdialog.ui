@@ -131,7 +131,16 @@
    <item row="4" column="1" colspan="2">
     <widget class="QWidget" name="widget_extent" native="true">
      <layout class="QGridLayout" name="gridLayout_2">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item row="1" column="2">
@@ -379,7 +388,7 @@
     </widget>
    </item>
    <item row="13" column="0" colspan="3">
-    <widget class="QGraphicsView" name="previewGraphic">
+    <widget class="QgsLayoutView" name="previewGraphic">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -420,6 +429,11 @@
   <customwidget>
    <class>QgsScaleComboBox</class>
    <extends>QComboBox</extends>
+   <header>qgis/gui.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QgsLayoutView</class>
+   <extends>QGraphicsView</extends>
    <header>qgis/gui.h</header>
   </customwidget>
  </customwidgets>

@@ -133,11 +133,7 @@ class PrintTool(QgsMapTool):
         self.__setUiEnabled(False)
 
     def __resizePreview(self, ev=None):
-        try:
-            page = self.printLayout.pageCollection()[0]
-            self.dialogui.previewGraphic.fitInView(page, Qt.KeepAspectRatio)
-        except:
-            pass
+        self.dialogui.previewGraphic.zoomFull()
 
     def __updateMap(self):
         if self.mapitem and not self.printing:

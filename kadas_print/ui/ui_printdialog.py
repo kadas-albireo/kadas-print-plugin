@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'printdialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.3
+# Created by: PyQt5 UI code generator 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -69,7 +69,7 @@ class Ui_PrintDialog(object):
         self.lineEdit_title.setSizePolicy(sizePolicy)
         self.lineEdit_title.setObjectName("lineEdit_title")
         self.gridLayout.addWidget(self.lineEdit_title, 2, 1, 1, 2)
-        self.comboBox_scale = gui.QgsScaleComboBox(PrintDialog)
+        self.comboBox_scale = QgsScaleComboBox(PrintDialog)
         self.comboBox_scale.setEditable(True)
         self.comboBox_scale.setObjectName("comboBox_scale")
         self.gridLayout.addWidget(self.comboBox_scale, 3, 1, 1, 2)
@@ -221,7 +221,7 @@ class Ui_PrintDialog(object):
         self.button_configureLegend.setEnabled(False)
         self.button_configureLegend.setObjectName("button_configureLegend")
         self.gridLayout.addWidget(self.button_configureLegend, 10, 1, 1, 2)
-        self.previewGraphic = QtWidgets.QGraphicsView(PrintDialog)
+        self.previewGraphic = QgsLayoutView(PrintDialog)
         self.previewGraphic.setEnabled(False)
         self.previewGraphic.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.previewGraphic.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -293,4 +293,4 @@ class Ui_PrintDialog(object):
         self.label_intervaly.setText(_translate("PrintDialog", "Interval Y:"))
         self.button_mapCartouche.setText(_translate("PrintDialog", "Edit map cartouche"))
         self.button_configureLegend.setText(_translate("PrintDialog", "Configure"))
-from qgis import gui
+from qgis.gui import QgsLayoutView, QgsScaleComboBox
