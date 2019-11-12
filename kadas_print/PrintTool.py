@@ -123,7 +123,7 @@ class PrintTool(QgsMapTool):
         self.dialogui.groupBox_grid.setChecked(False)
         self.exportButton.clicked.connect(self.__export)
         self.printButton.clicked.connect(self.__print)
-        # self.advancedButton.clicked.connect(self.__advanced)
+        self.advancedButton.clicked.connect(self.__advanced)
         self.dialog.finished.connect(lambda: self.setToolEnabled(False))
         self.dialogui.groupBox_grid.toggled.connect(self.__setupGrid)
         self.iface.mapCanvas().mapCanvasRefreshed.connect(self.__updateMap)
@@ -844,5 +844,5 @@ class PrintTool(QgsMapTool):
         self.dialogui.spinBox_border.setVisible(visible)
         self.dialogui.label_paperSize.setVisible(visible)
 
-    # def __advanced(self):
-    #     self.iface.showComposer(self.printLayout)
+    def __advanced(self):
+        self.iface.showLayoutDesigner(self.printLayout)
