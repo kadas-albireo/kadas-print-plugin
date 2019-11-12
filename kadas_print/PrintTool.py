@@ -70,8 +70,6 @@ class PrintTool(QgsMapTool):
         self.dialogui.comboBox_crs.addItem("DD", "EPSG:4326,0")
         self.dialogui.comboBox_crs.addItem("DM", "EPSG:4326,minute")
         self.dialogui.comboBox_crs.addItem("DMS", "EPSG:4326,second")
-        self.dialogui.comboBox_crs.addItem("MGRS", "EPSG:4326,MGRS")
-        self.dialogui.comboBox_crs.addItem("UTM", "EPSG:4326,UTM")
 
         self.dialogui.lineedit_xmin.setValidator(QDoubleValidator())
         self.dialogui.lineedit_xmax.setValidator(QDoubleValidator())
@@ -413,10 +411,6 @@ class PrintTool(QgsMapTool):
                     self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
                     self.grid.setAnnotationPrecision(3)
                     self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinute)
-                elif format == 'MGRS':
-                    self.grid.setGridCrsType(QgsComposerMapGrid.CrsMGRS)
-                elif format == 'UTM':
-                    self.grid.setGridCrsType(QgsComposerMapGrid.CrsUTM)
             except:
                 # Ignore missing setGridCrsType method
                 pass
@@ -435,21 +429,19 @@ class PrintTool(QgsMapTool):
                 # self.grid.setAnnotationDisplay(QgsComposerMapGrid.HideAll, QgsComposerMapGrid.Right)
                 self.grid.setAnnotationPrecision(0)
 
-            showInterval = (format != 'MGRS' and format != 'UTM')
-            self.dialogui.spinBox_intervalx.setEnabled(showInterval)
-            self.dialogui.label_intervalx.setEnabled(showInterval)
-            self.dialogui.spinBox_intervaly.setEnabled(showInterval)
-            self.dialogui.label_intervaly.setEnabled(showInterval)
-            if showInterval:
-                # Get interval from composer
-                self.dialogui.spinBox_intervalx.blockSignals(True)
-                self.dialogui.spinBox_intervalx.setValue(
-                    self.mapitem.grid().intervalX())
-                self.dialogui.spinBox_intervalx.blockSignals(False)
-                self.dialogui.spinBox_intervaly.blockSignals(True)
-                self.dialogui.spinBox_intervaly.setValue(
-                    self.mapitem.grid().intervalY())
-                self.dialogui.spinBox_intervaly.blockSignals(False)
+            self.dialogui.spinBox_intervalx.setEnabled(True)
+            self.dialogui.label_intervalx.setEnabled(True)
+            self.dialogui.spinBox_intervaly.setEnabled(True)
+            self.dialogui.label_intervaly.setEnabled(True)
+            # Get interval from composer
+            self.dialogui.spinBox_intervalx.blockSignals(True)
+            self.dialogui.spinBox_intervalx.setValue(
+                self.mapitem.grid().intervalX())
+            self.dialogui.spinBox_intervalx.blockSignals(False)
+            self.dialogui.spinBox_intervaly.blockSignals(True)
+            self.dialogui.spinBox_intervaly.setValue(
+                self.mapitem.grid().intervalY())
+            self.dialogui.spinBox_intervaly.blockSignals(False)
 
         self.__updateView()
 
