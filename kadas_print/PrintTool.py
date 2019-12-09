@@ -13,6 +13,7 @@ from qgis.PyQt.QtWidgets import *
 from qgis.PyQt.QtPrintSupport import *
 from qgis.core import *
 from qgis.gui import *
+from kadas.kadasgui import *
 import os
 import math
 
@@ -21,25 +22,20 @@ from .PrintLayoutManager import PrintLayoutManager
 from .ui.ui_printdialog import Ui_PrintDialog
 
 
-class PrintTool(QgsMapTool):
+class PrintTool(KadasMapToolSelectRect):
 
     def __init__(self, iface):
-        QgsMapTool.__init__(self, iface.mapCanvas())
+        KadasMapToolSelectRect.__init__(self, iface.mapCanvas())
+        self.setAllowResize(False)
 
         self.iface = iface
         self.layoutManager = QgsProject.instance().layoutManager()
         self.printer = QPrinter()
-        self.rubberband = None
-        self.oldrubberband = None
-        self.resizeTol = 10
-        self.resizePoints = []
-        self.resizeHandlers = []
-        self.resizeMoveOffset = None
+
         self.fixedSizeMode = True
         self.mapitem = None
         self.printing = False
         self.printLayout = None
-        self.rect = None
 
         self.dialog = QDialog(self.iface.mainWindow())
         self.dialogui = Ui_PrintDialog()
@@ -122,11 +118,13 @@ class PrintTool(QgsMapTool):
         self.exportButton.clicked.connect(self.__export)
         self.printButton.clicked.connect(self.__print)
         self.advancedButton.clicked.connect(self.__advanced)
-        self.dialog.finished.connect(lambda: self.setToolEnabled(False))
+        self.dialog.finished.connect(self.close)
         self.dialogui.groupBox_grid.toggled.connect(self.__setupGrid)
         self.iface.mapCanvas().mapCanvasRefreshed.connect(self.__updateMap)
         self.iface.mapCanvas().destinationCrsChanged.connect(
             self.__mapUnitsChanged)
+        self.rectChanged.connect(self.__updateRectCoords)
+        self.rectChangeComplete.connect(self.__rectChangeComplete)
 
         self.__setUiEnabled(False)
 
@@ -239,154 +237,29 @@ class PrintTool(QgsMapTool):
         self.dialogui.groupBox_grid.setChecked(
             self.mapitem.grid().enabled())
 
-    def setToolEnabled(self, enabled):
-        if enabled:
-            self.dialog.show()
-            self.__reloadPrintLayouts()
-            self.__configureLegend(False)
-            self.iface.mapCanvas().setMapTool(self)
-        else:
-            self.mapitem = None
-            self.printLayout = None
-            self.dialog.hide()
-            self.__clearRubberBand()
-            self.iface.mapCanvas().unsetMapTool(self)
+    def close(self):
+        self.iface.mapCanvas().unsetMapTool(self)
 
-    def canvasPressEvent(self, e):
-        if not self.rubberband or not self.rect:
-            return
-        r = self.__canvasRect(self.rect)
-        if e.button() == Qt.LeftButton:
+    def activate(self):
+        KadasMapToolSelectRect.activate(self)
+        self.dialog.show()
+        self.__reloadPrintLayouts()
+        self.__configureLegend(False)
 
-            # Check whether to resize
-            if not self.fixedSizeMode:
-                p1 = r.topLeft()
-                p2 = r.bottomRight()
-                mup = self.iface.mapCanvas().mapSettings().mapUnitsPerPixel()
-                self.resizePoints = [self.rect.topLeft(),
-                                     self.rect.bottomRight()]
-                self.resizeHandlers = []
-                self.resizeMoveOffset = QPointF(0, 0)
+    def deactivate(self):
+        KadasMapToolSelectRect.deactivate(self)
+        self.dialog.hide()
 
-                if abs(p1.x() - e.x()) < self.resizeTol:
-                    self.resizeHandlers.append(
-                        lambda p: self.resizePoints[0].setX(p.x()))
-                    self.resizeMoveOffset.setX((e.x() - p1.x()) * mup)
-                elif abs(p2.x() - e.x()) < self.resizeTol:
-                    self.resizeHandlers.append(
-                        lambda p: self.resizePoints[1].setX(p.x()))
-                    self.resizeMoveOffset.setX((e.x() - p2.x()) * mup)
-                if abs(p1.y() - e.y()) < self.resizeTol:
-                    self.resizeHandlers.append(
-                        lambda p: self.resizePoints[0].setY(p.y()))
-                    self.resizeMoveOffset.setY(-(e.y() - p1.y()) * mup)
-                elif abs(p2.y() - e.y()) < self.resizeTol:
-                    self.resizeHandlers.append(
-                        lambda p: self.resizePoints[1].setY(p.y()))
-                    self.resizeMoveOffset.setY(-(e.y() - p2.y()) * mup)
+    def __updateRectCoords(self, rect):
+        self.dialogui.lineedit_xmin.setText(str(round(rect.xMinimum())))
+        self.dialogui.lineedit_xmax.setText(str(round(rect.xMaximum())))
+        self.dialogui.lineedit_ymin.setText(str(round(rect.yMinimum())))
+        self.dialogui.lineedit_ymax.setText(str(round(rect.yMaximum())))
 
-            # Check whether to move
-            if not self.resizeHandlers and r.contains(e.pos()):
-                self.oldrect = QRectF(self.rect)
-                self.oldrubberband = QgsRubberBand(
-                    self.iface.mapCanvas(), QgsWkbTypes.PolygonGeometry)
-                self.oldrubberband.setToCanvasRectangle(
-                    self.__canvasRect(self.oldrect))
-                self.oldrubberband.setColor(QColor(127, 127, 255, 31))
-                mtp = self.iface.mapCanvas().mapSettings().mapToPixel()
-                p = mtp.toMapCoordinates(e.pos())
-                self.resizeMoveOffset = QPointF(
-                    p.x() - self.rect.x(), p.y() - self.rect.y())
-
-    def canvasMoveEvent(self, e):
-        if not self.rect:
-            return
-        if not self.resizeMoveOffset:
-            # Determine cursor
-            r = self.__canvasRect(self.rect)
-            left = abs(r.left() - e.x()) < self.resizeTol
-            right = abs(r.right() - e.x()) < self.resizeTol
-            top = abs(r.top() - e.y()) < self.resizeTol
-            bottom = abs(r.bottom() - e.y()) < self.resizeTol
-            if not self.fixedSizeMode:
-                if (bottom and left) or (top and right):
-                    self.iface.mapCanvas().setCursor(Qt.SizeFDiagCursor)
-                elif (bottom and right) or (top and left):
-                    self.iface.mapCanvas().setCursor(Qt.SizeBDiagCursor)
-                elif top or bottom:
-                    self.iface.mapCanvas().setCursor(Qt.SizeVerCursor)
-                elif left or right:
-                    self.iface.mapCanvas().setCursor(Qt.SizeHorCursor)
-                elif r.contains(e.pos()):
-                    self.iface.mapCanvas().setCursor(Qt.OpenHandCursor)
-                else:
-                    self.iface.mapCanvas().unsetCursor()
-            elif r.contains(e.pos()):
-                self.iface.mapCanvas().setCursor(Qt.OpenHandCursor)
-            else:
-                self.iface.mapCanvas().unsetCursor()
-        else:
-            mtp = self.iface.mapCanvas().mapSettings().mapToPixel()
-            p = mtp.toMapCoordinates(e.pos())
-            p.setX(p.x() - self.resizeMoveOffset.x())
-            p.setY(p.y() - self.resizeMoveOffset.y())
-
-            if not self.resizeHandlers:
-                # Move entire rect
-                corner = QPointF(self.rect.x(), self.rect.y())
-                x = p.x()
-                y = p.y()
-                snaptol = 10 * self.iface.mapCanvas().mapSettings().mapUnitsPerPixel()
-                # Left edge matches with old right
-                if abs(x - (self.oldrect.x() + self.oldrect.width())) < snaptol:
-                    x = self.oldrect.x() + self.oldrect.width()
-                # Right edge matches with old left
-                elif abs(x + self.rect.width() - self.oldrect.x()) < snaptol:
-                    x = self.oldrect.x() - self.rect.width()
-                # Left edge matches with old left
-                elif abs(x - self.oldrect.x()) < snaptol:
-                    x = self.oldrect.x()
-                # Bottom edge matches with old top
-                if abs(y - (self.oldrect.y() + self.oldrect.height())) < snaptol:
-                    y = self.oldrect.y() + self.oldrect.height()
-                # Top edge matches with old bottom
-                elif abs(y + self.rect.height() - self.oldrect.y()) < snaptol:
-                    y = self.oldrect.y() - self.rect.height()
-                # Bottom edge matches with old bottom
-                elif abs(y - self.oldrect.y()) < snaptol:
-                    y = self.oldrect.y()
-
-                self.rect = QRectF(x, y, self.rect.width(), self.rect.height())
-            else:
-                # Resize rect
-                for handler in self.resizeHandlers:
-                    handler(p)
-                p1 = self.resizePoints[0]
-                p2 = self.resizePoints[1]
-                self.rect = QRectF(
-                    min(p1.x(), p2.x()),
-                    min(p1.y(), p2.y()),
-                    abs(p1.x() - p2.x()),
-                    abs(p1.y() - p2.y())
-                )
-            self.dialogui.lineedit_xmin.setText(str(round(self.rect.left())))
-            self.dialogui.lineedit_xmax.setText(str(round(self.rect.right())))
-            self.dialogui.lineedit_ymin.setText(str(round(self.rect.top())))
-            self.dialogui.lineedit_ymax.setText(str(round(self.rect.bottom())))
-            self.rubberband.setToCanvasRectangle(self.__canvasRect(self.rect))
-
-    def canvasReleaseEvent(self, e):
-        if e.button() == Qt.LeftButton and self.resizeMoveOffset:
-            if self.oldrubberband:
-                self.iface.mapCanvas().scene().removeItem(self.oldrubberband)
-                self.oldrubberband = None
-            self.oldrect = None
-            self.resizeHandlers = []
-            self.resizePoints = []
-            self.resizeMoveOffset = None
-            self.mapitem.setExtent(QgsRectangle(self.rect))
-            if not self.fixedSizeMode:
-                self.__generatePrintLayout()
+    def __rectChangeComplete(self, rect):
+        self.mapitem.setExtent(rect)
+        if not self.fixedSizeMode:
+            self.__generatePrintLayout()
 
     def __setupGrid(self):
         if not self.mapitem:
@@ -569,7 +442,7 @@ class PrintTool(QgsMapTool):
     def __changeScale(self):
         if self.fixedSizeMode:
             self.mapitem.setScale(self.dialogui.comboBox_scale.scale())
-            self.__createRubberBand()
+            self.setRect(self.mapitem.extent())
         else:
             self.__generatePrintLayout()
 
@@ -610,7 +483,7 @@ class PrintTool(QgsMapTool):
             self.__setUiEnabled(False)
 
     def __selectPrintLayout(self):
-        self.__clearRubberBand()
+        self.clear()
         self.mapitem = None
         self.dialogui.previewGraphic.setScene(None)
         try:
@@ -618,6 +491,7 @@ class PrintTool(QgsMapTool):
             layout = self.dialogui.comboBox_printlayouts.itemData(activeIndex)
             layout.__class__ = QgsPrintLayout
             self.fixedSizeMode = layout.name() != "Custom"
+            self.setAllowResize(not self.fixedSizeMode)
         except Exception as e:
             self.__setUiEnabled(False)
             return
@@ -702,43 +576,9 @@ class PrintTool(QgsMapTool):
             self.tr("Paper size: %.2f cm x %.2f cm") % (
                 newwidth / 10., newheight / 10.))
 
-        self.rect = extent.toRectF()
-        self.__createRubberBand()
+        self.setRect(extent)
         self.__resizePreview()
         self.__updateView()
-
-    def __createRubberBand(self):
-        self.__clearRubberBand()
-        extent = self.mapitem.extent()
-        center = extent.center()
-        corner = QPointF(
-            center.x() - 0.5 * extent.width(),
-            center.y() - 0.5 * extent.height())
-        self.rect = QRectF(
-            corner.x(), corner.y(), extent.width(), extent.height())
-
-        self.rubberband = QgsRubberBand(
-            self.iface.mapCanvas(), QgsWkbTypes.PolygonGeometry)
-        self.rubberband.setToCanvasRectangle(self.__canvasRect(self.rect))
-        self.rubberband.setColor(QColor(127, 127, 255, 127))
-
-    def __clearRubberBand(self):
-        if self.rubberband:
-            self.iface.mapCanvas().scene().removeItem(self.rubberband)
-        if self.oldrubberband:
-            self.iface.mapCanvas().scene().removeItem(self.oldrubberband)
-        self.rubberband = None
-        self.oldrubberband = None
-
-    def __canvasRect(self, rect):
-        mtp = self.iface.mapCanvas().mapSettings().mapToPixel()
-        p1 = mtp.transform(QgsPointXY(rect.left(), rect.top()))
-        p2 = mtp.transform(QgsPointXY(rect.right(), rect.bottom()))
-        try:
-            return QRect(int(p1.x()), int(p1.y()),
-                         int(p2.x() - p1.x()), int(p2.y() - p1.y()))
-        except:
-            return QRect(0, 0, 0, 0)
 
     def __export(self):
         settings = QSettings()

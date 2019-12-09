@@ -4,11 +4,14 @@ qgisMinimumVersion=3.00
 qgisMaximumVersion=3.99
 description=Instantly print map excerpts
 about=The instant print plugin allows to quickly print map excerpts to a file, utilizing an existing composer as page layout.
-version=1.90
+version=1.91
 author=Sandro Mani, Sourcepole AG
 email=smani@sourcepole.ch
 
 changelog=
+ Rev 1.91 (09.12.2019)
+ - Use KadasMapToolSelectRect
+
  Rev 1.90 (31.10.2019)
  - Initial port to Kadas 2
 

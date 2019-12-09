@@ -49,30 +49,15 @@ class PrintPlugin(QObject):
         if self.printAction:
             self.printAction.setCheckable(True)
             self.printAction.triggered.connect(self.__toggleTool)
-        else:
-            self.toolButton = QToolButton(self.iface.mapNavToolToolBar())
-            self.toolButton.setIcon(QIcon(":/plugins/print/icons/icon.png"))
-            self.toolButton.setText(self.tr(" Print"))
-            self.toolButton.setToolTip(self.tr(" Print"))
-            self.toolButton.setCheckable(True)
-            self.toolButton.setObjectName("vbsprintaction")
-            self.toolAction = self.iface.pluginToolBar().addWidget(
-                self.toolButton)
-            self.toolButton.toggled.connect(self.__toggleTool)
 
     def unload(self):
-        if self.toolAction:
-            self.iface.pluginToolBar().removeAction(self.toolAction)
-
-    def __createMapTool(self):
-        self.tool = PrintTool(self.iface)
-
-        if self.printAction:
-            self.tool.setAction(self.printAction)
-        else:
-            self.tool.setButton(self.toolButton)
+        pass
 
     def __toggleTool(self, active):
         if active:
-            self.__createMapTool()
-        self.tool.setToolEnabled(active)
+            self.tool = PrintTool(self.iface)
+            self.tool.setAction(self.printAction)
+            self.iface.mapCanvas().setMapTool(self.tool)
+        elif self.tool:
+            self.iface.mapCanvas().unsetMapTool(self.tool)
+            self.tool = None
