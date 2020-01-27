@@ -4,132 +4,132 @@
 <context>
     <name>CartoucheDialog</name>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="124"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="126"/>
         <source>Map Cartouche</source>
         <translation>Karten Kartusche</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="125"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="127"/>
         <source>Exercise</source>
         <translation>Übung</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="126"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="128"/>
         <source>Course name</source>
         <translation>Kursbezeichnung</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="127"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="129"/>
         <source>Exercise name</source>
         <translation>Übungsbezeichnung</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="128"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="130"/>
         <source>Document name</source>
         <translation>Dokumentname</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="39"/>
+        <location filename="../CartoucheDialog.py" line="41"/>
         <source>CLASSIFICATION</source>
         <translation>KLASSIFIZIERUNG</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="30"/>
+        <location filename="../CartoucheDialog.py" line="32"/>
         <source>RESTRICTED</source>
         <translation>INTERN</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="31"/>
+        <location filename="../CartoucheDialog.py" line="33"/>
         <source>CONFIDENTIAL</source>
         <translation>VERTRAULICH</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="32"/>
+        <location filename="../CartoucheDialog.py" line="34"/>
         <source>SECRET</source>
         <translation>GEHEIM</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="129"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="131"/>
         <source>Exercise organisation</source>
         <translation>Übungsorganisation</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="130"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="132"/>
         <source>Annex name</source>
         <translation>Beilagebezeichnung</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="131"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="133"/>
         <source>Title of cartouche</source>
         <translation>Kartuschentitel</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="132"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="134"/>
         <source>Place, date</source>
         <translation>Ort, Datum</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="133"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="135"/>
         <source>&quot;CODE NAME&quot;</source>
         <translation>&quot;DECKNAME&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="134"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="136"/>
         <source>Unit</source>
         <translation>Truppenbezeichnung</translation>
     </message>
     <message>
-        <location filename="../ui/ui_cartouchedialog.py" line="135"/>
+        <location filename="../ui/ui_cartouchedialog.py" line="137"/>
         <source>Scale information</source>
         <translation>Massstabbezeichnung</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="57"/>
+        <location filename="../CartoucheDialog.py" line="59"/>
         <source>Export</source>
         <translation>Exportieren</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="58"/>
+        <location filename="../CartoucheDialog.py" line="60"/>
         <source>Import</source>
         <translation>Importieren</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="217"/>
+        <location filename="../CartoucheDialog.py" line="211"/>
         <source>Export cartouche</source>
         <translation>Kartousche exportieren</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="232"/>
+        <location filename="../CartoucheDialog.py" line="226"/>
         <source>XML Files (*.xml);;</source>
         <translation>XML Dateien (*.xml);;</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="226"/>
+        <location filename="../CartoucheDialog.py" line="220"/>
         <source>Export failed</source>
         <translation>Export gescheitert</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="226"/>
+        <location filename="../CartoucheDialog.py" line="220"/>
         <source>Unable to write to file.</source>
         <translation>Die Datei konnte nicht geschrieben werden.</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="232"/>
+        <location filename="../CartoucheDialog.py" line="226"/>
         <source>Import cartouche</source>
         <translation>Kartousche importieren</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="246"/>
+        <location filename="../CartoucheDialog.py" line="240"/>
         <source>Import failed</source>
         <translation>Import gescheitert</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="242"/>
+        <location filename="../CartoucheDialog.py" line="236"/>
         <source>Unable to read file.</source>
         <translation>Die Datei konnte nicht gelesen werden.</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="246"/>
+        <location filename="../CartoucheDialog.py" line="240"/>
         <source>The file does not appear to contain valid cartouche data.</source>
         <translation>Die Datei scheint keine gültige Kartousche zu enthalten.</translation>
     </message>
@@ -137,122 +137,122 @@
 <context>
     <name>PrintDialog</name>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="270"/>
+        <location filename="../ui/ui_printdialog.py" line="272"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="271"/>
+        <location filename="../ui/ui_printdialog.py" line="273"/>
         <source>Border:</source>
         <translation>Rand:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="272"/>
+        <location filename="../ui/ui_printdialog.py" line="274"/>
         <source>Extent:</source>
         <translation>Ausschnitt:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="286"/>
+        <location filename="../ui/ui_printdialog.py" line="288"/>
         <source> mm</source>
         <translation>mm</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="282"/>
+        <location filename="../ui/ui_printdialog.py" line="284"/>
         <source>X Max.:</source>
         <translation>X Max.:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="283"/>
+        <location filename="../ui/ui_printdialog.py" line="285"/>
         <source>X Min.:</source>
         <translation>X Min.:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="284"/>
+        <location filename="../ui/ui_printdialog.py" line="286"/>
         <source>Y Max.:</source>
         <translation>Y Max.:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="285"/>
+        <location filename="../ui/ui_printdialog.py" line="287"/>
         <source>Y Min.:</source>
         <translation>Y Min.:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="287"/>
+        <location filename="../ui/ui_printdialog.py" line="289"/>
         <source>Grid</source>
         <translation>Gitter</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="288"/>
+        <location filename="../ui/ui_printdialog.py" line="290"/>
         <source>Coordinate system:</source>
         <translation>Koordinatensystem:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="289"/>
+        <location filename="../ui/ui_printdialog.py" line="291"/>
         <source>Interval X:</source>
         <translation>X Intervall:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="290"/>
+        <location filename="../ui/ui_printdialog.py" line="292"/>
         <source>Coordinate labels</source>
         <translation>Koordinatenbeschriftungen</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="291"/>
+        <location filename="../ui/ui_printdialog.py" line="293"/>
         <source>Interval Y:</source>
         <translation>Y Intervall:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="273"/>
+        <location filename="../ui/ui_printdialog.py" line="275"/>
         <source>Layout:</source>
         <translation>Vorlage:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="274"/>
+        <location filename="../ui/ui_printdialog.py" line="276"/>
         <source>Title:</source>
         <translation>Titel:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="275"/>
+        <location filename="../ui/ui_printdialog.py" line="277"/>
         <source>Scalebar</source>
         <translation>Massstabbalken</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="276"/>
+        <location filename="../ui/ui_printdialog.py" line="278"/>
         <source>Legend</source>
         <translation>Legende</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="292"/>
+        <location filename="../ui/ui_printdialog.py" line="294"/>
         <source>Edit map cartouche</source>
         <translation>Kartenkartusche anpassen</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="277"/>
+        <location filename="../ui/ui_printdialog.py" line="279"/>
         <source>File format:</source>
         <translation>Dateiformat:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="278"/>
+        <location filename="../ui/ui_printdialog.py" line="280"/>
         <source>Map cartouche</source>
         <translation>Kartenkartusche</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="279"/>
+        <location filename="../ui/ui_printdialog.py" line="281"/>
         <source>Scale:</source>
         <translation>Massstab:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="281"/>
+        <location filename="../ui/ui_printdialog.py" line="283"/>
         <source>Only meter based coordinate systems are supported in variable extent mode.</source>
         <translation>Nur Meterbasierte Koordinatensysteme werden im variablen Ausschnitt Modus unterstützt</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="293"/>
+        <location filename="../ui/ui_printdialog.py" line="295"/>
         <source>Configure</source>
         <translation>Anpassen</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printdialog.py" line="280"/>
+        <location filename="../ui/ui_printdialog.py" line="282"/>
         <source>...</source>
         <translation>...</translation>
     </message>
@@ -260,22 +260,22 @@
 <context>
     <name>PrintLayoutManager</name>
     <message>
-        <location filename="../ui/ui_printlayoutmanager.py" line="44"/>
+        <location filename="../ui/ui_printlayoutmanager.py" line="46"/>
         <source>Print Layout Manager</source>
         <translation>Druckzusammenstellungen verwalten</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printlayoutmanager.py" line="45"/>
+        <location filename="../ui/ui_printlayoutmanager.py" line="47"/>
         <source>Import</source>
         <translation>Importieren</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printlayoutmanager.py" line="46"/>
+        <location filename="../ui/ui_printlayoutmanager.py" line="48"/>
         <source>Export</source>
         <translation>Exportieren</translation>
     </message>
     <message>
-        <location filename="../ui/ui_printlayoutmanager.py" line="47"/>
+        <location filename="../ui/ui_printlayoutmanager.py" line="49"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
@@ -285,110 +285,130 @@
     <message>
         <location filename="../PrintPlugin.py" line="52"/>
         <source> Print</source>
-        <translation>Drucken</translation>
+        <translation type="obsolete">Drucken</translation>
     </message>
 </context>
 <context>
     <name>PrintTool</name>
     <message>
-        <location filename="../PrintTool.py" line="41"/>
+        <location filename="../PrintTool.py" line="43"/>
         <source>Export</source>
         <translation>Exportieren</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="42"/>
+        <location filename="../PrintTool.py" line="45"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="43"/>
+        <location filename="../PrintTool.py" line="47"/>
         <source>Advanced</source>
         <translation>Fortgeschritten</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="51"/>
+        <location filename="../PrintTool.py" line="55"/>
         <source>PDF Document (*.pdf);;</source>
         <translation>PDF Dokument (*.pdf);;</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="52"/>
+        <location filename="../PrintTool.py" line="57"/>
         <source>JPG Image (*.jpg);;</source>
         <translation>JPG Bild (*.jpg);;</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="53"/>
+        <location filename="../PrintTool.py" line="59"/>
         <source>BMP Image (*.bmp);;</source>
         <translation>BMP Bild (*.bmp);;</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="54"/>
+        <location filename="../PrintTool.py" line="61"/>
         <source>PNG Image (*.png);;</source>
         <translation>PNG Bild (*.png);;</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="390"/>
+        <location filename="../PrintTool.py" line="380"/>
         <source>Hidden</source>
         <translation>Unsichtbar</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="390"/>
+        <location filename="../PrintTool.py" line="380"/>
         <source>Visible without layer legend</source>
         <translation>Sichtbar, ohne Ebenenlegende</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="390"/>
+        <location filename="../PrintTool.py" line="380"/>
         <source>Visible with layer legend</source>
         <translation>Sichtbar, mit Ebenenlegende</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="400"/>
+        <location filename="../PrintTool.py" line="395"/>
         <source>Configure legend</source>
         <translation>Legende anpassen</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="402"/>
+        <location filename="../PrintTool.py" line="397"/>
         <source>Select layers to display in legend:</source>
         <translation>Ebenen auswählen, die in der Legende erscheinen sollen:</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="515"/>
         <source>Invalid composer</source>
-        <translation>Ungültige Druckzusammenstellung</translation>
+        <translation type="obsolete">Ungültige Druckzusammenstellung</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="515"/>
         <source>The composer must have exactly one map item.</source>
-        <translation>Die Zusammenstellung muss genau ein Kartenelement haben.</translation>
+        <translation type="obsolete">Die Zusammenstellung muss genau ein Kartenelement haben.</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="577"/>
+        <location filename="../PrintTool.py" line="575"/>
         <source>Paper size: %.2f cm x %.2f cm</source>
         <translation>Papierformat: %.2f cm x %.2f cm</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="626"/>
         <source>Print Composition</source>
-        <translation>Zusammenstellung drucken</translation>
+        <translation type="obsolete">Zusammenstellung drucken</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="653"/>
+        <location filename="../PrintTool.py" line="651"/>
         <source>Print Failed</source>
         <translation>Druck gescheitert</translation>
     </message>
     <message>
         <location filename="../PrintTool.py" line="653"/>
         <source>Failed to print the composition.</source>
-        <translation>Die Zusammenstellung konnte nicht gedruckt werden.</translation>
+        <translation type="obsolete">Die Zusammenstellung konnte nicht gedruckt werden.</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="662"/>
+        <location filename="../PrintTool.py" line="637"/>
         <source>No Printers</source>
         <translation>Keine Drucker</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="662"/>
+        <location filename="../PrintTool.py" line="637"/>
         <source>No printers were found.</source>
         <translation>Keine Drucker wurden gefunden.</translation>
+    </message>
+    <message>
+        <location filename="../PrintTool.py" line="507"/>
+        <source>Invalid layout</source>
+        <translation>Ungültige Druckzusammenstellung</translation>
+    </message>
+    <message>
+        <location filename="../PrintTool.py" line="507"/>
+        <source>The layout must have exactly one map item.</source>
+        <translation>Die Zusammenstellung muss genau ein Kartenelement haben.</translation>
+    </message>
+    <message>
+        <location filename="../PrintTool.py" line="595"/>
+        <source>Print Layout</source>
+        <translation>Vorlage</translation>
+    </message>
+    <message>
+        <location filename="../PrintTool.py" line="651"/>
+        <source>Failed to print the layout.</source>
+        <translation>Die Zusammenstellung konnte nicht gedruckt werden.</translation>
     </message>
 </context>
 </TS>
