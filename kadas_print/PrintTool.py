@@ -604,6 +604,7 @@ class PrintTool(KadasMapToolSelectRect):
             return
 
         self.printing = True
+        QApplication.setOverrideCursor( Qt.WaitCursor )
         self.dialogui.previewGraphic.setUpdatesEnabled(False)
         self.dialog.setEnabled(False)
 
@@ -630,6 +631,7 @@ class PrintTool(KadasMapToolSelectRect):
 
         self.dialog.setEnabled(True)
         self.dialogui.previewGraphic.setUpdatesEnabled(True)
+        QApplication.restoreOverrideCursor()
         self.printing = False
 
     def __print(self):
@@ -645,8 +647,19 @@ class PrintTool(KadasMapToolSelectRect):
             if printdialog.exec_() != QDialog.Accepted:
                 return
 
+            self.printing = True
+            QApplication.setOverrideCursor( Qt.WaitCursor )
+            self.dialogui.previewGraphic.setUpdatesEnabled(False)
+            self.dialog.setEnabled(False)
+
             success = exporter.print(
                 self.printer, QgsLayoutExporter.PrintExportSettings())
+
+            self.dialog.setEnabled(True)
+            self.dialogui.previewGraphic.setUpdatesEnabled(True)
+            QApplication.restoreOverrideCursor()
+            self.printing = False
+
             if success != 0:
                 QMessageBox.warning(
                     self.iface.mainWindow(),
