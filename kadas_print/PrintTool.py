@@ -11,6 +11,7 @@ from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 from qgis.PyQt.QtPrintSupport import *
+from qgis.PyQt.QtXml import *
 from qgis.core import *
 from qgis.gui import *
 from kadas.kadasgui import *
@@ -463,10 +464,22 @@ class PrintTool(KadasMapToolSelectRect):
             prev = self.layoutManager.printLayouts()[0].name()
         self.dialogui.comboBox_printlayouts.clear()
         items = []
+        # Loaded layouts
         for layout in self.layoutManager.printLayouts():
             if layout != removedLayout:
                 cur = layout.name()
                 items.append((cur, layout))
+
+        # Attached, unloaded layouts
+        for key, path in QgsProject.instance().attachedFiles().items():
+            if key.endswith(".qpt"):
+                file = QFile(path)
+                if file.open(QIODevice.ReadOnly):
+                    reader = QXmlStreamReader(file)
+                    reader.readNextStartElement()
+                    name = reader.attributes().value("name")
+                    items.append((name, key))
+
         items.sort(key=lambda x: x[0])
         for item in items:
             self.dialogui.comboBox_printlayouts.addItem(item[0], item[1])
@@ -482,6 +495,32 @@ class PrintTool(KadasMapToolSelectRect):
         else:
             self.__setUiEnabled(False)
 
+    def __loadPrintLayout(self, identifier):
+        filename = QgsProject.instance().attachedFile(identifier)
+        file = QFile(filename)
+        if not file.open(QIODevice.ReadOnly):
+            self.__setUiEnabled(False)
+            return
+
+        doc = QDomDocument()
+        doc.setContent(file)
+        layoutEls = doc.elementsByTagName("Layout")
+        if layoutEls.isEmpty():
+            # Invalid layout
+            self.__setUiEnabled(False)
+
+        layoutEl = layoutEls.at(0).toElement()
+        layout = QgsPrintLayout( QgsProject.instance() )
+        layout.setName(layoutEl.attribute("name"))
+
+        if not layout.loadFromTemplate(doc, QgsReadWriteContext()):
+            # Invalid layout
+            self.__setUiEnabled(False)
+
+        QgsProject.instance().removeAttachedFile(identifier)
+        layout.undoStack().stack().clear()
+        QgsProject.instance().layoutManager().addLayout(layout)
+
     def __selectPrintLayout(self):
         self.clear()
         self.mapitem = None
@@ -489,6 +528,9 @@ class PrintTool(KadasMapToolSelectRect):
         try:
             activeIndex = self.dialogui.comboBox_printlayouts.currentIndex()
             layout = self.dialogui.comboBox_printlayouts.itemData(activeIndex)
+            if isinstance(layout, str):
+                self.__loadPrintLayout(layout)
+                return
             layout.__class__ = QgsPrintLayout
             self.fixedSizeMode = layout.name() != "Custom"
             self.setAllowResize(not self.fixedSizeMode)
@@ -521,6 +563,7 @@ class PrintTool(KadasMapToolSelectRect):
 
     def __manageLayouts(self):
         PrintLayoutManager(self.iface, self.dialog).exec_()
+        self.__reloadPrintLayouts()
 
     def __getCustomExtent(self):
         try:

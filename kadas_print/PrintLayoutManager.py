@@ -39,22 +39,32 @@ class PrintLayoutManager(QDialog, Ui_PrintLayoutManager):
 
     def __reloadPrintLayouts(self, removedLayout=None):
         self.listWidgetLayouts.clear()
+        # Loaded layouts
         for layout in self.layoutManager.printLayouts():
             if layout != removedLayout:
                 name = layout.name()
                 item = QListWidgetItem(name)
                 item.setData(Qt.UserRole, layout)
                 self.listWidgetLayouts.addItem(item)
+        # Attached, unloaded layouts
+        for key, path in QgsProject.instance().attachedFiles().items():
+            if key.endswith(".qpt"):
+                file = QFile(path)
+                if file.open(QIODevice.ReadOnly):
+                    reader = QXmlStreamReader(file)
+                    reader.readNextStartElement()
+                    name = reader.attributes().value("name")
+                    item = QListWidgetItem(name)
+                    item.setData(Qt.UserRole, key)
+                    self.listWidgetLayouts.addItem(item)
+
         self.listWidgetLayouts.sortItems()
 
     def __listSelectionChanged(self):
         selected = len(self.listWidgetLayouts.selectedItems()) > 0
         fixedMode = False
         if selected:
-            layout = self.listWidgetLayouts.selectedItems()[0].data(
-                Qt.UserRole)
-            layout.__class__ = QgsPrintLayout
-            fixedMode = layout.name() == "Custom"
+            fixedMode = self.listWidgetLayouts.selectedItems()[0].text() == "Custom"
         self.pushButtonExport.setEnabled(selected)
         self.pushButtonRemove.setEnabled(selected and not fixedMode)
 
@@ -98,12 +108,6 @@ class PrintLayoutManager(QDialog, Ui_PrintLayoutManager):
             self.layoutManager.addLayout(layout)
 
     def __export(self):
-        item = self.listWidgetLayouts.selectedItems()[0]
-        layout = item.data(Qt.UserRole)
-        layout.__class__ = QgsPrintLayout
-        doc = QDomDocument()
-        layout.writeXML(doc, doc)
-
         lastDir = QSettings().value("/UI/lastImportExportDir", ".")
         filename = QFileDialog.getSaveFileName(
             self, self.tr("Export Layout"),
@@ -114,17 +118,28 @@ class PrintLayoutManager(QDialog, Ui_PrintLayoutManager):
             return
         QSettings().setValue(
             "/UI/lastImportExportDir", QFileInfo(filename).absolutePath())
-        file = QFile(filename)
-        if not file.open(QIODevice.WriteOnly):
+
+        item = self.listWidgetLayouts.selectedItems()[0]
+        layout = item.data(Qt.UserRole)
+        if isinstance(layout, str):
+            success = QFile(QgsProject.instance().attachedFile(layout)).copy(filename)
+        else:
+            layout.__class__ = QgsPrintLayout
+            ctx = QgsReadWriteContext()
+            ctx.setPathResolver(QgsProject.instance().pathResolver())
+            success = layout.saveAsTemplate(filename, ctx)
+        if not success:
             QMessageBox.critical(
                 self, self.tr("Export Failed"),
                 self.tr("Failed to open the output file for writing."),
                 QMessageBox.Ok)
-        else:
-            file.write(bytes(doc.toString()))
 
     def __remove(self):
         item = self.listWidgetLayouts.selectedItems()[0]
         layout = item.data(Qt.UserRole)
-        layout.__class__ = QgsPrintLayout
-        self.layoutManager.removeLayout(layout)
+        if isinstance(layout, str):
+            QgsProject.instance().removeAttachedFile(layout)
+            self.__reloadPrintLayouts()
+        else:
+            layout.__class__ = QgsPrintLayout
+            self.layoutManager.removeLayout(layout)
