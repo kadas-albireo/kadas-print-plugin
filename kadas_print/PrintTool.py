@@ -685,6 +685,8 @@ class PrintTool(KadasMapToolSelectRect):
                 self.tr("No printers were found."))
         else:
             exporter = QgsLayoutExporter(self.printLayout)
+            if self.printLayout.pageCollection().pageCount() > 0:
+                self.printer.setPageLayout(self.printLayout.pageCollection().page(0).pageLayout())
             printdialog = QPrintDialog(self.printer)
 
             if printdialog.exec_() != QDialog.Accepted:
