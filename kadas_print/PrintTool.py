@@ -460,8 +460,8 @@ class PrintTool(KadasMapToolSelectRect):
         self.mapitem = None
         self.dialogui.comboBox_printlayouts.blockSignals(True)
         prev = self.dialogui.comboBox_printlayouts.currentText()
-        if not prev and self.layoutManager.printLayouts():
-            prev = self.layoutManager.printLayouts()[0].name()
+        if not prev:
+            prev = QSettings().value("/print/defaulttemplate")
         self.dialogui.comboBox_printlayouts.clear()
         items = []
         # Loaded layouts
