@@ -204,6 +204,7 @@ class CartoucheDialog(QDialog, Ui_CartoucheDialog):
         self.cartouchecircumscriptionLE.setText(self.__getElementText(legend, "PrintName"))
         self.supplementtitleLE.setText(self.__getElementText(legend, "PrintAnnexRef"))
         self.scaletitleLE.setText(self.__getElementText(legend, "PrintScaleRef"))
+        self.updatePrintLayout()
         return True
 
     def __exportCartouche(self):
