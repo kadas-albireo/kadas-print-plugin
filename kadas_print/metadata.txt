@@ -4,11 +4,14 @@ qgisMinimumVersion=3.00
 qgisMaximumVersion=3.99
 description=Instantly print map excerpts
 about=The instant print plugin allows to quickly print map excerpts to a file, utilizing an existing composer as page layout.
-version=1.94
+version=1.95
 author=Sandro Mani, Sourcepole AG
 email=smani@sourcepole.ch
 
 changelog=
+ Rev 1.95 (03.02.2020)
+ - Set printer page layout
+
  Rev 1.94 (03.02.2020)
  - Support setting default print layout in settings
 
