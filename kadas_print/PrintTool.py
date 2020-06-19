@@ -337,8 +337,9 @@ class PrintTool(KadasMapToolSelectRect):
     def __titleChanged(self, arg):
         titleItem = self.__layoutItem("title", QgsLayoutItemLabel)
         if titleItem:
-            titleItem.setText(unicode(self.dialogui.lineEdit_title.text()))
+            titleItem.setText(self.dialogui.lineEdit_title.text())
             titleItem.setVisible(not not titleItem.text())
+            titleItem.redraw()
             self.__updateView()
 
     def __toggleGridAnnotations(self, active):
