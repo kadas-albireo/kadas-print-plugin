@@ -472,14 +472,14 @@ class PrintTool(KadasMapToolSelectRect):
                 items.append((cur, layout))
 
         # Attached, unloaded layouts
-        for key, path in QgsProject.instance().attachedFiles().items():
-            if key.endswith(".qpt"):
+        for path in QgsProject.instance().attachedFiles():
+            if path.endswith(".qpt"):
                 file = QFile(path)
                 if file.open(QIODevice.ReadOnly):
                     reader = QXmlStreamReader(file)
                     reader.readNextStartElement()
                     name = reader.attributes().value("name")
-                    items.append((name, key))
+                    items.append((name, path))
 
         items.sort(key=lambda x: x[0])
         for item in items:
@@ -496,10 +496,10 @@ class PrintTool(KadasMapToolSelectRect):
         else:
             self.__setUiEnabled(False)
 
-    def __loadPrintLayout(self, identifier):
-        filename = QgsProject.instance().attachedFile(identifier)
+    def __loadPrintLayout(self, filename):
         file = QFile(filename)
         if not file.open(QIODevice.ReadOnly):
+
             self.__setUiEnabled(False)
             return
 
@@ -518,7 +518,7 @@ class PrintTool(KadasMapToolSelectRect):
             # Invalid layout
             self.__setUiEnabled(False)
 
-        QgsProject.instance().removeAttachedFile(identifier)
+        QgsProject.instance().removeAttachedFile(filename)
         layout.undoStack().stack().clear()
         QgsProject.instance().layoutManager().addLayout(layout)
 

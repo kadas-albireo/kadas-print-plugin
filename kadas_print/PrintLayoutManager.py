@@ -47,15 +47,15 @@ class PrintLayoutManager(QDialog, Ui_PrintLayoutManager):
                 item.setData(Qt.UserRole, layout)
                 self.listWidgetLayouts.addItem(item)
         # Attached, unloaded layouts
-        for key, path in QgsProject.instance().attachedFiles().items():
-            if key.endswith(".qpt"):
+        for path in QgsProject.instance().attachedFiles():
+            if path.endswith(".qpt"):
                 file = QFile(path)
                 if file.open(QIODevice.ReadOnly):
                     reader = QXmlStreamReader(file)
                     reader.readNextStartElement()
                     name = reader.attributes().value("name")
                     item = QListWidgetItem(name)
-                    item.setData(Qt.UserRole, key)
+                    item.setData(Qt.UserRole, path)
                     self.listWidgetLayouts.addItem(item)
 
         self.listWidgetLayouts.sortItems()
