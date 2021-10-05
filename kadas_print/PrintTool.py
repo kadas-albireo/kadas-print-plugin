@@ -218,6 +218,7 @@ class PrintTool(KadasMapToolSelectRect):
         if not legendItem:
             self.dialogui.checkBox_legend.setEnabled(False)
         else:
+            self.__configureLegend(False)
             self.dialogui.checkBox_legend.setChecked(legendItem.isVisible())
         scaleBarItem = self.__layoutItem("scalebar", QgsLayoutItemScaleBar)
         if not scaleBarItem:
@@ -245,7 +246,6 @@ class PrintTool(KadasMapToolSelectRect):
         KadasMapToolSelectRect.activate(self)
         self.dialog.show()
         self.__reloadPrintLayouts()
-        self.__configureLegend(False)
 
     def deactivate(self):
         KadasMapToolSelectRect.deactivate(self)
