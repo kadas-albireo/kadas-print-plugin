@@ -387,7 +387,7 @@ class PrintTool(KadasMapToolSelectRect):
                 combo.setCurrentIndex(
                     2 if prevLayers[layerNode.layerId()] is True else 1)
             else:
-                combo.setCurrentIndex(0)
+                combo.setCurrentIndex(2)
             layersList.setCellWidget(row, 1, combo)
         legendDialog = QDialog(self.dialog)
         if execDialog:
