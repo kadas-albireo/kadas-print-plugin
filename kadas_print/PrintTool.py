@@ -272,22 +272,15 @@ class PrintTool(KadasMapToolSelectRect):
                 self.dialogui.comboBox_crs.currentIndex()).split(",")
             self.mapitem.grid().setEnabled(True)
             self.grid.setCrs(QgsCoordinateReferenceSystem(crs))
-            try:
-                if format == '0':
-                    self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
-                    self.mapitem.setGridAnnotationFormat(0)
-                    self.grid.setAnnotationPrecision(5)
-                elif format == 'second':
-                    self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
-                    self.grid.setAnnotationPrecision(1)
-                    self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinuteSecond)
-                elif format == 'minute':
-                    self.grid.setGridCrsType(QgsComposerMapGrid.CrsUserSelected)
-                    self.grid.setAnnotationPrecision(3)
-                    self.mapitem.setGridAnnotationFormat(QgsComposerMap.DegreeMinute)
-            except:
-                # Ignore missing setGridCrsType method
-                pass
+            if format == '0':
+                self.grid.setAnnotationPrecision(5)
+                self.grid.setAnnotationFormat(QgsLayoutItemMapGrid.Decimal)
+            elif format == 'second':
+                self.grid.setAnnotationPrecision(1)
+                self.grid.setAnnotationFormat(QgsLayoutItemMapGrid.DegreeMinuteSecond)
+            elif format == 'minute':
+                self.grid.setAnnotationPrecision(3)
+                self.grid.setAnnotationFormat(QgsLayoutItemMapGrid.DegreeMinute)
 
             self.grid.setAnnotationDisplay(
                 QgsLayoutItemMapGrid.LongitudeOnly, QgsLayoutItemMapGrid.Top)
