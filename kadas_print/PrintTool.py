@@ -162,6 +162,7 @@ class PrintTool(KadasMapToolSelectRect):
     def __initPrintLayout(self):
         self.grid = self.mapitem.grid()
         self.cartouchedialog = CartoucheDialog(self.printLayout, self.dialog)
+        self.mapitem.setCrs(self.iface.mapCanvas().mapSettings().destinationCrs())
         if not self.fixedSizeMode:
             # Only update extent if it does not intersect
             # with full extent of map
