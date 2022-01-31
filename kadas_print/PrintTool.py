@@ -552,7 +552,6 @@ class PrintTool(KadasMapToolSelectRect):
 
         self.printLayout = layout
         # Default to twice the screen dpi
-        self.printLayout.renderContext().setDpi(2 * QApplication.desktop().logicalDpiX())
         self.mapitem = referenceMap
         self.__initPrintLayout()
 
