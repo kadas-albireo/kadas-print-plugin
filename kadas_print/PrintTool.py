@@ -253,10 +253,11 @@ class PrintTool(KadasMapToolSelectRect):
         self.dialog.hide()
 
     def __updateRectCoords(self, rect):
-        self.dialogui.lineedit_xmin.setText(str(round(rect.xMinimum())))
-        self.dialogui.lineedit_xmax.setText(str(round(rect.xMaximum())))
-        self.dialogui.lineedit_ymin.setText(str(round(rect.yMinimum())))
-        self.dialogui.lineedit_ymax.setText(str(round(rect.yMaximum())))
+        if not rect.isEmpty():
+            self.dialogui.lineedit_xmin.setText(str(round(rect.xMinimum())))
+            self.dialogui.lineedit_xmax.setText(str(round(rect.xMaximum())))
+            self.dialogui.lineedit_ymin.setText(str(round(rect.yMinimum())))
+            self.dialogui.lineedit_ymax.setText(str(round(rect.yMaximum())))
 
     def __rectChangeComplete(self, rect):
         self.mapitem.setExtent(rect)
