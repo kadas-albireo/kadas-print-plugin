@@ -71,7 +71,7 @@
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="135"/>
         <source>&quot;CODE NAME&quot;</source>
-        <translation>&quot;NOME DI COPERTURA&quot;</translation>
+        <translation>&amp;quot;NOME DI COPERTURA&amp;quot;</translation>
     </message>
     <message>
         <location filename="../ui/ui_cartouchedialog.py" line="136"/>
@@ -94,42 +94,42 @@
         <translation>Importa</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="211"/>
+        <location filename="../CartoucheDialog.py" line="212"/>
         <source>Export cartouche</source>
         <translation>Esporta il cartiglio</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="226"/>
+        <location filename="../CartoucheDialog.py" line="227"/>
         <source>XML Files (*.xml);;</source>
         <translation>File XML (*.xml);;</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="220"/>
+        <location filename="../CartoucheDialog.py" line="221"/>
         <source>Export failed</source>
         <translation>Impossibile esportare</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="220"/>
+        <location filename="../CartoucheDialog.py" line="221"/>
         <source>Unable to write to file.</source>
         <translation>Impossibile scrivere il file.</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="226"/>
+        <location filename="../CartoucheDialog.py" line="227"/>
         <source>Import cartouche</source>
         <translation>Importa cartiglio</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="240"/>
+        <location filename="../CartoucheDialog.py" line="241"/>
         <source>Import failed</source>
         <translation>Impossibile importare</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="236"/>
+        <location filename="../CartoucheDialog.py" line="237"/>
         <source>Unable to read file.</source>
         <translation>Impossibile leggere il file.</translation>
     </message>
     <message>
-        <location filename="../CartoucheDialog.py" line="240"/>
+        <location filename="../CartoucheDialog.py" line="241"/>
         <source>The file does not appear to contain valid cartouche data.</source>
         <translation>Il file non sembra contenere cartiglio valido.</translation>
     </message>
@@ -291,62 +291,62 @@
 <context>
     <name>PrintTool</name>
     <message>
-        <location filename="../PrintTool.py" line="43"/>
+        <location filename="../PrintTool.py" line="44"/>
         <source>Export</source>
         <translation>Esporta</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="45"/>
+        <location filename="../PrintTool.py" line="46"/>
         <source>Print</source>
         <translation>Stampa</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="47"/>
+        <location filename="../PrintTool.py" line="48"/>
         <source>Advanced</source>
         <translation>Avanzato</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="55"/>
+        <location filename="../PrintTool.py" line="56"/>
         <source>PDF Document (*.pdf);;</source>
         <translation>Documento PDF (*.pdf);;</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="57"/>
+        <location filename="../PrintTool.py" line="60"/>
         <source>JPG Image (*.jpg);;</source>
         <translation>Immagine JPG (*.jpg);;</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="59"/>
+        <location filename="../PrintTool.py" line="62"/>
         <source>BMP Image (*.bmp);;</source>
         <translation>Immagine BMP (*.bmp);;</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="61"/>
+        <location filename="../PrintTool.py" line="64"/>
         <source>PNG Image (*.png);;</source>
         <translation>Immagine PNG (*.png);;</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="380"/>
+        <location filename="../PrintTool.py" line="379"/>
         <source>Hidden</source>
         <translation>Nascosto</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="380"/>
+        <location filename="../PrintTool.py" line="379"/>
         <source>Visible without layer legend</source>
         <translation>Visibile, senza legenda del layer</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="380"/>
+        <location filename="../PrintTool.py" line="379"/>
         <source>Visible with layer legend</source>
         <translation>Visible, con legenda del layer</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="395"/>
+        <location filename="../PrintTool.py" line="394"/>
         <source>Configure legend</source>
         <translation>Configura legenda</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="397"/>
+        <location filename="../PrintTool.py" line="396"/>
         <source>Select layers to display in legend:</source>
         <translation>Selezionare i layer da mostrare nella legenda:</translation>
     </message>
@@ -361,7 +361,7 @@
         <translation type="obsolete">La composizione deve contenere esattamente una mappa.</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="575"/>
+        <location filename="../PrintTool.py" line="615"/>
         <source>Paper size: %.2f cm x %.2f cm</source>
         <translation>Dimensioni:%.2f cm x %.2f cm</translation>
     </message>
@@ -371,7 +371,7 @@
         <translation type="obsolete">Stampa composizione</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="651"/>
+        <location filename="../PrintTool.py" line="711"/>
         <source>Print Failed</source>
         <translation>Stampa non riuscita</translation>
     </message>
@@ -381,34 +381,39 @@
         <translation type="obsolete">La stampa della composizione non è riuscita.</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="637"/>
+        <location filename="../PrintTool.py" line="684"/>
         <source>No Printers</source>
         <translation>Nessuna stampante</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="637"/>
+        <location filename="../PrintTool.py" line="684"/>
         <source>No printers were found.</source>
         <translation>Nessuna stampante è stata rilevata</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="507"/>
+        <location filename="../PrintTool.py" line="547"/>
         <source>Invalid layout</source>
         <translation>Composizione invalida</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="507"/>
+        <location filename="../PrintTool.py" line="547"/>
         <source>The layout must have exactly one map item.</source>
         <translation>La composizione deve contenere esattamente una mappa.</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="595"/>
+        <location filename="../PrintTool.py" line="635"/>
         <source>Print Layout</source>
         <translation>Modello</translation>
     </message>
     <message>
-        <location filename="../PrintTool.py" line="651"/>
+        <location filename="../PrintTool.py" line="711"/>
         <source>Failed to print the layout.</source>
         <translation>La stampa della composizione non è riuscita.</translation>
+    </message>
+    <message>
+        <location filename="../PrintTool.py" line="58"/>
+        <source>GeoPDF Document (*.geopdf);;</source>
+        <translation>Documento GeoPDF (*.geopdf);;</translation>
     </message>
 </context>
 </TS>

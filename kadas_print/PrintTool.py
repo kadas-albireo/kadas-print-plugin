@@ -56,6 +56,8 @@ class PrintTool(KadasMapToolSelectRect):
         self.dialogui.comboBox_fileformat.addItem(
             "PDF", self.tr("PDF Document (*.pdf);;"))
         self.dialogui.comboBox_fileformat.addItem(
+            "GeoPDF", self.tr("GeoPDF Document (*.geopdf);;"))
+        self.dialogui.comboBox_fileformat.addItem(
             "JPG", self.tr("JPG Image (*.jpg);;"))
         self.dialogui.comboBox_fileformat.addItem(
             "BMP", self.tr("BMP Image (*.bmp);;"))
@@ -657,6 +659,11 @@ class PrintTool(KadasMapToolSelectRect):
         if filename[-3:].lower() == u"pdf":
             success = exporter.exportToPdf(
                 filename, QgsLayoutExporter.PdfExportSettings())
+        elif filename[-3:].lower() == u"geopdf":
+            pdfExportSettings = QgsLayoutExporter.PdfExportSettings()
+            pdfExportSettings.writeGeoPdf = True
+            success = exporter.exportToPdf(
+                filename, pdfExportSettings)
         else:
             success = exporter.exportToImage(
                 filename, QgsLayoutExporter.ImageExportSettings())
