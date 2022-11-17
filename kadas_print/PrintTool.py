@@ -656,12 +656,13 @@ class PrintTool(KadasMapToolSelectRect):
 
         success = False
         exporter = QgsLayoutExporter(self.printLayout)
-        if filename[-3:].lower() == u"pdf":
+        if filename[-4:].lower() == u".pdf":
             success = exporter.exportToPdf(
                 filename, QgsLayoutExporter.PdfExportSettings())
-        elif filename[-3:].lower() == u"geopdf":
+        elif filename[-7:].lower() == u".geopdf":
             pdfExportSettings = QgsLayoutExporter.PdfExportSettings()
             pdfExportSettings.writeGeoPdf = True
+
             success = exporter.exportToPdf(
                 filename, pdfExportSettings)
         else:
