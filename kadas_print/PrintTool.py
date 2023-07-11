@@ -31,7 +31,7 @@ class PrintTool(KadasMapToolSelectRect):
 
         self.iface = iface
         self.layoutManager = QgsProject.instance().layoutManager()
-        self.printer = QPrinter()
+        self.printer = None
 
         self.fixedSizeMode = True
         self.mapitem = None
@@ -687,6 +687,8 @@ class PrintTool(KadasMapToolSelectRect):
                 self.tr("No Printers"),
                 self.tr("No printers were found."))
         else:
+            if not self.printer:
+                self.printer = QPrinter()
             exporter = QgsLayoutExporter(self.printLayout)
             if self.printLayout.pageCollection().pageCount() > 0:
                 self.printer.setPageLayout(self.printLayout.pageCollection().page(0).pageLayout())
